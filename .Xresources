@@ -1,0 +1,55 @@
+URxvt.font: xft:Monofur for Powerline:size=15:antialias=false
+URxvt.boldFont: xft:Monofur Bold for Powerline:size=15
+URxvt:italicFont: xft:Monofur Italic for Powerline:size=15
+
+! special
+*.foreground:   #a3a5b5
+*.background:   #252c33
+*.cursorColor:  #a3a5b5
+
+! black
+*.color0:	#4b5963
+*.color8:	#728a9a
+
+! red
+*.color1:	#9f3939
+*.color9:	#9c5858
+
+! green
+*.color2:	#3e9c7a
+*.color10:	#729c8d
+
+! yellow
+*.color3:	#dbdb74
+*.color11:	#b5b580
+
+! blue
+*.color4:	#437bb1
+*.color12:	#485f76
+
+! magenta
+*.color5:	#9c4f71
+*.color13:	#774a5e
+
+! cyan
+*.color6:	#407d89
+*.color14:	#5b7c82
+
+! white
+*.color7:	#caccda
+*.color15:	#9a9dba
+
+
+URxvt.internalBorder:      0
+URxvt.externalBorder:      0
+
+URxvt.scrollBar:           false
+
+URxvt*fading:              30
+
+URxvt.perl-ext-common:     matcher
+
+URxvt.url-launcher:        /usr/bin/vivaldi-stable
+URxvt.keysym.M-Delete:     perl:matcher:list
+URxvt.colorUL:             #7780a1
+

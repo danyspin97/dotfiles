@@ -1,0 +1,73 @@
+#
+# macros
+#
+[macros.clone]
+	deps = ["git"]
+	prefix = ["git", "clone"]
+[macros.install]
+	prefix = ["sudo", "pacman", "-S", "--noconfirm"]
+[macros.enable]
+	prefix = ["sudo", "systemctl", "enable"]
+[macros.yaourt]
+	deps = ["aur"]
+	prefix = ["yaourt", "--noconfirm"]
+#
+# system
+#
+[tasks.fish]
+	rejects = [["which", "fish"]]
+	cmds = [["@install", "fish"], ["chsh", "-s", "/usr/bin/fish"]]
+	links = [[".config/fish/config.fish"]]
+[tasks.git]
+	cmds = [["@install", "git"]]
+[tasks.libreoffice]
+	cmds = [["@install", "libreoffice-fresh"]]
+[tasks.vim]
+	#deps = ["vimrc"]
+	cmds = [["@install", "neovim"]]
+#[tasks.vimrc]
+	#rejects = [["test", "-d", ".config/nvim"]]
+	#cmds = [["@clone", "https://FooSoft@github.com/FooSoft/dotvim.git", ".config/vim"]]
+#links = [
+	#[".vim", "$HM_DEST/.config/vim/.vim"],
+	#[".vimrc", "$HM_DEST/.config/vim/.vimrc"],
+	#[".eslintrc.json"],
+	#]
+[tasks.urxvt]
+	cmds = [["@install", "urxvt256"]]
+[tasks.audio]
+	cmds = [["@install", "pulseaudio", "alsa-utils", "pavucontrol"]]
+[tasks.zip]
+	cmds = [["@install", "unzip"]]
+[tasks.common]
+	cmds = [["@install", "gimp", "keepassx2", "xf86-input-synaptics", "rofi", "vlc"]]
+	links = [[".Xresources"]]
+[tasks.fonts]
+	links = [[".fonts"]]
+[tasks.userpackage]
+	deps = ["aur"]
+	cmds = [["@yaourt", "slack-desktop"],
+		["@yaourt", "telegram-desktop"],
+		["@yaourt", "vivaldi"],
+		["@yaourt", "i3blocks"]]
+[tasks.vlc]
+	cmds = [["@install", "vlc"], ["/usr/lib/vlc/vlc-cache-gen", "-f", "/usr/lib/vlc/plugins"]]
+[tasks.i3]
+	deps = ["i3config"]
+	cmds = [["@install", "i3-gaps"]]
+	links = [[".i3/config"]]
+[tasks.i3__dekstop]
+	links = ["$HM_SRC/desktop/.i3blocks.conf", ".i3blocks.conf"]]
+[tasks.screenlayout]
+[tasks.screenlayout__desktop]
+	links = [["$HM_SRC/desktop/bin/.screenlayout", "$HM_DEST/bin/.screenlayout"]]
+[tasks.screencofig]
+[tasks.xscreensaver]
+	cmds = [["@install", "xscreensaver"]]
+	#links = [[".xscreensaver"]]
+[tasks.powerline]
+	cmds = [["@install", "powerline"]]
+[tasks.aur]
+	cmds = [["@install", "base-devel", "yaourt"]]
+[tasks.default]
+	deps = ["aur", "common", "git", "vim", "fish", "libreoffice", "fonts", "audio", "xscreensaver", "powerline", "i3", "userpackage", "screenlayout"]

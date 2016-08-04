@@ -41,7 +41,7 @@ set $workspace5 " Office"
 set $workspace6 " Games"
 set $workspace7 " Telegram"
 set $workspace8 " Team"
-set $workspace9 " Settings"
+set $workspace9 " Youtube"
 set $workspace10 " Others"
 
 set $monitor1 "HDMI-0"
@@ -49,7 +49,7 @@ set $monitor2 "DVI-0"
 
 # Font for window titles. Will also be used by the bar unless a different font
 # is used in the bar {} block below.
-font pango:Arimo\ For\ Powerline 13
+font pango:AnonymicePowerline 12
 
 # This font is widely installed, provides lots of unicode glyphs, right-to-left
 # text rendering and scalability on retina/hidpi displays (thanks to pango).
@@ -156,15 +156,18 @@ bindsym $sup+Shift+4 move container to workspace $workspace9
 bindsym $sup+Shift+5 move container to workspace $workspace10
 
 assign [class="vivaldi-stable"]                 $workspace1
-assign [class="URxvt256" instance="^terminal$"]	$workspace2
+assign [class="URxvt" instance="^terminal$"]	$workspace2
 assign [class="atom"]				$workspace3
 assign [class="qt-creator"]                     $workspace3
+assign [class="URxvt" title="nvim"]		$workspace3
 assign [class="URxvt" title="ranger"]           $workspace4
-assign [class="keepass"]                        $workspace4
+assign [class="keepassx2"]                      $workspace4
 assign [class="libreoffice"]                    $workspace5
 assign [class="gimp"]                           $workspace5
 assign [class="Telegram"]                       $workspace7
 assign [class="Slack"]				$workspace8
+assign [class="URxvt" title="mpsyt"]		$workspace9
+assign [class="^Vlc$"]				$workspace9
 
 for_window [window_role="pop-up"] floating enable
 for_window [window_role="bubble"] floating enable
@@ -265,7 +268,7 @@ bindsym $mod+r mode "resize"
 
 # Bar
 bar {
-    font pango: Hermit, FontAwesome 16
+    font pango:Arimo For Powerline, FontAwesome 16
     status_command i3blocks
     i3bar_command i3bar -t
     position bottom
@@ -279,7 +282,7 @@ bar {
         separator       $foreground
         background      $background
         statusline      $base00
-#                          border	background      text
+        #                  border	background      text
         focused_workspace  $foreground	$foreground     $background
         active_workspace   $foreground	$foreground     $base0C
         inactive_workspace $background  $background     $base0F
@@ -320,7 +323,7 @@ workspace $workspace5 output $monitor1
 workspace $workspace6 output $monitor1
 workspace $workspace7 output $monitor2
 workspace $workspace8 output $monitor2
-workspace $workspace9 output $monitor1
+workspace $workspace9 output $monitor2
 workspace $workspace10 output $monitor1
 
 # printscreen (Thanks to pavel for this)
@@ -340,7 +343,7 @@ bindsym $sup+w [class="Slack"] focus
 bindsym $sup+s exec steam
 bindsym $sup+l exec libreoffice
 bindsym $sup+g exec gimp
-bindsym $sup+x keepass
+bindsym $sup+x exec keepassx2
 bindsym $sup+q exec qtcreator -style=gtk
 bindsym $sup+F3 exec pcmanfm
 
@@ -405,13 +408,16 @@ mode "$mode_gaps_outer" {
 ## DPMS monitor setting (standby -> suspend -> off) (seconds)
 exec xset dpms 300 600 900 &
 
-exec --no-startup-id ~.screenlayout
-exec_always feh --bg-scale /home/danyspin97/Pictures/Wallpaper_01.jpg
-exec --no-startup-id nm-applet
-exec --no-startup-id clipit
+exec_always xrandr --output DisplayPort-0 --off --output DVI-1 --off --output DVI-0 --mode 1600x900 --pos 1920x180 --rotate normal --output HDMI-0 --primary --mode 1920x1080 --pos 0x0 --rotate normal
+#exec_always feh --bg-scale /home/danyspin97/Pictures/Wallpaper_01.jpg
+exec --no-startup-id redshift-gtk
+#exec --no-startup-id nm-applet
+#exec --no-startup-id clipit
 exec --no-startup-id xautolock -time 10 -locker blurlock
 exec vivaldi-stable
-exec urxvt256 -name terminal
-exec urxvt256 -e ranger
+exec urxvt -name terminal
+exec urxvt -e ranger
+exec urxvt -e nvim
 exec Telegram
 exec slack
+exec urxvt -e mpsyt

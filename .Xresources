@@ -1,4 +1,3 @@
-
 ! special
 *.foreground:   #a3a5b5
 *.background:   #252c33
@@ -36,16 +35,21 @@
 *.color7:	#caccda
 *.color15:	#9a9dba
 
-
-URxvt.font: xft:Anonymice Powerline:size=15,xft:FontAwesome:size=15
+URxvt*termName: rxvt-unicode-256color
+URxvt.font: xft:Anonymice Powerline:size=15,xft:TerminessPowerline:style=Bold:size=15
 URxvt.boldFont: xft:Anonymice Powerline Bold:size=15
 URxvt.italicFont: xft:Anonymice Powerline Italic:size=15
 URxvt.boldItalicFont: xft:Anonymice Powerline Bold Italic:size=15
+URxvt.letterSpace: true
 
 URxvt.saveLines:                      5000
 
 URxvt.internalBorder:      0
 URxvt.externalBorder:      0
+
+URxvt.transparent: false
+URxvt.tintColor: white
+URxvt.shading: 0
 
 URxvt.perl-ext-common:     matcher
 
@@ -64,8 +68,24 @@ URxvt.skipScroll: true
 URxvt.scrollBar: false
 URxvt.scrollBar_right: false
 URxvt.scrollBar_floating: false
-URxvt.fading: 30
+! URxvt.fading: 30
 URxvt.utmpInhibit: false
 URxvt.urgentOnBell: false
-URxvt.visualBell: true
+URxvt.visualBell: false
 URxvt.mapAlert: true
+
+! ------------------------------------------------------------------------------
+! ROFI Color theme
+! ------------------------------------------------------------------------------
+! Use extended color scheme
+rofi.color-enabled:                  true
+! Color scheme for normal row
+rofi.color-normal:                   #252c33,#caccda,#485f76,#a3a5b5,#252c33
+! Color scheme for urgent row
+rofi.color-urgent:                   #9c5858,#4b5963,#9g3939,#5b7c82,#407d89
+! Color scheme for active row
+rofi.color-active:                   #a3a4b5,#485f76,#437bb1,#5294e2,#c2cad0
+! Color scheme window
+rofi.color-window:                   #252c33,#485f76
+! Separator style (none, dash, solid)
+rofi.separator-style:                solid

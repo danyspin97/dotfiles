@@ -2,63 +2,78 @@
 # macros
 #
 [macros.clone]
-	prefix = ["git", "clone"]
+    prefix = ["git", "clone"]
 [macros.install]
-	prefix = ["sudo", "pacman", "-S", "--noconfirm"]
+    prefix = ["sudo", "pacman", "-S", "--noconfirm"]
 [macros.enable]
-	prefix = ["sudo", "systemctl", "enable"]
+    prefix = ["sudo", "systemctl", "enable"]
 [macros.aur]
-	prefix = ["yaourt", "-S", "--noconfirm"]
+    prefix = ["yaourt", "-S", "--noconfirm"]
 #
 # system
 #
 [tasks.fish]
-	rejects = [["which", "fish"]]
-	cmds = [["@install", "fish"], ["chsh", "-s", "$(which fish)"]]
-	links = [[".config/fish/config.fish"]]
+    rejects = [["which", "fish"]]
+    cmds = [["@install", "fish"], ["chsh", "-s", "$(which fish)"]]
+    links = [[".config/fish/config.fish"],
+        [".config/fish/fishfile"]]
 [tasks.libreoffice]
-	cmds = [["@install", "libreoffice-fresh"]]
+    cmds = [["@install", "libreoffice-fresh"]]
 [tasks.vim]
-	cmds = [["@install", "neovim"]]
+   cmds = [["@install", "neovim"]]
+   links = [[".config/nvim/init.vim"]]
 [tasks.urxvt]
-	cmds = [["@install", "urxvt"]]
+    cmds = [["@install", "rxvt-unicode"]]
 [tasks.audio]
-	cmds = [["@install", "pulseaudio", "alsa-utils", "pavucontrol"]]
+    cmds = [["@install", "pulseaudio", "alsa-utils", "pavucontrol"]]
+    links = [[".config/pavucontrol.ini"]]
 [tasks.zip]
-	cmds = [["@install", "unzip"]]
+    cmds = [["@install", "unzip"]]
 [tasks.common]
-	cmds = [["@install", "gimp", "keepassx2", "xf86-input-synaptics", "rofi", "dunst", "mps-youtube", "kdenlive"]]
-	links = [[".Xresources"]]
+    cmds = [["@install", "gimp", "keepassx2", "xf86-input-synaptics", "rofi", "mps-youtube", "kdenlive", "gpicview", "cmus", "zatura", "smplayer", "livestreamer", "krita", "xautolock", "feh", "pcmanfm"]]
+    links = [[".Xresources"]]
+[tasks.qutebrowser]
+    cmds = [["@install", "qutebrowser"]]
+    links = [[".config/qutebrowser/qutebrowser.conf"],
+        [".config/qutebrowser/keys.conf"]]
 [tasks.redshift]
-	cmds = [["@install", "redshift"]]
-	links = [[".config/redshift.conf"],
-		[".config/redshift/hooks/brightness.sh"]]
+    cmds = [["@install", "redshift"]]
+    links = [[".config/redshift.conf"],
+        [".config/redshift/hooks/brightness.sh"]]
 [tasks.fonts]
-	links = [[".fonts"]]
+    links = [[".fonts"]]
 [tasks.userpackage]
-	cmds = [["@aur", "slack-desktop"],
-		["@aur", "telegram-desktop"],
-		["@aur", "vivaldi"],
-		["@aur", "trackma-git"]]
+    cmds = [["@aur", "slack-desktop"],
+        ["@aur", "telegram-desktop"],
+        ["@aur", "vivaldi"],
+        ["@aur", "trackma-git"]]
 [tasks.vlc]
-	cmds = [["@install", "vlc"], ["/usr/lib/vlc/vlc-cache-gen", "-f", "/usr/lib/vlc/plugins"]]
+    cmds = [["@install", "vlc"], ["/usr/lib/vlc/vlc-cache-gen", "-f", "/usr/lib/vlc/plugins"]]
 [tasks.i3]
-	cmds = [["@install", "i3-gaps"],
-		["@aur", "lemonbar-xft-git"],
-		["@aur", "i3blocks"]]
-	links = [[".config/i3/config"],
-		[".script"]]
-[tasks.i3__dekstop]
-	deps = ["i3"]
-	links = [["$HM_SRC/desktop/.i3blocks.conf", ".i3blocks.conf"]]
-[tasks.screenlayout]
-[tasks.screenlayout__desktop]
-	links = [["$HM_SRC/desktop/bin/screenlayout", "$HM_DEST/bin/screenlayout"]]
-[tasks.screencofig]
-[tasks.xscreensaver]
-	cmds = [["@install", "xscreensaver"]]
-	#links = [[".xscreensaver"]]
+    cmds = [["@install", "i3-gaps"],
+        ["@aur", "lemonbar-xft-git"],
+        ["@aur", "i3blocks"]]
+    links = [[".config/i3/config"],
+        [".script"],
+        [".i3blocks.conf"]]
 [tasks.powerline]
-	cmds = [["@install", "powerline"]]
+    cmds = [["@install", "powerline"]]
+[tasks.ranger]
+    cmds = [["@install", "ranger"]]
+    links = [[".config/ranger/rc.conf"],
+        [".config/ranger/rifle.conf"],
+        [".config/ranger/scope.sh"]]
+[tasks.dust]
+    cmds = [["@install", "dusnt"]]
+    links = [[".config/dunst/dunstrc"]]
+[tasks.morc_menu]
+    cmds = [["@install", "morc_menu"]]
+    links = [[".config/morc_menu/morc_menu_v1.conf"]]
+[tasks.compton]
+    cmds = [["@install", "compton"]]
+    links = [["./config/compton.conf"]]
+[tasks.teiler]
+    cmds = [["@install", "teiler"]]
+    links = [[".config/teiler/config"]]
 [tasks.default]
-	deps = ["common", "vim", "fish", "libreoffice", "fonts", "audio", "xscreensaver", "powerline", "i3", "userpackage", "redshift"]
+    deps = ["common", "vim", "fish", "libreoffice", "fonts", "audio", "powerline", "i3", "userpackage", "redshift", "ranger", "dunst", "morc_menu", "compton", "teiler"]

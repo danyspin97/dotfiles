@@ -31,17 +31,17 @@
     cmds = [["@install", "unzip"]]
 [tasks.common]
     cmds = [["@install", "gimp", "keepassx2", "xf86-input-synaptics", "rofi", "mps-youtube", "kdenlive", "gpicview", "cmus", "zatura", "smplayer", "livestreamer", "krita", "xautolock", "feh", "pcmanfm", "task"]]
-    links = [[".Xresources"], [".local/share/fonts"]]
+    links = [[".Xresources"]]
 [tasks.qutebrowser]
     cmds = [["@install", "qutebrowser"]]
     links = [[".config/qutebrowser/qutebrowser.conf"],
         [".config/qutebrowser/keys.conf"]]
 [tasks.redshift]
     cmds = [["@install", "redshift"]]
-    links = [[".config/redshift.conf"],
-        [".config/redshift/hooks/brightness.sh"]]
+    #links = [[".config/redshift.conf"],
+    #    [".config/redshift/hooks/brightness.sh"]]
 [tasks.fonts]
-    links = [[".fonts"]]
+    links = [[".local/share/fonts"]]
 [tasks.userpackage]
     cmds = [["@aur", "slack-desktop"],
         ["@aur", "telegram-desktop"],
@@ -53,8 +53,8 @@
     cmds = [["@install", "i3-gaps", "perl-anyevent-i3"],
         ["@aur", "lemonbar-xft-git"],
         ["@aur", "i3blocks"]]
-    links = [[".config/i3/config"],
-        [".script"],
+    links = [[".i3"],
+        [".scripts"],
         [".i3blocks.conf"]]
 [tasks.powerline]
     cmds = [["@install", "powerline"]]
@@ -63,15 +63,15 @@
     links = [[".config/ranger/rc.conf"],
         [".config/ranger/rifle.conf"],
         [".config/ranger/scope.sh"]]
-[tasks.dust]
-    cmds = [["@install", "dusnt"]]
+[tasks.dunst]
+    cmds = [["@install", "dunst"]]
     links = [[".config/dunst/dunstrc"]]
 [tasks.morc_menu]
     cmds = [["@install", "morc_menu"]]
     links = [[".config/morc_menu/morc_menu_v1.conf"]]
 [tasks.compton]
     cmds = [["@install", "compton"]]
-    links = [["./config/compton.conf"]]
+    links = [[".config/compton.conf"]]
 [tasks.teiler]
     cmds = [["@install", "teiler"]]
     links = [[".config/teiler/config"]]

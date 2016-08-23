@@ -1,0 +1,42 @@
+{
+    "layout": "stacked",
+    "border": "pixel",
+    "current_border_width": 0,
+    "floating": "auto_off",
+    "geometry": {
+       "height": 859,
+       "width": 1103,
+       "x": 1928,
+       "y": 188
+    },
+    "name": "Slack",
+    "percent": 0.7,
+    "swallows": [
+       {
+        "class": "^Slack$",
+        "instance": "^slack$"
+       }
+    ]
+}
+
+{
+    "layout": "stacked",
+    "border": "pixel",
+    "current_border_width": 0,
+    "floating": "auto_off",
+    "geometry": {
+       "height": 859,
+       "width": 463,
+       "x": 3049,
+       "y": 188
+    },
+    "name": "Telegram",
+    "percent": 0.3,
+    "swallows": [
+       {
+        "class": "^Telegram$",
+        "instance": "^Telegram$"
+       }
+    ]
+}
+

@@ -30,8 +30,8 @@
 [tasks.zip]
     cmds = [["@install", "unzip"]]
 [tasks.common]
-    cmds = [["@install", "gimp", "keepassx2", "xf86-input-synaptics", "rofi", "mps-youtube", "kdenlive", "gpicview", "cmus", "zatura", "smplayer", "livestreamer", "krita", "xautolock", "feh", "pcmanfm"]]
-    links = [[".Xresources"]]
+    cmds = [["@install", "gimp", "keepassx2", "xf86-input-synaptics", "rofi", "mps-youtube", "kdenlive", "gpicview", "cmus", "zatura", "smplayer", "livestreamer", "krita", "xautolock", "feh", "pcmanfm", "task"]]
+    links = [[".Xresources"], [".local/share/fonts"]]
 [tasks.qutebrowser]
     cmds = [["@install", "qutebrowser"]]
     links = [[".config/qutebrowser/qutebrowser.conf"],
@@ -50,7 +50,7 @@
 [tasks.vlc]
     cmds = [["@install", "vlc"], ["/usr/lib/vlc/vlc-cache-gen", "-f", "/usr/lib/vlc/plugins"]]
 [tasks.i3]
-    cmds = [["@install", "i3-gaps"],
+    cmds = [["@install", "i3-gaps", "perl-anyevent-i3"],
         ["@aur", "lemonbar-xft-git"],
         ["@aur", "i3blocks"]]
     links = [[".config/i3/config"],

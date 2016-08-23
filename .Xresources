@@ -35,12 +35,21 @@
 *.color7:	#caccda
 *.color15:	#9a9dba
 
+Xft.autohint: 0
+Xft.antialias: 0
+Xft.hinting: true
+Xft.hintstyle: hintslight
+Xft.dpi: 96
+Xft.rgba: rgb
+Xft.lcdfilter: lcddefault
+
 URxvt*termName: rxvt-unicode-256color
-URxvt.font: xft:Anonymice Powerline:size=15,xft:TerminessPowerline:style=Bold:size=15
-URxvt.boldFont: xft:Anonymice Powerline Bold:size=15
-URxvt.italicFont: xft:Anonymice Powerline Italic:size=15
-URxvt.boldItalicFont: xft:Anonymice Powerline Bold Italic:size=15
-URxvt.letterSpace: true
+URxvt.letterSpace: 1
+
+URxvt*font: xft: Iosevka:style=Regular:size=14, \
+URxvt.italicFont: xft: Iosevka:style=Italic:size=14
+URxvt.boldFont: xft: Iosevka:style=Bold:size=14
+URxvt.boldItalicFont: xft: Iosevka:style=Bold Italic:size=14
 
 URxvt.saveLines:                      5000
 
@@ -53,10 +62,10 @@ URxvt.shading: 0
 
 URxvt.perl-ext-common:     matcher
 
-URxvt.url-launcher:        /usr/bin/vivaldi-stable
+URxvt.url-launcher:        /usr/bin/qutebrowser
 URxvt.keysym.M-Delete:     perl:matcher:list
 URxvt.colorUL:             #7780a1
-URxvt.scrollbar:	   false
+URxvt.scrollbar:   false
 
 URxvt.scrollstyle: plain
 URxvt.scrollTtyKeypress: true
@@ -89,3 +98,8 @@ rofi.color-active:                   #a3a4b5,#485f76,#437bb1,#5294e2,#c2cad0
 rofi.color-window:                   #252c33,#485f76
 ! Separator style (none, dash, solid)
 rofi.separator-style:                solid
+
+xterm*locale: true
+xterm*faceName: Iosevka Regular:size=14:antialias=false
+xterm*font: 7x13
+

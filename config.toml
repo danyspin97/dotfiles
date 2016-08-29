@@ -14,7 +14,7 @@
 #
 [tasks.fish]
     rejects = [["which", "fish"]]
-    cmds = [["@install", "fish"], ["chsh", "-s", "$(which fish)"]]
+    cmds = [["@install", "fish"], ["chsh", "-s", "/usr/bin/fish"]]
     links = [[".config/fish/config.fish"],
         [".config/fish/fishfile"]]
 [tasks.libreoffice]
@@ -30,7 +30,7 @@
 [tasks.zip]
     cmds = [["@install", "unzip"]]
 [tasks.common]
-    cmds = [["@install", "gimp", "keepassx2", "xf86-input-synaptics", "rofi", "mps-youtube", "kdenlive", "gpicview", "cmus", "zatura", "smplayer", "livestreamer", "krita", "xautolock", "feh", "pcmanfm", "task"]]
+    cmds = [["@install", "arandr", "gimp", "keepassx2", "xf86-input-synaptics", "rofi", "mps-youtube", "kdenlive", "gpicview", "cmus", "smplayer", "livestreamer", "krita", "xautolock", "feh", "pcmanfm", "task"]]
     links = [[".Xresources"]]
 [tasks.qutebrowser]
     cmds = [["@install", "qutebrowser"]]
@@ -45,13 +45,11 @@
 [tasks.userpackage]
     cmds = [["@aur", "slack-desktop"],
         ["@aur", "telegram-desktop"],
-        ["@aur", "vivaldi"],
         ["@aur", "trackma-git"]]
 [tasks.vlc]
     cmds = [["@install", "vlc"], ["/usr/lib/vlc/vlc-cache-gen", "-f", "/usr/lib/vlc/plugins"]]
 [tasks.i3]
-    cmds = [["@install", "i3-gaps", "perl-anyevent-i3"],
-        ["@aur", "lemonbar-xft-git"],
+    cmds = [["@aur", "lemonbar-xft-git"],
         ["@aur", "i3blocks"]]
     links = [[".i3"],
         [".scripts"],
@@ -67,13 +65,13 @@
     cmds = [["@install", "dunst"]]
     links = [[".config/dunst/dunstrc"]]
 [tasks.morc_menu]
-    cmds = [["@install", "morc_menu"]]
+    cmds = [["@aur", "morc_menu"]]
     links = [[".config/morc_menu/morc_menu_v1.conf"]]
 [tasks.compton]
     cmds = [["@install", "compton"]]
     links = [[".config/compton.conf"]]
 [tasks.teiler]
-    cmds = [["@install", "teiler"]]
+    cmds = [["@aur", "teiler"]]
     links = [[".config/teiler/config"]]
 [tasks.default]
-    deps = ["common", "vim", "fish", "libreoffice", "fonts", "audio", "powerline", "i3", "userpackage", "redshift", "ranger", "dunst", "morc_menu", "compton", "teiler"]
+    deps = ["common", "vim", "fish", "libreoffice", "fonts", "audio", "powerline", "i3", "userpackage", "redshift", "ranger", "dunst", "morc_menu", "compton", "teiler", "qutebrowser"]

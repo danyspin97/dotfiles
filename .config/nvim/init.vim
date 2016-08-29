@@ -1,5 +1,5 @@
 set encoding=utf8
-set guifont=Iosevka\ Nerd\ Font\ Regular\ 12
+"set guifont=Iosevka\ Nerd\ Font\ Regular\ 12
 
 "Map the leader key to SPACE
 let mapleader="\<SPACE>"
@@ -13,6 +13,7 @@ set textwidth=0         " Hard-wrap long lines as you type them.
 set expandtab           " Insert spaces when TAB is pressed.
 set tabstop=4           " Render TABs using this many spaces.
 set shiftwidth=4        " Indentation amount for < and > commands.
+set noshowmode          " Hide the default mode text (e.g. -- INSERT -- below the statusline)
 
 set noerrorbells        " No beeps.
 set modeline            " Enable modeline.
@@ -56,11 +57,60 @@ if maparg('<C-L>', 'n') ==# ''
   nnoremap <silent> <C-L> :nohlsearch<CR><C-L>
 endif
 
+" Relative numbering
+function! NumberToggle()
+  if(&relativenumber == 1)
+    set nornu
+    set number
+  else
+    set rnu
+  endif
+endfunc
+
+" Toggle between normal and relative numbering.
+nnoremap <leader>r :call NumberToggle()<cr>
+
+" Use The Silver Searcher https://github.com/ggreer/the_silver_searcher
+if executable('ag')
+  " Use Ag over Grep
+  set grepprg=ag\ --nogroup\ --nocolor
+
+  " Use ag in CtrlP for listing files. Lightning fast and respects .gitignore
+  let g:ctrlp_user_command = 'ag -Q -l --nocolor --hidden -g "" %s'
+
+  " ag is fast enough that CtrlP doesn't need to cache
+  let g:ctrlp_use_caching = 0
+
+  if !exists(":Ag")
+    command -nargs=+ -complete=file -bar Ag silent! grep! <args>|cwindow|redraw!
+    nnoremap \ :Ag<SPACE>
+  endif
+endif
+
 call plug#begin()
 Plug 'vim-airline/vim-airline'
 Plug 'scrooloose/nerdtree'
+Plug 'vim-pandoc/vim-pandoc', { 'for': [ 'pandoc', 'markdown' ] }
+Plug 'vim-pandoc/vim-pandoc-syntax', { 'for': [ 'pandoc', 'markdown' ] }
 Plug 'ryanoasis/vim-devicons'
+Plug 'easymotion/vim-easymotion'
+Plug 'kien/ctrlp.vim'
+Plug 'benekastah/neomake'
+Plug 'thirtythreeforty/lessspace.vim', { 'do': ':UpdateRemotePlugins' }
+Plug 'airblade/vim-gitgutter'
+Plug 'ervandew/supertab'
+Plug 'Shougo/deoplete.nvim'
+Plug 'Raimondi/delimitMate'
+Plug 'zenbro/mirror.vim'
+" Plug 'floobits/floobits-neovim'
+Plug 'critiqjo/lldb.nvim'
+Plug 'mhinz/vim-grepper'
+Plug 'tpope/vim-repeat'
+Plug 'altercation/vim-colors-solarized'
+Plug 'vim-airline/vim-airline-themes'
 call plug#end()
+
+filetype plugin indent on
 
 " NerdTree
 autocmd StdinReadPre * let s:std_in=1
@@ -110,3 +160,45 @@ let g:airline#extensions#tabline#enabled = 1
 
 let g:airline#extensions#tabline#left_sep =  ""
 let g:airline#extensions#tabline#left_alt_sep =  ""
+
+""""""" SuperTab configuration """""""
+"let g:SuperTabDefaultCompletionType = "<c-x><c-u>"
+function! Completefunc(findstart, base)
+    return "\<c-x>\<c-p>"
+endfunction
+
+""""""" General coding stuff """""""
+" Highlight 80th column
+"set colorcolumn=120
+" Always show status bar
+set laststatus=2
+" Let plugins show effects after 500ms, not 4s
+set updatetime=500
+" Disable mouse click to go to position
+set mouse-=a
+" Don't let autocomplete affect usual typing habits
+set completeopt=menuone,preview,noinsert
+" Let vim-gitgutter do its thing on large files
+let g:gitgutter_max_signs=10000
+
+" Linux / windows ctrl+backspace ctrl+delete
+" Note that ctrl+backspace doesn't work in Linux, so ctrl+\ is also available
+imap <C-backspace> ú
+imap <C-\> ú
+imap <C-delete> ø
+
+" Neomake and other build commands (ctrl-b)
+nnoremap <C-b> :w<cr>:Neomake<cr>
+
+autocmd BufNewFile,BufRead *.tex,*.bib noremap <buffer> <C-b> :w<cr>:new<bar>r !make<cr>:setlocal buftype=nofile<cr>:setlocal bufhidden=hide<cr>:setlocal noswapfile<cr>
+autocmd BufNewFile,BufRead *.tex,*.bib imap <buffer> <C-b> <Esc><C-b>
+
+let g:deoplete#enable_at_startup = 1
+
+autocmd! BufWritePost * Neomake
+let g:neomake_serialize = 1
+let g:neomake_serialize_abort_on_error = 1
+
+syntax enable
+set background=dark
+colorscheme solarized

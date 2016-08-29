@@ -5,8 +5,8 @@
  *
  * font: see http://freedesktop.org/software/fontconfig/fontconfig-user.html
  */
-static char font[] = "Iosevka Nerd Font:style=Regular:size=14:antialias=true:autohint=true";
-static int borderpx = 0;
+static char font[] = "Input:size=13:antialias=true:autohint=false:hint=hintfull";
+static int borderpx = 2;
 
 /*
  * What program is execed by st depends of these precedence rules:
@@ -84,31 +84,23 @@ static unsigned int tabspaces = 4;
 
 /* Terminal colors (16 first used in escape sequence) */
 static const char *colorname[] = {
-	/* 8 normal colors */
-	"#4b5963",
-	"#9f3939",
-	"#3e9c7a",
-	"#dbdb74",
-	"#437bb1",
-	"#9c4f71",
-	"#407d89",
-	"#caccda",
-
-	/* 8 bright colors */
-	"#728a9a",
-	"#9c5858",
-	"#729c8d",
-	"#b5b580",
-	"#485f76",
-	"#774a5e",
-	"#5b7c82",
-	"#9a9dba",
-
-	[255] = 0,
-
-	/* more colors can be added after 255 to use with DefaultXX */
-	"#252c33",
-	"#a3a5b5",
+	/* solarized dark */
+	"#073642",  /*  0: black    */
+	"#dc322f",  /*  1: red      */
+	"#859900",  /*  2: green    */
+	"#b58900",  /*  3: yellow   */
+	"#268bd2",  /*  4: blue     */
+	"#d33682",  /*  5: magenta  */
+	"#2aa198",  /*  6: cyan     */
+	"#eee8d5",  /*  7: white    */
+	"#002b36",  /*  8: brblack  */
+	"#cb4b16",  /*  9: brred    */
+	"#586e75",  /* 10: brgreen  */
+	"#657b83",  /* 11: bryellow */
+	"#839496",  /* 12: brblue   */
+	"#6c71c4",  /* 13: brmagenta*/
+	"#93a1a1",  /* 14: brcyan   */
+	"#fdf6e3",  /* 15: brwhite  */
 };
 
 
@@ -116,10 +108,10 @@ static const char *colorname[] = {
  * Default colors (colorname index)
  * foreground, background, cursor, reverse cursor
  */
-static unsigned int defaultfg = 257;
-static unsigned int defaultbg = 256;
-static unsigned int defaultcs = 257;
-static unsigned int defaultrcs = 256;
+static unsigned int defaultfg = 12;
+static unsigned int defaultbg = 8;
+static unsigned int defaultcs = 14;
+static unsigned int defaultrcs = 15;
 
 /*
  * Default shape of cursor
@@ -134,8 +126,8 @@ static unsigned int cursorshape = 6;
  * Default colour and shape of the mouse cursor
  */
 static unsigned int mouseshape = XC_xterm;
-static unsigned int mousefg = 256;
-static unsigned int mousebg = 257;
+static unsigned int mousefg = 7;
+static unsigned int mousebg = 0;
 
 /*
  * Colors used, when the specific fg == defaultfg. So in reverse mode this

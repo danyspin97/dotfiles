@@ -36,9 +36,9 @@
 *.color15:	#9a9dba
 
 Xft.autohint: 0
-Xft.antialias: 0
+Xft.antialias: 1
 Xft.hinting: true
-Xft.hintstyle: hintslight
+Xft.hintstyle: hintall
 Xft.dpi: 96
 Xft.rgba: rgb
 Xft.lcdfilter: lcddefault
@@ -100,6 +100,6 @@ rofi.color-window:                   #252c33,#485f76
 rofi.separator-style:                solid
 
 xterm*locale: true
-xterm*faceName: Iosevka Regular:size=14:antialias=false
+xterm*faceName: Input:style=Regular:size=14:antialias=false
 xterm*font: 7x13
 

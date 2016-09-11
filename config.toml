@@ -30,8 +30,10 @@
 [tasks.zip]
     cmds = [["@install", "unzip"]]
 [tasks.common]
-    cmds = [["@install", "arandr", "gimp", "keepassx2", "xf86-input-synaptics", "rofi", "mps-youtube", "kdenlive", "gpicview", "cmus", "smplayer", "livestreamer", "krita", "xautolock", "feh", "pcmanfm", "task"]]
-    links = [[".Xresources"]]
+    cmds = [["@install", "arandr", "gimp", "keepassx2", "xf86-input-synaptics", "rofi", "mps-youtube", "kdenlive", "gpicview", "cmus", "smplayer", "livestreamer", "krita", "xautolock", "feh", "pcmanfm", "task", "trash-cli"]]
+    links = [[".Xresources"],
+            [".gitconfig"],
+            [".gitignore"]]
 [tasks.qutebrowser]
     cmds = [["@install", "qutebrowser"]]
     links = [[".config/qutebrowser/qutebrowser.conf"],

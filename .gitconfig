@@ -1,0 +1,5 @@
+[user]
+	name = Danilo Spinella
+	email = danyspin.ds@gmail.com
+[core]
+	excludesfile = ~/.gitignore

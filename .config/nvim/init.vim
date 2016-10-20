@@ -70,6 +70,15 @@ endfunc
 " Toggle between normal and relative numbering.
 nnoremap <leader>r :call NumberToggle()<cr>
 
+tnoremap <A-h> <C-\><C-n><C-w>h
+tnoremap <A-j> <C-\><C-n><C-w>j
+tnoremap <A-k> <C-\><C-n><C-w>k
+tnoremap <A-l> <C-\><C-n><C-w>l
+nnoremap <A-h> <C-w>h
+nnoremap <A-j> <C-w>j
+nnoremap <A-k> <C-w>k
+nnoremap <A-l> <C-w>l
+
 call plug#begin()
 Plug 'vim-airline/vim-airline'
 Plug 'scrooloose/nerdtree'
@@ -255,3 +264,7 @@ endfunction
 vmap <silent> <expr> p <sid>Repl()
 
 au FocusLost * wa
+
+let b:usemarks         = 1
+let b:cb_jump_on_close = 1
+

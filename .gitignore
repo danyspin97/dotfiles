@@ -1,4 +1,5 @@
 .idea/
 CMakeFiles/
 *.swp
+CMakeLists.txt.user
 

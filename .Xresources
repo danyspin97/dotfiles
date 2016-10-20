@@ -1,39 +1,59 @@
-! special
-*.foreground:   #a3a5b5
-*.background:   #252c33
-*.cursorColor:  #a3a5b5
+#define S_base03        #002b36
+#define S_base02        #073642
+#define S_base01        #586e75
+#define S_base00        #657b83
+#define S_base0         #839496
+#define S_base1         #93a1a1
+#define S_base2         #eee8d5
+#define S_base3         #fdf6e3
 
-! black
-*.color0:	#4b5963
-*.color8:	#728a9a
+*background:            S_base03
+*foreground:            S_base0
+*fadeColor:             S_base03
+*cursorColor:           S_base1
+*pointerColorBackground:S_base01
+*pointerColorForeground:S_base1
 
-! red
-*.color1:	#9f3939
-*.color9:	#9c5858
+#define S_yellow        #b58900
+#define S_orange        #cb4b16
+#define S_red           #dc322f
+#define S_magenta       #d33682
+#define S_violet        #6c71c4
+#define S_blue          #268bd2
+#define S_cyan          #2aa198
+#define S_green         #859900
 
-! green
-*.color2:	#3e9c7a
-*.color10:	#729c8d
+!! black dark/light
+*color0:                S_base02
+*color8:                S_base03
 
-! yellow
-*.color3:	#dbdb74
-*.color11:	#b5b580
+!! red dark/light
+*color1:                S_red
+*color9:                S_orange
 
-! blue
-*.color4:	#437bb1
-*.color12:	#485f76
+!! green dark/light
+*color2:                S_green
+*color10:               S_base01
 
-! magenta
-*.color5:	#9c4f71
-*.color13:	#774a5e
+!! yellow dark/light
+*color3:                S_yellow
+*color11:               S_base00
 
-! cyan
-*.color6:	#407d89
-*.color14:	#5b7c82
+!! blue dark/light
+*color4:                S_blue
+*color12:               S_base0
 
-! white
-*.color7:	#caccda
-*.color15:	#9a9dba
+!! magenta dark/light
+*color5:                S_magenta
+*color13:               S_violet
+
+!! cyan dark/light
+*color6:                S_cyan
+*color14:               S_base1
+
+!! white dark/light
+*color7:                S_base2
+*color15:               S_base3
 
 Xft.autohint: 0
 Xft.antialias: 1
@@ -46,7 +66,7 @@ Xft.lcdfilter: lcddefault
 URxvt*termName: rxvt-unicode-256color
 URxvt.letterSpace: 1
 
-URxvt*font: xft: Iosevka:style=Regular:size=14, \
+URxvt*font: xft: Iosevka:style=Regular:size=14
 URxvt.italicFont: xft: Iosevka:style=Italic:size=14
 URxvt.boldFont: xft: Iosevka:style=Bold:size=14
 URxvt.boldItalicFont: xft: Iosevka:style=Bold Italic:size=14
@@ -100,6 +120,14 @@ rofi.color-window:                   #252c33,#485f76
 rofi.separator-style:                solid
 
 xterm*locale: true
-xterm*faceName: Input:style=Regular:size=14:antialias=false
+xterm*faceName: Input:style=Regular:size=14:antialias=true, Iosevka:style=Regular
 xterm*font: 7x13
+xterm*borderWidth: 0
+XTerm*utf8: 1
+XTerm*charClass: 33:48,36-47:48,58-59:48,61:48,63-64:48,95:48,126:48
+XTerm*on3Clicks: regex ([[:alpha:]]+://)?([[:alnum:]!#+,./=?@_~-]|(%[[:xdigit:]][[:xdigit:]]))+
+*VT100*translations: #override Shift <Btn1Up>: exec-formatted("qutebrowser '%t'", PRIMARY)
+XTerm*printerCommand: xterm -T History -e sh -c 'less -r <&3' 3<&0
+XTerm*translations: #override Ctrl <Key>slash: print-everything()
+XTerm*ScrollKey: true
 

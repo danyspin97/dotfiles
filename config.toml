@@ -2,39 +2,58 @@
 # macros
 #
 [macros.clone]
+    deps = ["git"]
     prefix = ["git", "clone"]
-[macros.install]
-    prefix = ["sudo", "pacman", "-S", "--noconfirm"]
+[macros.install__arch]
+    ## Use yaourt instead of pacman
+    ##prefix = ["sudo", "pacman", "-S", "--noconfirm"]
+    deps = ["yaourt"]
+    prefix = ["yaourt", "-S", "--noconfirm"]
+[macros.install__ubuntu]
+    prefix = ["sudo", "apt-get", "install", "--force-yes"]
 [macros.enable]
     prefix = ["sudo", "systemctl", "enable"]
-[macros.aur]
-    prefix = ["yaourt", "-S", "--noconfirm"]
-#
-# system
-#
+
+## Tasks
+[tasks.git]
+    rejects = [["which", "git"]]
+    links = [[".gitconfig"],
+            [".gitignore"]]
+[tasks.git__arch]
+    # Install git using pacman
+    cmds = [["sudo", "pacman", "-S", "--noconfirm", "git"]]
+[tasks.yaourt]
+    deps = ["git"]
+    rejects = [["which", "yaourt"]]
+    cmds = [["git", "clone", "https://aur.archlinux.org/package-query.git"],
+            ["cd", "package-query"],
+            ["makepkg", "-si"],
+            ["cd", ".."],
+            ["git", "clone", "https://aur.archlinux.org/yaourt.git"],
+            ["makepkg", "-si"],
+            ["cd", ".."]]
 [tasks.fish]
     rejects = [["which", "fish"]]
-    cmds = [["@install", "fish"], ["chsh", "-s", "/usr/bin/fish"]]
-    links = [[".config/fish/config.fish"],
-        [".config/fish/fishfile"]]
-[tasks.libreoffice]
-    cmds = [["@install", "libreoffice-fresh"]]
+    cmds = [["@install", "fish"], ["chsh", "-s", "/usr/bin/fish"],
+            # Install oh-my-fish
+            ["curl", "-L", "http://get.oh-my.fish", "|", "fish"]]
+    links = [[".config/omf"]]
 [tasks.vim]
-   cmds = [["@install", "neovim"]]
+   rejects = [["which", "nvim"]]
+   cmds = [["@install", "neovim"],
+   # Download vim-plug
+           ["curl", "-fLo", "~/.local/share/nvim/site/autoload/plug.vim",
+            "--create-dirs", "\\", "https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"]]
    links = [[".config/nvim/init.vim"]]
-[tasks.urxvt]
-    cmds = [["@install", "rxvt-unicode"]]
 [tasks.audio]
     cmds = [["@install", "pulseaudio", "alsa-utils", "pavucontrol"]]
     links = [[".config/pavucontrol.ini"]]
-[tasks.zip]
-    cmds = [["@install", "unzip"]]
 [tasks.common]
-    cmds = [["@install", "arandr", "gimp", "keepassx2", "xf86-input-synaptics", "rofi", "mps-youtube", "kdenlive", "gpicview", "cmus", "smplayer", "livestreamer", "krita", "xautolock", "feh", "pcmanfm", "task", "trash-cli"]]
-    links = [[".Xresources"],
-            [".gitconfig"],
-            [".gitignore"]]
-[tasks.qutebrowser]
+    cmds = [["@install", "unzip"]]
+    links = [[".Xresources"]]
+[tasks.desktop]
+    cmds = [["@install", "gimp", "keepassx2", "xf86-input-synaptics", "rofi", "mps-youtube", "kdenlive", "cmus", "smplayer", "livestreamer", "xautolock", "feh", "pcmanfm"]]
+[tasks.browser]
     cmds = [["@install", "qutebrowser"]]
     links = [[".config/qutebrowser/qutebrowser.conf"],
         [".config/qutebrowser/keys.conf"]]
@@ -44,20 +63,11 @@
     #    [".config/redshift/hooks/brightness.sh"]]
 [tasks.fonts]
     links = [[".local/share/fonts"]]
-[tasks.userpackage]
-    cmds = [["@aur", "slack-desktop"],
-        ["@aur", "telegram-desktop"],
-        ["@aur", "trackma-git"]]
 [tasks.vlc]
     cmds = [["@install", "vlc"], ["/usr/lib/vlc/vlc-cache-gen", "-f", "/usr/lib/vlc/plugins"]]
 [tasks.i3]
-    cmds = [["@aur", "lemonbar-xft-git"],
-        ["@aur", "i3blocks"]]
+    cmds = [["@install", "lemonbar-xft-git"],
     links = [[".i3"],
-        [".scripts"],
-        [".i3blocks.conf"]]
-[tasks.powerline]
-    cmds = [["@install", "powerline"]]
 [tasks.ranger]
     cmds = [["@install", "ranger"]]
     links = [[".config/ranger/rc.conf"],
@@ -73,7 +83,9 @@
     cmds = [["@install", "compton"]]
     links = [[".config/compton.conf"]]
 [tasks.teiler]
-    cmds = [["@aur", "teiler"]]
+    cmds = [["@install", "teiler"]]
     links = [[".config/teiler/config"]]
 [tasks.default]
-    deps = ["common", "vim", "fish", "libreoffice", "fonts", "audio", "powerline", "i3", "userpackage", "redshift", "ranger", "dunst", "morc_menu", "compton", "teiler", "qutebrowser"]
+    deps = ["common", "vim", "fish"]
+[tasks.default__arch]
+    deps = ["desktop", "fonts", "audio", "i3", "redshift", "ranger", "dunst", "morc_menu", "compton", "teiler", "browser"]

@@ -267,8 +267,8 @@ bindsym XF86MonBrightnessDown exec "xbacklight -dec 10; notify-send 'brightness 
 bindsym $mod+Tab exec rofi -show window -lines 4 -eh 2 -width 250 -padding 170 -opacity "85" -font "Input Regular 22" -fullscreen
 
 # scratchpad (http://i3wm.org/docs/user-contributed/lzap-config.html)
-bindsym $mod+m move scratchpad
-bindsym $mod+o scratchpad show
+#bindsym $mod+m move scratchpad
+#bindsym $mod+o scratchpad show
 
 # Move the current workspace to the next output
 # (effectively toggles when you only have two outputs)
@@ -364,7 +364,7 @@ exec xset dpms 300 600 900 &
 
 exec_always xrandr --output DisplayPort-0 --off --output DVI-1 --off --output DVI-0 --mode 1600x900 --pos 1920x180 --rotate normal --output HDMI-0 --primary --mode 1920x1080 --pos 0x0 --rotate normal
 exec_always feh --bg-scale $HOME/Pictures/Wallpaper_01.png
-exec_always $HOME/.config/lemonbuddy/launch.sh
+exec --no-startup-id $HOME/.i3/lemonbar/lemonbar.sh | lemonbar -p -g 12920x20+0+0 -f "Iosevka-12:Medium"
 #exec --no-startup-id "i3-msg 'workspace im.send(); append_layout /home/danyspin97/.i3/workspace-im.json'"
 exec --no-startup-id "i3-msg 'workspace \"make install\"; layout tabbed'"
 exec --no-startup-id redshift
@@ -372,7 +372,6 @@ exec --no-startup-id redshift
 #exec --no-startup-id clipit
 exec --no-startup-id xautolock -time 10 -locker blurlock
 exec qutebrowser
-exec st -e nvim
 exec st -e ranger
 exec Telegram
 exec st -e mpsyt

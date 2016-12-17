@@ -1,4 +1,6 @@
+package composer
+package gityaw
 package sudope
 package thefuck
 theme default
-theme yimmy
+theme syl20bnr

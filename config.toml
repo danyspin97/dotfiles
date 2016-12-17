@@ -66,8 +66,8 @@
 [tasks.vlc]
     cmds = [["@install", "vlc"], ["/usr/lib/vlc/vlc-cache-gen", "-f", "/usr/lib/vlc/plugins"]]
 [tasks.i3]
-    cmds = [["@install", "lemonbar-xft-git"],
-    links = [[".i3"],
+    cmds = [["@install", "lemonbar-xft-git"]]
+    links = [[".i3"]]
 [tasks.ranger]
     cmds = [["@install", "ranger"]]
     links = [[".config/ranger/rc.conf"],

@@ -1,5 +1,4 @@
 set encoding=utf8
-"set guifont=Iosevka\ Nerd\ Font\ Regular\ 12
 
 "Map the leader key to SPACE
 let mapleader="\<SPACE>"
@@ -34,6 +33,15 @@ endif
 set display+=lastline
 set nostartofline       " Do not jump to first character with page commands.
 
+set laststatus=2 " Always show status bar
+set updatetime=500 " Let plugins show effects after 500ms, not 4s
+set mouse-=a " Disable mouse click to go to position
+" Don't let autocomplete affect usual typing habits
+set completeopt=menuone,preview,noinsert
+
+set hidden
+set history=100
+
 " Tell Vim which characters to show for expanded TABs,
 " trailing whitespace, and end-of-lines. VERY useful!
 if &listchars ==# 'eol:$'
@@ -52,10 +60,14 @@ set incsearch           " Incremental search.
 set gdefault            " Use 'g' flag by default with :s/foo/bar/.
 set magic               " Use 'magic' patterns (extended regular expressions).
 
-" Use <C-L> to clear the highlighting of :set hlsearch.
-if maparg('<C-L>', 'n') ==# ''
-  nnoremap <silent> <C-L> :nohlsearch<CR><C-L>
-endif
+" Cancel a search with esc
+nnoremap <silent> <Esc> :nohlsearch<Bar>:echo<CR>
+
+" Linux / windows ctrl+backspace ctrl+delete
+" Note that ctrl+backspace doesn't work in Linux, so ctrl+\ is also available
+imap <C-backspace> ú
+imap <C-\> ú
+imap <C-delete> ø
 
 " Relative numbering
 function! NumberToggle()
@@ -70,6 +82,8 @@ endfunc
 " Toggle between normal and relative numbering.
 nnoremap <leader>r :call NumberToggle()<cr>
 
+nnoremap <Leader>w :w<CR>
+
 tnoremap <A-h> <C-\><C-n><C-w>h
 tnoremap <A-j> <C-\><C-n><C-w>j
 tnoremap <A-k> <C-\><C-n><C-w>k
@@ -79,41 +93,95 @@ nnoremap <A-j> <C-w>j
 nnoremap <A-k> <C-w>k
 nnoremap <A-l> <C-w>l
 
+" Easy switch between vims tab
+nnoremap tc :tabnew<CR>
+nnoremap td :tabclose<CR>
+nnoremap tp :tabprev<CR>
+nnoremap tn :tabnext<CR>
+
+" Current line highlithing
+hi CursorLineNR cterm=bold
+augroup CLNRSet
+    autocmd! ColorScheme * hi CursorLineNR cterm=bold
+augroup END
+
+augroup CursorLine
+  au!
+  au VimEnter,WinEnter,BufWinEnter * setlocal cursorline
+  au WinLeave * setlocal nocursorline
+augroup END
+
+set lazyredraw
+syntax sync minlines=128
+
+" vp doesn't replace paste buffer
+function! RestoreRegister()
+  let @" = s:restore_reg
+  return ''
+endfunction
+function! s:Repl()
+  let s:restore_reg = @"
+  return "p@=RestoreRegister()\<cr>"
+endfunction
+vmap <silent> <expr> p <sid>Repl()
+
+" Autosave when focus is lost from window
+au FocusLost * wa
+
 call plug#begin()
 Plug 'vim-airline/vim-airline'
 Plug 'scrooloose/nerdtree'
-"Plug 'Xuyuanp/nerdtree-git-plugin'
-"Plug 'vim-pandoc/vim-pandoc', { 'for': [ 'pandoc', 'markdown' ] }
-"Plug 'vim-pandoc/vim-pandoc-syntax', { 'for': [ 'pandoc', 'markdown' ] }
+Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'ryanoasis/vim-devicons'
-"Plug 'easymotion/vim-easymotion'
-Plug 'kien/ctrlp.vim'
-Plug 'benekastah/neomake'
+Plug 'easymotion/vim-easymotion'
 Plug 'thirtythreeforty/lessspace.vim', { 'do': ':UpdateRemotePlugins' }
 Plug 'airblade/vim-gitgutter'
-Plug 'Shougo/deoplete.nvim'
-Plug 'Raimondi/delimitMate'
-"Plug 'zenbro/mirror.vim'
-" Plug 'floobits/floobits-neovim'
-"Plug 'critiqjo/lldb.nvim'
-"Plug 'mhinz/vim-grepper'
+Plug 'zenbro/mirror.vim'
+Plug 'freeo/vim-kalisi'
 Plug 'tpope/vim-repeat'
-"Plug 'tpope/vim-fugitive'
-Plug 'altercation/vim-colors-solarized'
 Plug 'vim-airline/vim-airline-themes'
+Plug 'Yggdroot/indentLine'
+Plug 'mhinz/vim-startify'
+Plug 'scrooloose/nerdcommenter'
+Plug 'editorconfig/editorconfig-vim'
+Plug 'tpope/vim-surround'
+Plug 'Valloric/YouCompleteMe'
+Plug 'rdnetto/YCM-Generator', { 'branch': 'stable'}
+Plug 'jiangmiao/auto-pairs'
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+Plug 'junegunn/fzf.vim'
 call plug#end()
 
 filetype plugin indent on
 
-" NerdTree
-autocmd StdinReadPre * let s:std_in=1
-autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
+" Set theme
+syntax enable
+set background=dark
+colorscheme kalisi
+
+"""" indentLine config
+let g:indentLine_color_term = 241
+let g:indentLine_char = '┆'
+
+""" NerdTree config
+
+" Close NerdTree if it is the onyl windows open
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
-" autocmd vimenter * NERDTree
+
+" Open NerdTree with ctrl+n
 map <C-n> :NERDTreeToggle<CR>
+
+" Show hidden file
+let NERDTreeShowHidden=1
+
+" Ignore file
+let NERDTreeIgnore=['\.DS_Store', '\~$', '\.swp']
+
+" Arrows
 let g:NERDTreeDirArrowExpandable = ''
 let g:NERDTreeDirArrowCollapsible = ''
 
+" Symbols
 let g:NERDTreeIndicatorMapCustom = {
     \ "Modified"  : "✹",
     \ "Staged"    : "✚",
@@ -126,8 +194,11 @@ let g:NERDTreeIndicatorMapCustom = {
     \ "Unknown"   : "?"
     \ }
 
-" air-line
+""" air-line config
 let g:airline_powerline_fonts = 1
+
+" Set kalisi theme
+let g:airline_theme='kalisi'
 
 if !exists('g:airline_symbols')
     let g:airline_symbols = {}
@@ -151,7 +222,7 @@ let g:airline_symbols.whitespace = 'Ξ'
 let g:airline_left_sep = ''
 let g:airline_left_alt_sep = ''
 let g:airline_right_sep = ''
-let g:airline_right_alt_sep = '' 
+let g:airline_right_alt_sep = ''
 let g:airline_symbols.branch = ''
 let g:airline_symbols.readonly = ''
 let g:airline_symbols.linenr = ''
@@ -167,104 +238,58 @@ let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#left_sep =  ""
 let g:airline#extensions#tabline#left_alt_sep =  ""
 
-""""""" SuperTab configuration """""""
-"let g:SuperTabDefaultCompletionType = "<c-x><c-u>"
-function! Completefunc(findstart, base)
-    return "\<c-x>\<c-p>"
-endfunction
-
-""""""" General coding stuff """""""
-" Highlight 80th column
-"set colorcolumn=120
-" Always show status bar
-set laststatus=2
-" Let plugins show effects after 500ms, not 4s
-set updatetime=500
-" Disable mouse click to go to position
-set mouse-=a
-" Don't let autocomplete affect usual typing habits
-set completeopt=menuone,preview,noinsert
-" Let vim-gitgutter do its thing on large files
-let g:gitgutter_max_signs=10000
-
-" Linux / windows ctrl+backspace ctrl+delete
-" Note that ctrl+backspace doesn't work in Linux, so ctrl+\ is also available
-imap <C-backspace> ú
-imap <C-\> ú
-imap <C-delete> ø
-
-" Neomake and other build commands (ctrl-b)
-nnoremap <C-b> :w<cr>:Neomake<cr>
-
-autocmd BufNewFile,BufRead *.tex,*.bib noremap <buffer> <C-b> :w<cr>:new<bar>r !make<cr>:setlocal buftype=nofile<cr>:setlocal bufhidden=hide<cr>:setlocal noswapfile<cr>
-autocmd BufNewFile,BufRead *.tex,*.bib imap <buffer> <C-b> <Esc><C-b>
-
-let g:deoplete#enable_at_startup = 1
-
-autocmd! BufWritePost * Neomake
-let g:neomake_serialize = 1
-let g:neomake_serialize_abort_on_error = 1
-
-syntax enable
-set background=dark
-colorscheme solarized
-
-" Alternatively use
-nnoremap th :tabnext<CR>
-nnoremap tl :tabprev<CR>
-nnoremap tn :tabnew<CR>
-
-" Current line highlithing
-"hi clear CursorLine
-"augroup CLClear
-""    autocmd! ColorScheme * hi clear CursorLine
-"augroup END
-hi CursorLineNR cterm=bold
-augroup CLNRSet
-    autocmd! ColorScheme * hi CursorLineNR cterm=bold
-augroup END
-
-augroup CursorLine
-  au!
-  au VimEnter,WinEnter,BufWinEnter * setlocal cursorline
-  au WinLeave * setlocal nocursorline
-augroup END
-
-set lazyredraw
-syntax sync minlines=256
-
-nnoremap <Leader>w :w<CR>
-
-" Use The Silver Searcher https://github.com/ggreer/the_silver_searcher
-if executable('ag')
-  " Use Ag over Grep
-  set grepprg=ag\ --nogroup\ --nocolor
-
-  " Use ag in CtrlP for listing files. Lightning fast and respects .gitignore
-  let g:ctrlp_user_command = 'ag -Q -l --nocolor --hidden -g "" %s'
-
-  " ag is fast enough that CtrlP doesn't need to cache
-  let g:ctrlp_use_caching = 0
-
-  if !exists(":Ag")
-    command -nargs=+ -complete=file -bar Ag silent! grep! <args>|cwindow|redraw!
-    nnoremap \ :Ag<SPACE>
-  endif
-endif
-
-" vp doesn't replace paste buffer
-function! RestoreRegister()
-  let @" = s:restore_reg
-  return ''
-endfunction
-function! s:Repl()
-  let s:restore_reg = @"
-  return "p@=RestoreRegister()\<cr>"
-endfunction
-vmap <silent> <expr> p <sid>Repl()
-
-au FocusLost * wa
-
 let b:usemarks         = 1
 let b:cb_jump_on_close = 1
 
+""" Easymotion configuration
+let g:EasyMotion_do_mapping = 0 " Disable default mappings
+
+" Jump to anywhere you want with minimal keystrokes, with just one key binding.
+" `s{char}{label}`
+nmap s <Plug>(easymotion-overwin-f)
+" or
+" `s{char}{char}{label}`
+" Need one more keystroke, but on average, it may be more comfortable.
+nmap s <Plug>(easymotion-overwin-f2)
+
+" Turn on case insensitive feature
+let g:EasyMotion_smartcase = 1
+
+" JK motions: Line motions
+map <Leader>j <Plug>(easymotion-j)
+map <Leader>k <Plug>(easymotion-k)
+
+map <Leader>w <Plug>(easymotion-w)
+map <Leader>e <Plug>(easymotion-e)
+map <Leader>b <Plug>(easymotion-b)
+
+""" Git gutter config
+" Always show column
+let g:gitgutter_sign_column_always=1
+" Stop git gutter when there are 500+ modifications
+let g:gitgutter_max_signs = 500
+
+""" Startify config
+let g:startify_enable_unsafe = 0
+
+""" FZF config
+" In Neovim, you can set up fzf window using a Vim command
+let g:fzf_layout = { 'window': 'enew' }
+
+" Customize fzf colors to match your color scheme
+let g:fzf_colors =
+\ { 'fg':      ['fg', 'Normal'],
+  \ 'bg':      ['bg', 'Normal'],
+  \ 'hl':      ['fg', 'Comment'],
+  \ 'fg+':     ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
+  \ 'bg+':     ['bg', 'CursorLine', 'CursorColumn'],
+  \ 'hl+':     ['fg', 'Statement'],
+  \ 'info':    ['fg', 'PreProc'],
+  \ 'prompt':  ['fg', 'Conditional'],
+  \ 'pointer': ['fg', 'Exception'],
+  \ 'marker':  ['fg', 'Keyword'],
+  \ 'spinner': ['fg', 'Label'],
+  \ 'header':  ['fg', 'Comment'] }
+
+" Call fzf
+map <C-z> :FZF<CR>

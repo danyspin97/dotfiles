@@ -364,7 +364,7 @@ exec xset dpms 300 600 900 &
 
 exec_always xrandr --output DisplayPort-0 --off --output DVI-1 --off --output DVI-0 --mode 1600x900 --pos 1920x180 --rotate normal --output HDMI-0 --primary --mode 1920x1080 --pos 0x0 --rotate normal
 exec_always feh --bg-scale $HOME/Pictures/Wallpaper_01.png
-exec --no-startup-id $HOME/.i3/lemonbar/lemonbar.sh | lemonbar -p -g 12920x20+0+0 -f "Iosevka-12:Medium"
+exec --no-startup-id $HOME/.i3/lemonbar/lemonbar.sh | lemonbar -p -g 1920x25+0+0 -f "Iosevka-14:Medium"
 #exec --no-startup-id "i3-msg 'workspace im.send(); append_layout /home/danyspin97/.i3/workspace-im.json'"
 exec --no-startup-id "i3-msg 'workspace \"make install\"; layout tabbed'"
 exec --no-startup-id redshift

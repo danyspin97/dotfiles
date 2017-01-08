@@ -14,7 +14,6 @@ set tabstop=4           " Render TABs using this many spaces.
 set shiftwidth=4        " Indentation amount for < and > commands.
 set noshowmode          " Hide the default mode text (e.g. -- INSERT -- below the statusline)
 
-set noerrorbells        " No beeps.
 set modeline            " Enable modeline.
 set esckeys             " Cursor keys in insert mode.
 set linespace=0         " Set line-spacing to minimum.
@@ -25,10 +24,10 @@ set splitbelow          " Horizontal split below current.
 set splitright          " Vertical split to right of current.
 
 if !&scrolloff
-  set scrolloff=3       " Show next 3 lines while scrolling.
+    set scrolloff=3       " Show next 3 lines while scrolling.
 endif
 if !&sidescrolloff
-  set sidescrolloff=5   " Show next 5 columns while side-scrolling.
+    set sidescrolloff=5   " Show next 5 columns while side-scrolling.
 endif
 set display+=lastline
 set nostartofline       " Do not jump to first character with page commands.
@@ -42,10 +41,34 @@ set completeopt=menuone,preview,noinsert
 set hidden
 set history=100
 
+" Set to auto read when a file is changed from the outside
+set autoread
+
+" Turn on the WiLd menu
+set wildmenu
+
+" Ignore compiled files
+set wildignore=*.o,*~,*.pyc,*/.git/*,*/.hg/*,*/.svn/*,*/.DS_Store
+
+" Height of the command bar
+set cmdheight=2
+
+" A buffer becomes hidden when it is abandoned
+set hid
+
+" How many tenths of a second to blink when matching brackets
+set mat=2
+
+" No annoying sound on errors
+set noerrorbells
+set novisualbell
+set t_vb=
+set tm=500"
+
 " Tell Vim which characters to show for expanded TABs,
 " trailing whitespace, and end-of-lines. VERY useful!
 if &listchars ==# 'eol:$'
-  set listchars=tab:>\ ,trail:-,extends:>,precedes:<,nbsp:+
+    set listchars=tab:>\ ,trail:-,extends:>,precedes:<,nbsp:+
 endif
 set list                " Show problematic characters.
 
@@ -60,6 +83,22 @@ set incsearch           " Incremental search.
 set gdefault            " Use 'g' flag by default with :s/foo/bar/.
 set magic               " Use 'magic' patterns (extended regular expressions).
 
+" Disable swap and backup
+set nobackup
+set noswapfile
+set nowb
+
+" Linebreak on 500 characters
+set lbr
+set tw=500
+
+set ai "Auto indent
+set si "Smart indent
+set wrap "Wrap lines
+
+" Add cpp syntax for .tpp files
+autocmd BufEnter *.tpp :setlocal filetype=cpp
+
 " Cancel a search with esc
 nnoremap <silent> <Esc> :nohlsearch<Bar>:echo<CR>
 
@@ -71,33 +110,40 @@ imap <C-delete> ø
 
 " Relative numbering
 function! NumberToggle()
-  if(&relativenumber == 1)
-    set nornu
-    set number
-  else
-    set rnu
-  endif
+    if(&relativenumber == 1)
+        set nornu
+        set number
+    else
+        set rnu
+    endif
 endfunc
 
 " Toggle between normal and relative numbering.
 nnoremap <leader>r :call NumberToggle()<cr>
 
-nnoremap <Leader>w :w<CR>
-
-tnoremap <A-h> <C-\><C-n><C-w>h
-tnoremap <A-j> <C-\><C-n><C-w>j
-tnoremap <A-k> <C-\><C-n><C-w>k
-tnoremap <A-l> <C-\><C-n><C-w>l
-nnoremap <A-h> <C-w>h
-nnoremap <A-j> <C-w>j
-nnoremap <A-k> <C-w>k
-nnoremap <A-l> <C-w>l
+" Easy window navigation
+map <C-h> <C-w>h
+map <C-j> <C-w>j
+map <C-k> <C-w>k
+map <C-l> <C-w>l
 
 " Easy switch between vims tab
 nnoremap tc :tabnew<CR>
 nnoremap td :tabclose<CR>
 nnoremap tp :tabprev<CR>
 nnoremap tn :tabnext<CR>
+
+" Use Q for formatting the current paragraph (or selection)
+vmap Q gq
+nmap Q gqap
+
+" Move in wrapped lines instead of jumping over them
+nnoremap j gj
+nnoremap k gk
+
+" Edit files with permission even after opened them
+" (http://nvie.com/posts/how-i-boosted-my-vim/)
+cmap w!! w !sudo tee % >/dev/null
 
 " Current line highlithing
 hi CursorLineNR cterm=bold
@@ -106,9 +152,9 @@ augroup CLNRSet
 augroup END
 
 augroup CursorLine
-  au!
-  au VimEnter,WinEnter,BufWinEnter * setlocal cursorline
-  au WinLeave * setlocal nocursorline
+    au!
+    au VimEnter,WinEnter,BufWinEnter * setlocal cursorline
+    au WinLeave * setlocal nocursorline
 augroup END
 
 set lazyredraw
@@ -116,40 +162,64 @@ syntax sync minlines=128
 
 " vp doesn't replace paste buffer
 function! RestoreRegister()
-  let @" = s:restore_reg
-  return ''
+    let @" = s:restore_reg
+    return ''
 endfunction
 function! s:Repl()
-  let s:restore_reg = @"
-  return "p@=RestoreRegister()\<cr>"
+    let s:restore_reg = @"
+    return "p@=RestoreRegister()\<cr>"
 endfunction
 vmap <silent> <expr> p <sid>Repl()
 
 " Autosave when focus is lost from window
+" (disable it when using mirrors.vim)
 au FocusLost * wa
 
 call plug#begin()
+
+" UI plugins
 Plug 'vim-airline/vim-airline'
+Plug 'freeo/vim-kalisi'
+Plug 'morhetz/gruvbox'
+Plug 'vim-airline/vim-airline-themes'
+Plug 'ryanoasis/vim-devicons'
+" Disable because it was caused lag
+"Plug 'airblade/vim-gitgutter'
+
+" File management
 Plug 'scrooloose/nerdtree'
 Plug 'Xuyuanp/nerdtree-git-plugin'
-Plug 'ryanoasis/vim-devicons'
-Plug 'easymotion/vim-easymotion'
-Plug 'thirtythreeforty/lessspace.vim', { 'do': ':UpdateRemotePlugins' }
-Plug 'airblade/vim-gitgutter'
 Plug 'zenbro/mirror.vim'
-Plug 'freeo/vim-kalisi'
-Plug 'tpope/vim-repeat'
-Plug 'vim-airline/vim-airline-themes'
-Plug 'Yggdroot/indentLine'
 Plug 'mhinz/vim-startify'
-Plug 'scrooloose/nerdcommenter'
-Plug 'editorconfig/editorconfig-vim'
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+Plug 'junegunn/fzf.vim'
+Plug 'tpope/vim-fugitive'
+Plug 'dietsche/vim-lastplace'
+
+" Vim movement and bindings
+Plug 'easymotion/vim-easymotion'
+Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-surround'
+Plug 'unblevable/quick-scope'
+Plug 'scrooloose/nerdcommenter'
+Plug 'terryma/vim-smooth-scroll'
+
+" Indenting and autocompletition
+Plug 'thirtythreeforty/lessspace.vim', { 'do': ':UpdateRemotePlugins' }
+Plug 'Yggdroot/indentLine'
+Plug 'editorconfig/editorconfig-vim'
 Plug 'Valloric/YouCompleteMe'
 Plug 'rdnetto/YCM-Generator', { 'branch': 'stable'}
 Plug 'jiangmiao/auto-pairs'
-Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
-Plug 'junegunn/fzf.vim'
+Plug 'sbdchd/neoformat'
+
+" Ctags and language plugins
+Plug 'ludovicchabant/vim-gutentags'
+Plug 'majutsushi/tagbar'
+Plug 'shawncplus/phpcomplete.vim'
+Plug 'PotatoesMaster/i3-vim-syntax'
+Plug 'octol/vim-cpp-enhanced-highlight'
+
 call plug#end()
 
 filetype plugin indent on
@@ -157,7 +227,7 @@ filetype plugin indent on
 " Set theme
 syntax enable
 set background=dark
-colorscheme kalisi
+colorscheme gruvbox
 
 """" indentLine config
 let g:indentLine_color_term = 241
@@ -183,22 +253,22 @@ let g:NERDTreeDirArrowCollapsible = ''
 
 " Symbols
 let g:NERDTreeIndicatorMapCustom = {
-    \ "Modified"  : "✹",
-    \ "Staged"    : "✚",
-    \ "Untracked" : "✭",
-    \ "Renamed"   : "➜",
-    \ "Unmerged"  : "═",
-    \ "Deleted"   : "✖",
-    \ "Dirty"     : "✗",
-    \ "Clean"     : "✔︎",
-    \ "Unknown"   : "?"
-    \ }
+            \ "Modified"  : "✹",
+            \ "Staged"    : "✚",
+            \ "Untracked" : "✭",
+            \ "Renamed"   : "➜",
+            \ "Unmerged"  : "═",
+            \ "Deleted"   : "✖",
+            \ "Dirty"     : "✗",
+            \ "Clean"     : "✔︎",
+            \ "Unknown"   : "?"
+            \ }
 
 """ air-line config
 let g:airline_powerline_fonts = 1
 
 " Set kalisi theme
-let g:airline_theme='kalisi'
+let g:airline_theme='gruvbox'
 
 if !exists('g:airline_symbols')
     let g:airline_symbols = {}
@@ -244,14 +314,6 @@ let b:cb_jump_on_close = 1
 """ Easymotion configuration
 let g:EasyMotion_do_mapping = 0 " Disable default mappings
 
-" Jump to anywhere you want with minimal keystrokes, with just one key binding.
-" `s{char}{label}`
-nmap s <Plug>(easymotion-overwin-f)
-" or
-" `s{char}{char}{label}`
-" Need one more keystroke, but on average, it may be more comfortable.
-nmap s <Plug>(easymotion-overwin-f2)
-
 " Turn on case insensitive feature
 let g:EasyMotion_smartcase = 1
 
@@ -265,9 +327,13 @@ map <Leader>b <Plug>(easymotion-b)
 
 """ Git gutter config
 " Always show column
-let g:gitgutter_sign_column_always=1
+"let g:gitgutter_sign_column_always=1
 " Stop git gutter when there are 500+ modifications
-let g:gitgutter_max_signs = 500
+"let g:gitgutter_max_signs = 50
+
+" Speed up gitgutter
+"let g:gitgutter_realtime = 0
+"let g:gitgutter_eager = 0
 
 """ Startify config
 let g:startify_enable_unsafe = 0
@@ -278,18 +344,60 @@ let g:fzf_layout = { 'window': 'enew' }
 
 " Customize fzf colors to match your color scheme
 let g:fzf_colors =
-\ { 'fg':      ['fg', 'Normal'],
-  \ 'bg':      ['bg', 'Normal'],
-  \ 'hl':      ['fg', 'Comment'],
-  \ 'fg+':     ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
-  \ 'bg+':     ['bg', 'CursorLine', 'CursorColumn'],
-  \ 'hl+':     ['fg', 'Statement'],
-  \ 'info':    ['fg', 'PreProc'],
-  \ 'prompt':  ['fg', 'Conditional'],
-  \ 'pointer': ['fg', 'Exception'],
-  \ 'marker':  ['fg', 'Keyword'],
-  \ 'spinner': ['fg', 'Label'],
-  \ 'header':  ['fg', 'Comment'] }
+            \ { 'fg':      ['fg', 'Normal'],
+            \ 'bg':      ['bg', 'Normal'],
+            \ 'hl':      ['fg', 'Comment'],
+            \ 'fg+':     ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
+            \ 'bg+':     ['bg', 'CursorLine', 'CursorColumn'],
+            \ 'hl+':     ['fg', 'Statement'],
+            \ 'info':    ['fg', 'PreProc'],
+            \ 'prompt':  ['fg', 'Conditional'],
+            \ 'pointer': ['fg', 'Exception'],
+            \ 'marker':  ['fg', 'Keyword'],
+            \ 'spinner': ['fg', 'Label'],
+            \ 'header':  ['fg', 'Comment'] }
 
 " Call fzf
 map <C-z> :FZF<CR>
+map <Leader>t :BTags<CR>
+
+""" Tagbar
+nmap <F8> :TagbarToggle<CR>
+
+""" vim-smooth-scroll config
+noremap <silent> <c-u> :call smooth_scroll#up(&scroll, 0, 2)<CR>
+noremap <silent> <c-d> :call smooth_scroll#down(&scroll, 0, 2)<CR>
+noremap <silent> <c-b> :call smooth_scroll#up(&scroll*2, 0, 4)<CR>
+noremap <silent> <c-f> :call smooth_scroll#down(&scroll*2, 0, 4)<CR>
+
+""" Quick scope config
+" Trigger a highlight in the appropriate direction when pressing these keys:
+let g:qs_highlight_on_keys = ['f', 'F', 't', 'T']
+
+""" Cpp enhanced sintax highligthing
+" Highlighting of class scope
+let g:cpp_class_scope_highlight = 1
+
+" Hightlight template functions
+let g:cpp_experimental_simple_template_highlight = 1
+
+" Highlighting of library concepts
+let g:cpp_concepts_highlight = 1
+
+""" Gruvbox config
+let g:gruvbox_contrast_dark = "hard"
+
+""" Neoformat config
+" Add a mapping
+nmap <Leader>R :Neoformat<CR>
+
+" Enable alignment
+let g:neoformat_basic_format_align = 1
+
+" Enable tab to spaces conversion
+let g:neoformat_basic_format_retab = 1
+
+""" Mirrors.vim config
+" Add a mapping for pushing to the server
+nmap <Leader>p :MirrorPush<CR>
+

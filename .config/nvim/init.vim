@@ -127,6 +127,18 @@ map <C-j> <C-w>j
 map <C-k> <C-w>k
 map <C-l> <C-w>l
 
+""" Terminal Mapping
+tnoremap <Esc> <C-\><C-n>
+
+" Remapping for switching windows when in terminal
+tnoremap <C-h> <C-\><C-n><C-w>h
+tnoremap <C-j> <C-\><C-n><C-w>j
+tnoremap <C-k> <C-\><C-n><C-w>k
+tnoremap <C-l> <C-\><C-n><C-w>l
+
+" Get terminal get input focus when switching to terminal window
+au BufEnter * if &buftype == 'terminal' | :startinsert | endif
+
 " Easy switch between vims tab
 nnoremap tc :tabnew<CR>
 nnoremap td :tabclose<CR>
@@ -183,7 +195,9 @@ Plug 'freeo/vim-kalisi'
 Plug 'morhetz/gruvbox'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'ryanoasis/vim-devicons'
-" Disable because it was caused lag
+Plug 'mbbill/undotree'
+Plug 'tpope/vim-characterize'
+" Disable because it was causing lag
 "Plug 'airblade/vim-gitgutter'
 
 " File management
@@ -203,6 +217,7 @@ Plug 'tpope/vim-surround'
 Plug 'unblevable/quick-scope'
 Plug 'scrooloose/nerdcommenter'
 Plug 'terryma/vim-smooth-scroll'
+Plug 'reedes/vim-wheel'
 
 " Indenting and autocompletition
 Plug 'thirtythreeforty/lessspace.vim', { 'do': ':UpdateRemotePlugins' }
@@ -219,6 +234,11 @@ Plug 'majutsushi/tagbar'
 Plug 'shawncplus/phpcomplete.vim'
 Plug 'PotatoesMaster/i3-vim-syntax'
 Plug 'octol/vim-cpp-enhanced-highlight'
+Plug 'elzr/vim-json'
+Plug 'mattn/emmet-vim'
+
+" Terminal
+Plug 'wvffle/vimterm'
 
 call plug#end()
 
@@ -230,8 +250,14 @@ set background=dark
 colorscheme gruvbox
 
 """" indentLine config
+" Set color for indenting character
 let g:indentLine_color_term = 241
+
+" Set new indenting char
 let g:indentLine_char = '┆'
+
+" Disable concealing
+let g:indentLine_concealcursor = ''
 
 """ NerdTree config
 
@@ -401,3 +427,19 @@ let g:neoformat_basic_format_retab = 1
 " Add a mapping for pushing to the server
 nmap <Leader>p :MirrorPush<CR>
 
+""" vim-wheel config
+let g:wheel#map#up   = '<m-y>'
+let g:wheel#map#down = '<m-e>'
+
+""" Vimterm config
+nnoremap <F7> :call vimterm#toggle() <CR>
+tnoremap <F7> <C-\><C-n>:call vimterm#toggle() <CR>
+
+""" Undotree config
+nnoremap <F6> :UndotreeToggle<cr>
+
+" Add persistent undo history between files
+if has("persistent_undo")
+    set undodir=~/.undodir/
+    set undofile
+endif

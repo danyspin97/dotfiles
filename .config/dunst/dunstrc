@@ -1,5 +1,5 @@
 [global]
-    font =  Input Regular 18
+    font =  Input Regular 14
     
     # Allow a small subset of html markup:
     #   <b>bold</b>
@@ -65,7 +65,7 @@
     # the top and down respectevly.
     # The width can be negative.  In this case the actual width is the
     # screen width minus the width defined in within the geometry option.
-    geometry = "0x4-25+25"
+    geometry = "600x4-25+25"
     
     # Shrink window if it's smaller than the width.  Will be ignored if
     # width is 0.
@@ -120,7 +120,7 @@
     
     # Padding between text and separator.
     # padding = 8
-    padding = 8
+    padding = 10
     
     # Horizontal padding.
     horizontal_padding = 10
@@ -131,7 +131,7 @@
     #  * foreground: use the same color as the foreground;
     #  * frame: use the same color as the frame;
     #  * anything else will be interpreted as a X color.
-    separator_color = #9A9DBA
+    separator_color = frame
     
     # Print a notification on startup.
     # This is mainly for error detection, since dbus (re-)starts dunst
@@ -142,7 +142,7 @@
     dmenu = /usr/bin/dmenu -p dunst:
     
     # Browser for opening urls in context menu.
-    browser = firefox
+    browser = opera
 
     # Align icons left/right/off
     icon_position = left
@@ -152,7 +152,7 @@
 
 [frame]
     width = 1
-    color = "#16A085"
+    color = "#a89984"
 
 [shortcuts]
 
@@ -179,18 +179,18 @@
 [urgency_low]
     # IMPORTANT: colors have to be defined in quotation marks.
     # Otherwise the "#" and following would be interpreted as a comment.
+    background = "#f9f5d7"
+    foreground = "#3c3836"
+    timeout = 10
+
+[urgency_normal]
     background = "#282828"
     foreground = "#ebdbb2"
     timeout = 10
 
-[urgency_normal]
-    background = "#485F76"
-    foreground = "#CACCDA"
-    timeout = 10
-
 [urgency_critical]
-    background = "#9C5858"
-    foreground = "#4B5963"
+    background = "#fbf1c7"
+    foreground = "#9d0006"
     timeout = 0
 
 
@@ -280,8 +280,9 @@
 #     foreground = "#F67245"
 #
 [Telegram]
-    appname = Telegram
-    background = "0088cc"
-    foreground = "ffffff"
+    appname = Telegram Desktop
+    format = " %s \n%b"
+    background = "#0088cc"
+    foreground = "#ffffff"
     urgency = critical
 # vim: ft=cfg

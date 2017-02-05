@@ -36,8 +36,7 @@
     rejects = [["which", "fish"]]
     cmds = [["@install", "fish"], ["chsh", "-s", "/usr/bin/fish"],
             # Install oh-my-fish
-            ["curl", "-L", "http://get.oh-my.fish", "|", "fish"]]
-    links = [[".config/omf"]]
+    links = [[".config/fish"]]
 [tasks.vim]
    rejects = [["which", "nvim"]]
    cmds = [["@install", "neovim"],
@@ -52,17 +51,21 @@
     cmds = [["@install", "unzip"]]
     links = [[".Xresources"]]
 [tasks.desktop]
-    cmds = [["@install", "gimp", "keepassx2", "xf86-input-synaptics", "rofi", "mps-youtube", "kdenlive", "cmus", "smplayer", "livestreamer", "xautolock", "feh", "pcmanfm"]]
+    cmds = [["@install", "gimp", "keepassx2", "xf86-input-synaptics", "rofi", "mps-youtube", "xautolock", "feh", "pcmanfm"]]
 [tasks.browser]
-    cmds = [["@install", "qutebrowser"]]
-    links = [[".config/qutebrowser/qutebrowser.conf"],
-        [".config/qutebrowser/keys.conf"]]
+    cmds = [["@install", "opera"]]
 [tasks.redshift]
     cmds = [["@install", "redshift"]]
-    #links = [[".config/redshift.conf"],
-    #    [".config/redshift/hooks/brightness.sh"]]
-[tasks.fonts]
-    links = [[".local/share/fonts"]]
+[tasks.mpv]
+    cmds = [["@install", "mpv"]]
+    links = [[".config/mpv/mpv.conf"]]
+[tasks.neofetch]
+    cmds = [["@install", "neofetch"]]
+    links = [[".config/neofetch"]]
+[tasks.composer]
+    cmds = [["@install", "php"],
+# Install composer here TOADD
+    links = [[".config/composer/composer.json"]]
 [tasks.vlc]
     cmds = [["@install", "vlc"], ["/usr/lib/vlc/vlc-cache-gen", "-f", "/usr/lib/vlc/plugins"]]
 [tasks.i3]
@@ -76,9 +79,6 @@
 [tasks.dunst]
     cmds = [["@install", "dunst"]]
     links = [[".config/dunst/dunstrc"]]
-[tasks.morc_menu]
-    cmds = [["@aur", "morc_menu"]]
-    links = [[".config/morc_menu/morc_menu_v1.conf"]]
 [tasks.compton]
     cmds = [["@install", "compton"]]
     links = [[".config/compton.conf"]]
@@ -88,4 +88,4 @@
 [tasks.default]
     deps = ["common", "vim", "fish"]
 [tasks.default__arch]
-    deps = ["desktop", "fonts", "audio", "i3", "redshift", "ranger", "dunst", "morc_menu", "compton", "teiler", "browser"]
+    deps = ["desktop", "fonts", "audio", "i3", "redshift", "ranger", "dunst", "compton", "teiler", "browser", "composer", "neofetch", "mpv"]

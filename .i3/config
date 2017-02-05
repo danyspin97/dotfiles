@@ -254,7 +254,7 @@ client.background       #ffffff
 for_window [class="^.*"] border pixel 3
 
 # Set inner/outer gaps
-gaps inner 1
+gaps inner 2
 gaps outer 9
 
 # Additionally, you can issue commands with the following syntax. This is useful to bind keys to changi$

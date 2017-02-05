@@ -1,0 +1,5 @@
+{
+    "require": {
+        "mmoreram/php-formatter": "dev-master"
+    }
+}

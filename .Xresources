@@ -1,59 +1,33 @@
-#define S_base03        #002b36
-#define S_base02        #073642
-#define S_base01        #586e75
-#define S_base00        #657b83
-#define S_base0         #839496
-#define S_base1         #93a1a1
-#define S_base2         #eee8d5
-#define S_base3         #fdf6e3
+! Theme Source: https://github.com/morhetz/gruvbox-generalized
 
-*background:            S_base03
-*foreground:            S_base0
-*fadeColor:             S_base03
-*cursorColor:           S_base1
-*pointerColorBackground:S_base01
-*pointerColorForeground:S_base1
-
-#define S_yellow        #b58900
-#define S_orange        #cb4b16
-#define S_red           #dc322f
-#define S_magenta       #d33682
-#define S_violet        #6c71c4
-#define S_blue          #268bd2
-#define S_cyan          #2aa198
-#define S_green         #859900
-
-!! black dark/light
-*color0:                S_base02
-*color8:                S_base03
-
-!! red dark/light
-*color1:                S_red
-*color9:                S_orange
-
-!! green dark/light
-*color2:                S_green
-*color10:               S_base01
-
-!! yellow dark/light
-*color3:                S_yellow
-*color11:               S_base00
-
-!! blue dark/light
-*color4:                S_blue
-*color12:               S_base0
-
-!! magenta dark/light
-*color5:                S_magenta
-*color13:               S_violet
-
-!! cyan dark/light
-*color6:                S_cyan
-*color14:               S_base1
-
-!! white dark/light
-*color7:                S_base2
-*color15:               S_base3
+! hard contrast: *background: #1d2021
+*background: #282828
+! soft contrast: *background: #32302f
+*foreground: #ebdbb2
+! Black + DarkGrey
+*color0:  #282828
+*color8:  #928374
+! DarkRed + Red
+*color1:  #cc241d
+*color9:  #fb4934
+! DarkGreen + Green
+*color2:  #98971a
+*color10: #b8bb26
+! DarkYellow + Yellow
+*color3:  #d79921
+*color11: #fabd2f
+! DarkBlue + Blue
+*color4:  #458588
+*color12: #83a598
+! DarkMagenta + Magenta
+*color5:  #b16286
+*color13: #d3869b
+! DarkCyan + Cyan
+*color6:  #689d6a
+*color14: #8ec07c
+! LightGrey + White
+*color7:  #a89984
+*color15: #ebdbb2
 
 Xft.autohint: 0
 Xft.antialias: 1
@@ -62,72 +36,3 @@ Xft.hintstyle: hintall
 Xft.dpi: 96
 Xft.rgba: rgb
 Xft.lcdfilter: lcddefault
-
-URxvt*termName: rxvt-unicode-256color
-URxvt.letterSpace: 1
-
-URxvt*font: xft: Iosevka:style=Regular:size=14
-URxvt.italicFont: xft: Iosevka:style=Italic:size=14
-URxvt.boldFont: xft: Iosevka:style=Bold:size=14
-URxvt.boldItalicFont: xft: Iosevka:style=Bold Italic:size=14
-
-URxvt.saveLines:                      5000
-
-URxvt.internalBorder:      0
-URxvt.externalBorder:      0
-
-URxvt.transparent: false
-URxvt.tintColor: white
-URxvt.shading: 0
-
-URxvt.perl-ext-common:     matcher
-
-URxvt.url-launcher:        /usr/bin/qutebrowser
-URxvt.keysym.M-Delete:     perl:matcher:list
-URxvt.colorUL:             #7780a1
-URxvt.scrollbar:   false
-
-URxvt.scrollstyle: plain
-URxvt.scrollTtyKeypress: true
-URxvt.scrollTtyOutput: false
-URxvt.scrollWithBuffer: false
-URxvt.secondaryScreen: true
-URxvt.secondaryScroll: true
-URxvt.skipScroll: true
-URxvt.scrollBar: false
-URxvt.scrollBar_right: false
-URxvt.scrollBar_floating: false
-! URxvt.fading: 30
-URxvt.utmpInhibit: false
-URxvt.urgentOnBell: false
-URxvt.visualBell: false
-URxvt.mapAlert: true
-
-! ------------------------------------------------------------------------------
-! ROFI Color theme
-! ------------------------------------------------------------------------------
-! Use extended color scheme
-rofi.color-enabled:                  true
-! Color scheme for normal row
-rofi.color-normal:                   #252c33,#caccda,#485f76,#a3a5b5,#252c33
-! Color scheme for urgent row
-rofi.color-urgent:                   #9c5858,#4b5963,#9g3939,#5b7c82,#407d89
-! Color scheme for active row
-rofi.color-active:                   #a3a4b5,#485f76,#437bb1,#5294e2,#c2cad0
-! Color scheme window
-rofi.color-window:                   #252c33,#485f76
-! Separator style (none, dash, solid)
-rofi.separator-style:                solid
-
-xterm*locale: true
-xterm*faceName: Input:style=Regular:size=14:antialias=true, Iosevka:style=Regular
-xterm*font: 7x13
-xterm*borderWidth: 0
-XTerm*utf8: 1
-XTerm*charClass: 33:48,36-47:48,58-59:48,61:48,63-64:48,95:48,126:48
-XTerm*on3Clicks: regex ([[:alpha:]]+://)?([[:alnum:]!#+,./=?@_~-]|(%[[:xdigit:]][[:xdigit:]]))+
-*VT100*translations: #override Shift <Btn1Up>: exec-formatted("qutebrowser '%t'", PRIMARY)
-XTerm*printerCommand: xterm -T History -e sh -c 'less -r <&3' 3<&0
-XTerm*translations: #override Ctrl <Key>slash: print-everything()
-XTerm*ScrollKey: true
-

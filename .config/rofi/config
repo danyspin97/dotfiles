@@ -1,0 +1,16 @@
+#include "/usr/share/rofi/themes//gruvbox-dark.theme"
+
+rofi.font: Input Regular 22
+rofi.lines: 15
+! Border width
+rofi.width: 200
+rofi.bw: 4
+rofi.terminal: st
+rofi.fullscreen: true
+rofi.eh: 2
+rofi.padding: 200
+rofi.opacity: 85
+rofi.matching: regex
+rofi.hide-scrollbar: true
+rofi.separator-style: solid
+rofi.fake-transparency: true

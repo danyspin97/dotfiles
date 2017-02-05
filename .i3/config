@@ -12,27 +12,6 @@
 set $mod Mod4
 set $sup Mod1
 
-# solarized accents
-set $yellow #b58900
-set $orange #cb4b16
-set $red    #dc322f
-set $magenta    #d33682
-set $violet #6c71c4
-set $blue   #268bd2
-set $cyan   #2aa198
-set $green  #859900
-
-# solarized dark
-set $baseA3 #002b36
-set $baseA2 #073642
-set $baseA1 #586e75
-set $baseA0 #657b83
-set $baseB0 #839496
-set $baseB1 #93a1a1
-set $baseB2 #eee8d5
-set $baseB3 #fdf6e3
-set $custom #1c5766
-
 # Set workspace
 # Internet
 set $workspace1 "url.open()"
@@ -84,9 +63,8 @@ bindsym $mod+Return exec st
 
 
 # Application launcher
-bindsym $mod+d exec rofi -show run -lines 4 -eh 2 -width 200 -padding 350 -opacity "85" -font "Input Regular 24" -fullscreen
-bindsym $mod+y exec rofi -show ssh -lines 4 -eh 2 -width 200 -padding 350 -opacity "85" -font "Input Regular 24" -fullscreen
-bindsym $mod+z exec --no-startup-id morc_menu
+bindsym $mod+d exec rofi -show run
+bindsym $mod+y exec rofi -show ssh
 
 # kill focused window
 bindsym $mod+Shift+q kill
@@ -161,7 +139,7 @@ bindsym $mod+Shift+6 move container to workspace $workspace6
 bindsym $mod+Shift+7 move container to workspace $workspace7
 bindsym $mod+Shift+8 move container to workspace $workspace8
 
-assign [class="qutebrowser"]                        $workspace1
+assign [class="opera"]                              $workspace1
 assign [class="st-256color" title="nvim"]           $workspace3
 assign [class="st-256color" title="ranger"]         $workspace4
 assign [class="TelegramDesktop"]                    $workspace5
@@ -169,8 +147,6 @@ assign [class="discord"]                            $workspace5
 assign [class="st-256color" title="mpsyt"]          $workspace6
 assign [class="^Vlc$"]                              $workspace6
 assign [class="mpv"]                                $workspace6
-assign [class="libreoffice"]                        $workspace7
-assign [class="gimp"]                               $workspace7
 
 for_window [window_role="pop-up"] floating enable
 for_window [window_role="bubble"] floating enable
@@ -180,13 +156,8 @@ for_window [window_type="menu"] floating enable
 for_window [class="GParted"] floating enable border normal
 for_window [title="i3_help"] floating enable sticky enable border normal
 for_window [class="Lightdm-gtk-greeter-settings"] floating enable
-for_window [class="Lxappearance"] floating enable sticky enable border normal
-for_window [class="Nitrogen"] floating enable sticky enable border normal
-for_window [class="Oblogout"] fullscreen enable
 for_window [class="(?i)pavucontrol"] floating enable, move position mouse
 
-for_window [class="Thus"] floating enable border normal
-for_window [class="Timeset-gui"] floating enable border normal
 for_window [class="(?i)virtualbox"] floating enable border normal
 for_window [class="Xfburn"] floating enable
 
@@ -194,12 +165,9 @@ for_window [class="Xfburn"] floating enable
 bindsym $mod+Shift+c reload
 # restart i3 inplace (preserves your layout/session, can be used to upgrade i3)
 bindsym $mod+Shift+r restart
-# lock screen
-bindsym $mod+Shift+x exec --no-startup-id oblogout
 
 # Set shut down, restart and locking features
 bindsym $mod+Shift+s mode "$mode_system"
-set $mode_system (l)ock, (e)xit, switch_(u)ser, (s)uspend, (h)ibernate, (r)eboot, (Shift+s)hutdown
 mode "$mode_system" {
     bindsym l exec --no-startup-id i3exit lock, mode "default"
         bindsym s exec --no-startup-id i3exit suspend, mode "default"
@@ -218,16 +186,16 @@ mode "$mode_system" {
 mode "resize" {
 # These bindings trigger as soon as you enter the resize mode
 
-# Pressing left will shrink the window’s width.
-# Pressing right will grow the window’s width.
-# Pressing up will shrink the window’s height.
-# Pressing down will grow the window’s height.
+# Vim movement bindings
     bindsym h resize shrink width 10 px or 10 ppt
         bindsym j resize grow height 10 px or 10 ppt
         bindsym k resize shrink height 10 px or 10 ppt
         bindsym l resize grow width 10 px or 10 ppt
 
-# same bindings, but for the arrow keys
+# Pressing left will shrink the window’s width.
+# Pressing right will grow the window’s width.
+# Pressing up will shrink the window’s height.
+# Pressing down will grow the window’s height.
         bindsym Left resize shrink width 10 px or 10 ppt
         bindsym Down resize grow height 10 px or 10 ppt
         bindsym Up resize shrink height 10 px or 10 ppt
@@ -237,21 +205,7 @@ mode "resize" {
         bindsym Return mode "default"
         bindsym Escape mode "default"
 }
-
 bindsym $mod+r mode "resize"
-
-# Start i3bar to display a workspace bar (plus the system information i3status
-# finds out, if available)
-#bar {
-#        status_command i3status
-#}
-
-# Window Colours
-#class                  border  backgr. text    indicator
-client.focused          $white  $white  $dark    $dark
-client.unfocused        $dark   $dark   $white   $white
-client.focused_inactive $dark   $dark   $white   $dark
-client.urgent           $orange $orange $dark    $white
 
 # Audio settings
 bindsym XF86AudioRaiseVolume exec --no-startup-id amixer -D pulse sset Master 5%+
@@ -264,7 +218,7 @@ bindsym XF86MonBrightnessUp exec "xbacklight -in 10; notify-send 'brightness up'
 bindsym XF86MonBrightnessDown exec "xbacklight -dec 10; notify-send 'brightness down'"
 
 # move in workspaces
-bindsym $mod+Tab exec rofi -show window -lines 4 -eh 2 -width 250 -padding 170 -opacity "85" -font "Input Regular 22" -fullscreen
+bindsym $mod+Tab exec rofi -show window -lines 4 -eh 2 -width 250 -padding 170 -opacity "85"
 
 # scratchpad (http://i3wm.org/docs/user-contributed/lzap-config.html)
 #bindsym $mod+m move scratchpad
@@ -285,25 +239,23 @@ workspace $workspace7 output $monitor1
 workspace $workspace8 output $monitor1
 
 # Program shortcut
-bindsym $mod+F1 [class="^qutebrowser$"] focus
-bindsym $mod+F5 exec libreoffice
-bindsym $mod+F6 exec gimp
 bindsym $mod+F3 exec pcmanfm
 
-# clientclass               border  backgr. text    indicator
-client.focused              $green  $green  $baseB3 $blue
-client.focused_inactive     $cyan   $cyan   $baseB2 $violet
-client.unfocused            $baseA2 $baseA2 $baseB1 $baseA1
-#client.urgent              $orange $orange $baseB3 $red
-client.urgent               $yellow $yellow $baseB3 $orange
+client.focused          #665c54 #665c54 #eddbb2 #2e9ef4   #665c54
+client.focused_inactive #282828 #5f676a #ffffff #484e50   #5f676a
+client.unfocused        #3c3836 #3c3836 #a89984 #292d2e   #222222
+client.urgent           #cc241d #cc241d #ebdbb2 #cc241d   #cc241d
+client.placeholder      #000000 #0c0c0c #ffffff #000000   #0c0c0c
+
+client.background       #ffffff
 
 # i3-gasp
 
-for_window [class="^.*"] border pixel 0
+for_window [class="^.*"] border pixel 3
 
 # Set inner/outer gaps
-gaps inner 12
-gaps outer 12
+gaps inner 1
+gaps outer 9
 
 # Additionally, you can issue commands with the following syntax. This is useful to bind keys to changi$
 # gaps inner|outer current|all set|plus|minus <px>
@@ -315,21 +267,19 @@ smart_gaps on
 
 # Smart borders (draw borders around container only if it is not the only container on this workspace)
 # on|no_gaps (on=always activate and no_gaps=only activate if the gap size to the edge of the screen is$
-        smart_borders on
+smart_borders on
 
 # Press $mod+Shift+g to enter the gap mode. Choose o or i for modifying outer/inner gaps. Press one of $
-        set $mode_gaps Gaps: (o) outer, (i) inner
-        set $mode_gaps_outer Outer Gaps: +|-|0 (local), Shift + +|-|0 (global)
-        set $mode_gaps_inner Inner Gaps: +|-|0 (local), Shift + +|-|0 (global)
-        bindsym $mod+g mode "$mode_gaps"
+bindsym $mod+g mode "$mode_gaps"
 
-        mode "$mode_gaps" {
+mode "$mode_gaps" {
         bindsym o      mode "$mode_gaps_outer"
         bindsym i      mode "$mode_gaps_inner"
         bindsym Return mode "default"
         bindsym Escape mode "default"
-        }
-        mode "$mode_gaps_inner" {
+}
+
+mode "$mode_gaps_inner" {
         bindsym plus  gaps inner current plus 5
         bindsym minus gaps inner current minus 5
         bindsym 0     gaps inner current set 0
@@ -340,7 +290,8 @@ smart_gaps on
 
         bindsym Return mode "default"
         bindsym Escape mode "default"
-        }
+}
+
 mode "$mode_gaps_outer" {
     bindsym plus  gaps outer current plus 5
         bindsym minus gaps outer current minus 5

@@ -23,6 +23,6 @@ RAMUsage() {
 # Print the clock
 
 while true; do
-    echo "%{r}%{F#FFFF00}%{B#0000FF} $(RAMUsage) ┆ $(CPUusage) ┆ $(Clock) %{F-}%{B-}"
+    echo "%{r}%{F#FFFFFF}%{B#FF0000} $(RAMUsage)  $(CPUusage)  $(Clock) %{F-}%{B-}"
     sleep 1
 done

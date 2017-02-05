@@ -187,6 +187,9 @@ vmap <silent> <expr> p <sid>Repl()
 " (disable it when using mirrors.vim)
 au FocusLost * wa
 
+" Send lines in range to hastebin.com and copy url to clipboard
+command! -range -bar Haste <line1>,<line2>w !haste | xsel -b
+
 call plug#begin()
 
 " UI plugins
@@ -209,6 +212,8 @@ Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'tpope/vim-fugitive'
 Plug 'dietsche/vim-lastplace'
+Plug 'tpope/vim-eunuch'
+Plug 'vim-scripts/quit-another-window'
 
 " Vim movement and bindings
 Plug 'easymotion/vim-easymotion'
@@ -218,6 +223,7 @@ Plug 'unblevable/quick-scope'
 Plug 'scrooloose/nerdcommenter'
 Plug 'terryma/vim-smooth-scroll'
 Plug 'reedes/vim-wheel'
+Plug 'powerman/vim-plugin-viewdoc'
 
 " Indenting and autocompletition
 Plug 'thirtythreeforty/lessspace.vim', { 'do': ':UpdateRemotePlugins' }
@@ -227,6 +233,7 @@ Plug 'Valloric/YouCompleteMe'
 Plug 'rdnetto/YCM-Generator', { 'branch': 'stable'}
 Plug 'jiangmiao/auto-pairs'
 Plug 'sbdchd/neoformat'
+Plug 'vim-scripts/YankRing.vim'
 
 " Ctags and language plugins
 Plug 'ludovicchabant/vim-gutentags'
@@ -247,7 +254,12 @@ filetype plugin indent on
 " Set theme
 syntax enable
 set background=dark
+
+""" Gruvbox config
+let g:gruvbox_contrast_dark = "hard"
+let g:gruvbox_italic=1
 colorscheme gruvbox
+set termguicolors
 
 """" indentLine config
 " Set color for indenting character
@@ -390,6 +402,9 @@ map <Leader>t :BTags<CR>
 """ Tagbar
 nmap <F8> :TagbarToggle<CR>
 
+" Focus tag bar when showing
+let g:tagbar_autofocus = 1
+
 """ vim-smooth-scroll config
 noremap <silent> <c-u> :call smooth_scroll#up(&scroll, 0, 2)<CR>
 noremap <silent> <c-d> :call smooth_scroll#down(&scroll, 0, 2)<CR>
@@ -409,9 +424,6 @@ let g:cpp_experimental_simple_template_highlight = 1
 
 " Highlighting of library concepts
 let g:cpp_concepts_highlight = 1
-
-""" Gruvbox config
-let g:gruvbox_contrast_dark = "hard"
 
 """ Neoformat config
 " Add a mapping
@@ -436,10 +448,30 @@ nnoremap <F7> :call vimterm#toggle() <CR>
 tnoremap <F7> <C-\><C-n>:call vimterm#toggle() <CR>
 
 """ Undotree config
-nnoremap <F6> :UndotreeToggle<cr>
+" Keymap for undotree gui
+nnoremap <F5> :UndotreeToggle<cr>
+
+" Focus undotree when showing it
+let g:undotree_SetFocusWhenToggle = 1
 
 " Add persistent undo history between files
 if has("persistent_undo")
     set undodir=~/.undodir/
     set undofile
 endif
+
+""" YangRink config
+nnoremap <silent> <F6> :YRShow<CR>
+
+" Increase window height
+let g:yankring_window_height = 12
+
+" Change keys for replacing
+let g:yankring_replace_n_pkey = '<C-p>'
+let g:yankring_replace_n_nkey = '<C-m>'
+
+""" Quick windows close
+nnoremap <C-q>h :Qh <CR>
+nnoremap <C-q>j :Qj <CR>
+nnoremap <C-q>k :Qk <CR>
+nnoremap <C-q>l :Ql <CR>

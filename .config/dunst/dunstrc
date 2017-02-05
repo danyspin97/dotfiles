@@ -1,5 +1,5 @@
 [global]
-    font =  Arimo for Powerline 14
+    font =  Input Regular 18
     
     # Allow a small subset of html markup:
     #   <b>bold</b>
@@ -179,8 +179,8 @@
 [urgency_low]
     # IMPORTANT: colors have to be defined in quotation marks.
     # Otherwise the "#" and following would be interpreted as a comment.
-    background = "#252C33"
-    foreground = "#A3A5B5"
+    background = "#282828"
+    foreground = "#ebdbb2"
     timeout = 10
 
 [urgency_normal]
@@ -279,4 +279,9 @@
 #     background = "#30AB70"
 #     foreground = "#F67245"
 #
+[Telegram]
+    appname = Telegram
+    background = "0088cc"
+    foreground = "ffffff"
+    urgency = critical
 # vim: ft=cfg

@@ -62,7 +62,7 @@
     cmds = [["@install", "neofetch"]]
     links = [[".config/neofetch"]]
 [tasks.composer]
-    cmds = [["@install", "php"],
+    cmds = [["@install", "php"]]
 # Install composer here TOADD
     links = [[".config/composer/composer.json"]]
 [tasks.vlc]

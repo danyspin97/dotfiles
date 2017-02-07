@@ -34,8 +34,7 @@
             ["cd", ".."]]
 [tasks.fish]
     rejects = [["which", "fish"]]
-    cmds = [["@install", "fish"], ["chsh", "-s", "/usr/bin/fish"],
-            # Install oh-my-fish
+    cmds = [["@install", "fish"], ["chsh", "-s", "/usr/bin/fish"]]
     links = [[".config/fish"]]
 [tasks.vim]
    rejects = [["which", "nvim"]]

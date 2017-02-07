@@ -9,7 +9,6 @@
 [macros.install__arch]
     ## Use yaourt instead of pacman
     ##prefix = ["sudo", "pacman", "-S", "--noconfirm"]
-    deps = ["yaourt"]
     prefix = ["yaourt", "-S", "--noconfirm"]
 [macros.install__ubuntu]
     prefix = ["sudo", "apt-get", "install", "--force-yes"]
@@ -24,16 +23,6 @@
 [tasks.git__arch]
     # Install git using pacman
     cmds = [["sudo", "pacman", "-S", "--noconfirm", "git"]]
-[tasks.yaourt]
-    deps = ["git"]
-    rejects = [["which", "yaourt"]]
-    cmds = [["git", "clone", "https://aur.archlinux.org/package-query.git"],
-            ["cd", "package-query"],
-            ["makepkg", "-si"],
-            ["cd", ".."],
-            ["git", "clone", "https://aur.archlinux.org/yaourt.git"],
-            ["makepkg", "-si"],
-            ["cd", ".."]]
 [tasks.fish]
     rejects = [["which", "fish"]]
     cmds = [["@install", "fish"], ["chsh", "-s", "/usr/bin/fish"]]
@@ -41,9 +30,6 @@
 [tasks.vim]
    rejects = [["which", "nvim"]]
    cmds = [["@install", "neovim"]]
-   # Download vim-plug
-   #        ["curl", "-fLo", "~/.local/share/nvim/site/autoload/plug.vim",
-   #         "--create-dirs", "\\", "https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"]]
    links = [[".config/nvim/init.vim"]]
 [tasks.audio]
     cmds = [["@install", "pulseaudio", "alsa-utils", "pavucontrol"]]

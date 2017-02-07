@@ -262,8 +262,9 @@ Plug 'octol/vim-cpp-enhanced-highlight'
 Plug 'elzr/vim-json'
 Plug 'mattn/emmet-vim'
 
-" Terminal
+" Terminal and make
 Plug 'wvffle/vimterm'
+Plug 'neomake/neomake'
 
 call plug#end()
 
@@ -493,3 +494,7 @@ nnoremap <C-q>h :Qh <CR>
 nnoremap <C-q>j :Qj <CR>
 nnoremap <C-q>k :Qk <CR>
 nnoremap <C-q>l :Ql <CR>
+
+""" Neomake config
+" Run Neomake on everywriting
+autocmd! BufWritePost * Neomake

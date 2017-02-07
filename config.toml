@@ -85,6 +85,8 @@
 [tasks.teiler]
     cmds = [["@install", "teiler"]]
     links = [[".config/teiler/config"]]
+[tasks.fonts]
+    links = [[".local/share/fonts"]]
 [tasks.default]
     deps = ["common", "vim", "fish"]
 [tasks.default__arch]

@@ -1,0 +1,4 @@
+#!/usr/bin/bash
+panel_fifo="/tmp/i3_lemonbar_${USER}"
+
+# vim:filetype=sh

@@ -1,5 +1,7 @@
 #!/usr/bin/bash
 
+#. $(dirname $0)/lemonbar_config
+
 # Define the clock
 Clock() {
     DATETIME=$(date "+%H:%M:%S, %a %d-%m-%Y")
@@ -20,9 +22,10 @@ RAMUsage() {
     echo -n "RAM: $RAM%"
 }
 
-# Print the clock
+# i3 Workspaces, "WSP"
+#$(dirname $0)/i3_workspaces.py > ${panel_fifo} &
 
-while true; do
+while :; do
     echo "%{r}%{F#FFFFFF}%{B#FF0000} $(RAMUsage)  $(CPUusage)  $(Clock) %{F-}%{B-}"
     sleep 1
 done

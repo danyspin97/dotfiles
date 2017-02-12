@@ -1,5 +1,7 @@
 #!/usr/bin/bash
 
+#. $(dirname $0)/lemonbar_config
+
 # Define the clock
 Clock() {
     DATETIME=$(date "+%H:%M:%S, %a %d-%m-%Y")
@@ -32,9 +34,7 @@ Brightness() {
     echo -n "Brightnes: $BRIGHTNESS%"
 }
 
-# Print the clock
-
-while true; do
+while :; do
     echo "%{r}%{F#FFFFFF}%{B#FF0000} $(RAMUsage)  $(CPUusage)  $(Brightness)  $(Battery)  $(Clock) %{F-}%{B-}"
     sleep 1
 done

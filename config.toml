@@ -72,7 +72,7 @@
     cmds = [["@install", "rofi"]]
     links = [[".config/rofi/config"]]
 [tasks.teiler]
-    cmds = [["@install", "teiler"]]
+    cmds = [["@install", "teiler-git"]]
     links = [[".config/teiler/config"]]
 [tasks.fonts]
     links = [[".local/share/fonts"]]

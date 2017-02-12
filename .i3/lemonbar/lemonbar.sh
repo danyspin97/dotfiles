@@ -20,9 +20,21 @@ RAMUsage() {
     echo -n "RAM: $RAM%"
 }
 
+Battery() {
+    BATTERY=$(upower -i /org/freedesktop/UPower/devices/battery_BAT0 | awk /percentage/ | awk '{print $2}')
+
+    echo -n "Bat: $BATTERY"
+}
+
+Brightness() {
+    BRIGHTNESS=$(xbacklight -get | awk '{print int($1)}')
+
+    echo -n "Brightnes: $BRIGHTNESS%"
+}
+
 # Print the clock
 
 while true; do
-    echo "%{r}%{F#FFFFFF}%{B#FF0000} $(RAMUsage)  $(CPUusage)  $(Clock) %{F-}%{B-}"
+    echo "%{r}%{F#FFFFFF}%{B#FF0000} $(RAMUsage)  $(CPUusage)  $(Brightness)  $(Battery)  $(Clock) %{F-}%{B-}"
     sleep 1
 done

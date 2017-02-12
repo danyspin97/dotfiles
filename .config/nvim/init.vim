@@ -498,3 +498,6 @@ nnoremap <C-q>l :Ql <CR>
 """ Neomake config
 " Run Neomake on everywriting
 autocmd! BufWritePost * Neomake
+
+""" Guten tag config
+let g:gutentag_enabled = 1

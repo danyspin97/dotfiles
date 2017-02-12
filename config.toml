@@ -17,7 +17,6 @@
 
 ## Tasks
 [tasks.git]
-    rejects = [["which", "git"]]
     links = [[".gitconfig"],
             [".gitignore"]]
 [tasks.git__arch]
@@ -38,7 +37,7 @@
     cmds = [["@install", "unzip"]]
     links = [[".Xresources"]]
 [tasks.desktop]
-    cmds = [["@install", "gimp", "keepassx2", "xf86-input-synaptics", "rofi", "mps-youtube", "xautolock", "feh", "pcmanfm"]]
+    cmds = [["@install", "gimp", "keepassx2", "xf86-input-synaptics", "mps-youtube", "xautolock", "feh", "pcmanfm"]]
 [tasks.browser]
     cmds = [["@install", "opera"]]
 [tasks.redshift]
@@ -69,6 +68,9 @@
 [tasks.compton]
     cmds = [["@install", "compton"]]
     links = [[".config/compton.conf"]]
+[tasks.rofi]
+    cmds = [["@install", "rofi"]]
+    links = [[".config/rofi/config"]]
 [tasks.teiler]
     cmds = [["@install", "teiler"]]
     links = [[".config/teiler/config"]]
@@ -77,4 +79,4 @@
 [tasks.default]
     deps = ["common", "vim", "fish"]
 [tasks.default__arch]
-    deps = ["desktop", "fonts", "audio", "i3", "redshift", "ranger", "dunst", "compton", "teiler", "browser", "composer", "neofetch", "mpv"]
+    deps = ["desktop", "fonts", "audio", "i3", "redshift", "ranger", "dunst", "compton", "rofi", "teiler", "browser", "composer", "neofetch", "mpv"]

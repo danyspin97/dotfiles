@@ -1,0 +1,9 @@
+#!/usr/bin/bash
+
+. config
+
+scp $USER@$ADDRESS:/home/$USER/$FILENAME Sync.kdbx
+
+keepass $FILENAME
+
+scp Sync.kdbx $USER@$ADDRESS:/home/$USER/$FILENAME

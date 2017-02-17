@@ -14,21 +14,21 @@ set $sup Mod1
 
 # Set workspace
 # Internet
-set $workspace1 "url.open()"
+set $workspace1 "Internet"
 # Terminal
-set $workspace2 "main(argv[])"
+set $workspace2 "Terminal"
 # Coding
-set $workspace3 "make install"
+set $workspace3 "Neovim"
 # Files
-set $workspace4 "folder.view()"
+set $workspace4 "Files"
 # IM
-set $workspace5 "im.send()"
+set $workspace5 "IM"
 # Music
-set $workspace6 "this->play()"
+set $workspace6 "Music"
 # Office
-set $workspace7 "exec libreoffice"
+set $workspace7 "Null"
 # Others
-set $workspace8 "null"
+set $workspace8 "Void"
 
 set $monitor1 "HDMI-1"
 set $monitor2 "DVI-I-1"
@@ -239,7 +239,7 @@ workspace $workspace7 output $monitor1
 workspace $workspace8 output $monitor1
 
 # Program shortcut
-bindsym $mod+F3 exec pcmanfm
+bindsym $mod+F3 exec pcmanfm-qt
 
 client.focused          #665c54 #665c54 #eddbb2 #2e9ef4   #665c54
 client.focused_inactive #282828 #5f676a #ffffff #484e50   #5f676a
@@ -311,7 +311,7 @@ bindsym $sup+Print exec --no-startup-id teiler
 
 exec_always xrandr --output DisplayPort-0 --off --output DVI-1 --off --output DVI-0 --mode 1600x900 --pos 1920x180 --rotate normal --output HDMI-0 --primary --mode 1920x1080 --pos 0x0 --rotate normal
 exec_always feh --bg-scale $HOME/Pictures/Wallpaper_01.png
-exec --no-startup-id $HOME/.i3/lemonbar/lemonbar.sh | lemonbar -p -g 1920x25+0+0 -f "Iosevka-14:Medium"
+exec --no-startup-id $HOME/.config/polybar/launch.sh
 #exec --no-startup-id "i3-msg 'workspace im.send(); append_layout /home/danyspin97/.i3/workspace-im.json'"
 exec --no-startup-id "i3-msg 'workspace \"make install\"; layout tabbed'"
 #exec --no-startup-id redshift

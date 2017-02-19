@@ -315,7 +315,7 @@ exec_always feh --bg-scale $HOME/Pictures/Wallpaper_01.png
 exec --no-startup-id $HOME/.config/polybar/launch.sh
 exec --no-startup-id $HOME/.i3/lockscreen.sh
 #exec --no-startup-id "i3-msg 'workspace im.send(); append_layout /home/danyspin97/.i3/workspace-im.json'"
-exec --no-startup-id "i3-msg 'workspace \"make install\"; layout tabbed'"
+exec --no-startup-id "i3-msg 'workspace \"Neovim\"; layout tabbed'"
 #exec --no-startup-id redshift
 
 # vim:filetype=i3

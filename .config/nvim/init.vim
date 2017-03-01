@@ -119,7 +119,8 @@ function! NumberToggle()
 endfunc
 
 " Toggle between normal and relative numbering.
-nnoremap <leader>r :call NumberToggle()<cr>
+Shortcut Toggle between absolute and relative line number
+       \ nnoremap <leader>r :call NumberToggle()<cr>
 
 " Easy window navigation
 map <C-h> <C-w>h
@@ -242,6 +243,7 @@ Plug 'scrooloose/nerdcommenter'
 Plug 'terryma/vim-smooth-scroll'
 Plug 'reedes/vim-wheel'
 Plug 'powerman/vim-plugin-viewdoc'
+Plug 'sunaku/vim-shortcut'
 
 " Indenting and autocompletition
 Plug 'thirtythreeforty/lessspace.vim', { 'do': ':UpdateRemotePlugins' }
@@ -501,3 +503,10 @@ autocmd! BufWritePost * Neomake
 
 """ Guten tag config
 let g:gutentag_enabled = 1
+
+""" Shortcut.vim config
+Shortcut show shortcut menu and run chosen shortcut
+      \ noremap <silent> <Leader><Leader> :Shortcuts<Return>
+
+Shortcut fallback to shortcut menu on partial entry
+      \ noremap <silent> <Leader> :Shortcuts<Return>

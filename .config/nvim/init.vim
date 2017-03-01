@@ -10,6 +10,7 @@ set number              " Show the line numbers on the left side.
 set formatoptions+=o    " Continue comment marker in new lines.
 set textwidth=0         " Hard-wrap long lines as you type them.
 set expandtab           " Insert spaces when TAB is pressed.
+set nosmarttab
 set tabstop=4           " Render TABs using this many spaces.
 set shiftwidth=4        " Indentation amount for < and > commands.
 set noshowmode          " Hide the default mode text (e.g. -- INSERT -- below the statusline)
@@ -66,15 +67,11 @@ set t_vb=
 set tm=500"
 
 " Tell Vim which characters to show for expanded TABs,
-" trailing whitespace, and end-of-lines. VERY useful!
+" and end-of-lines.
 if &listchars ==# 'eol:$'
     set listchars=tab:>\ ,trail:-,extends:>,precedes:<,nbsp:+
 endif
 set list                " Show problematic characters.
-
-" Also highlight all tabs and trailing whitespace characters.
-highlight ExtraWhitespace ctermbg=darkgreen guibg=darkgreen
-match ExtraWhitespace /\s\+$\|\t/
 
 set hlsearch            " Highlight search results.
 set ignorecase          " Make searching case insensitive
@@ -158,16 +155,16 @@ nnoremap k gk
 cmap w!! w !sudo tee % >/dev/null
 
 " Current line highlithing
-    hi CursorLineNR cterm=bold
-    augroup CLNRSet
-        autocmd! ColorScheme * hi CursorLineNR cterm=bold
-    augroup END
+hi CursorLineNR cterm=bold
+augroup CLNRSet
+    autocmd! ColorScheme * hi CursorLineNR cterm=bold
+augroup END
 
-    augroup CursorLine
-        au!
-        au VimEnter,WinEnter,BufWinEnter * setlocal cursorline
-        au WinLeave * setlocal nocursorline
-    augroup END
+augroup CursorLine
+    au!
+    au VimEnter,WinEnter,BufWinEnter * setlocal cursorline
+    au WinLeave * setlocal nocursorline
+augroup END
 
 set lazyredraw
 syntax sync minlines=128
@@ -218,8 +215,9 @@ Plug 'vim-airline/vim-airline-themes'
 Plug 'ryanoasis/vim-devicons'
 Plug 'mbbill/undotree'
 Plug 'tpope/vim-characterize'
-" Disable because it was causing lag
-"Plug 'airblade/vim-gitgutter'
+Plug 'ntpeters/vim-better-whitespace'
+Plug 'lilydjwg/colorizer'
+Plug 'airblade/vim-gitgutter'
 
 " File management
 Plug 'scrooloose/nerdtree'
@@ -232,39 +230,51 @@ Plug 'tpope/vim-fugitive'
 Plug 'dietsche/vim-lastplace'
 Plug 'tpope/vim-eunuch'
 Plug 'vim-scripts/quit-another-window'
+Plug 'pbrisbin/vim-mkdir'
 
-" Vim movement and bindings
+" Vim motion and bindings
+Plug 'ervandew/supertab'
 Plug 'easymotion/vim-easymotion'
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-surround'
-Plug 'unblevable/quick-scope'
 Plug 'scrooloose/nerdcommenter'
 Plug 'terryma/vim-smooth-scroll'
 Plug 'reedes/vim-wheel'
 Plug 'powerman/vim-plugin-viewdoc'
+Plug 'bkad/CamelCaseMotion'
+Plug 'matze/vim-move'
+
+" Cliboard management
+Plug 'vim-scripts/YankRing.vim'
 
 " Indenting and autocompletition
-Plug 'thirtythreeforty/lessspace.vim', { 'do': ':UpdateRemotePlugins' }
 Plug 'Yggdroot/indentLine'
 Plug 'editorconfig/editorconfig-vim'
 Plug 'Valloric/YouCompleteMe'
 Plug 'rdnetto/YCM-Generator', { 'branch': 'stable'}
 Plug 'jiangmiao/auto-pairs'
 Plug 'sbdchd/neoformat'
-Plug 'vim-scripts/YankRing.vim'
+Plug 'tpope/vim-endwise'
+
+" Snippets
+Plug 'SirVer/ultisnips'
+Plug 'honza/vim-snippets'
+Plug 'sniphpets/sniphpets-phpunit'
 
 " Ctags and language plugins
 Plug 'ludovicchabant/vim-gutentags'
 Plug 'majutsushi/tagbar'
 Plug 'shawncplus/phpcomplete.vim'
-Plug 'PotatoesMaster/i3-vim-syntax'
-Plug 'octol/vim-cpp-enhanced-highlight'
-Plug 'elzr/vim-json'
 Plug 'mattn/emmet-vim'
+Plug 'sheerun/vim-polyglot'
 
 " Terminal and make
 Plug 'wvffle/vimterm'
 Plug 'neomake/neomake'
+Plug 'thinca/vim-quickrun'
+
+" Writer plugins
+Plug 'reedes/vim-pencil'
 
 call plug#end()
 
@@ -370,27 +380,57 @@ let b:cb_jump_on_close = 1
 
 """ Easymotion configuration
 let g:EasyMotion_do_mapping = 0 " Disable default mappings
+let g:EasyMotion_startofline = 0 " keep cursor column when JK motion
 
 " Turn on case insensitive feature
 let g:EasyMotion_smartcase = 1
 
 " JK motions: Line motions
+map <Leader>l <Plug>(easymotion-lineforward)
 map <Leader>j <Plug>(easymotion-j)
 map <Leader>k <Plug>(easymotion-k)
+map <Leader>h <Plug>(easymotion-linebackward)
 
-map <Leader>w <Plug>(easymotion-w)
 map <Leader>e <Plug>(easymotion-e)
 map <Leader>b <Plug>(easymotion-b)
+
+map / <Plug>(easymotion-sn)
+omap / <Plug>(easymotion-tn)
+map n <Plug>(easymotion-next)
+map N <Plug>(easymotion-prev)
+
+" Jump to anywhere with only `s{char}{target}`
+" `s<CR>` repeat last find motion.
+nmap s <Plug>(easymotion-s)
+" Bidirectional & within line 't' motion
+omap t <Plug>(easymotion-bd-tl)
+" Use uppercase target labels and type as a lower case
+let g:EasyMotion_use_upper = 1
+ " type `l` and match `l`&`L`
+let g:EasyMotion_smartcase = 1
+" Smartsign (type `3` and match `3`&`#`)
+let g:EasyMotion_use_smartsign_us = 1
+
+" <Leader>f{char} to move to {char}
+map  <Leader>f <Plug>(easymotion-bd-f)
+nmap <Leader>f <Plug>(easymotion-overwin-f)
+
+" Move to line
+map <Leader>L <Plug>(easymotion-bd-jk)
+nmap <Leader>L <Plug>(easymotion-overwin-line)
+
+" Move to word
+map  <Leader>w <Plug>(easymotion-w)
 
 """ Git gutter config
 " Always show column
 "let g:gitgutter_sign_column_always=1
 " Stop git gutter when there are 500+ modifications
-"let g:gitgutter_max_signs = 50
+let g:gitgutter_max_signs = 500
 
 " Speed up gitgutter
-"let g:gitgutter_realtime = 0
-"let g:gitgutter_eager = 0
+let g:gitgutter_realtime = 0
+let g:gitgutter_eager = 0
 
 """ Startify config
 let g:startify_enable_unsafe = 0
@@ -429,10 +469,6 @@ noremap <silent> <c-u> :call smooth_scroll#up(&scroll, 0, 2)<CR>
 noremap <silent> <c-d> :call smooth_scroll#down(&scroll, 0, 2)<CR>
 noremap <silent> <c-b> :call smooth_scroll#up(&scroll*2, 0, 4)<CR>
 noremap <silent> <c-f> :call smooth_scroll#down(&scroll*2, 0, 4)<CR>
-
-""" Quick scope config
-" Trigger a highlight in the appropriate direction when pressing these keys:
-let g:qs_highlight_on_keys = ['f', 'F', 't', 'T']
 
 """ Cpp enhanced sintax highligthing
 " Highlighting of class scope
@@ -501,3 +537,41 @@ autocmd! BufWritePost * Neomake
 
 """ Guten tag config
 let g:gutentag_enabled = 1
+
+""" vim-better-whitespace config
+" Enable stripping on save
+autocmd BufEnter * EnableStripWhitespaceOnSave
+" Whitespaces color
+highlight ExtraWhitespace ctermbg=darkred guibg=darkred
+
+""" Buffergator config
+Shortcut Open/close buffergator window map <Leader>v :BuffergatorToggle
+let g:buffergator_suppress_keymaps = 1
+let g:buffergator_window_statusline = 0
+
+""" CamelCaseMotion config
+map <silent> w <Plug>CamelCaseMotion_w
+map <silent> b <Plug>CamelCaseMotion_b
+map <silent> e <Plug>CamelCaseMotion_e
+map <silent> ge <Plug>CamelCaseMotion_ge
+sunmap w
+sunmap b
+sunmap e
+sunmap ge
+
+""" Vim pencil config
+augroup pencil
+  autocmd!
+  autocmd FileType markdown,mkd call pencil#init()
+  autocmd FileType text         call pencil#init()
+augroup END
+
+" make YCM compatible with UltiSnips (using supertab)
+let g:ycm_key_list_select_completion = ['<C-n>', '<Down>']
+let g:ycm_key_list_previous_completion = ['<C-p>', '<Up>']
+let g:SuperTabDefaultCompletionType = '<C-n>'
+
+" better key bindings for UltiSnipsExpandTrigger
+let g:UltiSnipsExpandTrigger = "<tab>"
+let g:UltiSnipsJumpForwardTrigger = "<tab>"
+let g:UltiSnipsJumpBackwardTrigger = "<s-tab>"

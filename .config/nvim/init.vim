@@ -116,7 +116,8 @@ function! NumberToggle()
 endfunc
 
 " Toggle between normal and relative numbering.
-nnoremap <leader>r :call NumberToggle()<cr>
+Shortcut Toggle between absolute and relative line number
+       \ nnoremap <leader>r :call NumberToggle()<cr>
 
 " Easy window navigation
 map <C-h> <C-w>h
@@ -243,6 +244,7 @@ Plug 'reedes/vim-wheel'
 Plug 'powerman/vim-plugin-viewdoc'
 Plug 'bkad/CamelCaseMotion'
 Plug 'matze/vim-move'
+Plug 'sunaku/vim-shortcut'
 
 " Cliboard management
 Plug 'vim-scripts/YankRing.vim'
@@ -575,3 +577,10 @@ let g:SuperTabDefaultCompletionType = '<C-n>'
 let g:UltiSnipsExpandTrigger = "<tab>"
 let g:UltiSnipsJumpForwardTrigger = "<tab>"
 let g:UltiSnipsJumpBackwardTrigger = "<s-tab>"
+
+""" Shortcut.vim config
+Shortcut show shortcut menu and run chosen shortcut
+      \ noremap <silent> <Leader><Leader> :Shortcuts<Return>
+
+Shortcut fallback to shortcut menu on partial entry
+      \ noremap <silent> <Leader> :Shortcuts<Return>

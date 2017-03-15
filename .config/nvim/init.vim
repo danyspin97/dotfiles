@@ -116,8 +116,7 @@ function! NumberToggle()
 endfunc
 
 " Toggle between normal and relative numbering.
-Shortcut Toggle between absolute and relative line number
-       \ nnoremap <leader>r :call NumberToggle()<cr>
+nnoremap <leader>r :call NumberToggle()<cr>
 
 " Easy window navigation
 map <C-h> <C-w>h
@@ -277,6 +276,9 @@ Plug 'thinca/vim-quickrun'
 
 " Writer plugins
 Plug 'reedes/vim-pencil'
+
+" Time
+Plug 'wakatime/vim-wakatime'
 
 call plug#end()
 
@@ -537,6 +539,10 @@ nnoremap <C-q>l :Ql <CR>
 " Run Neomake on everywriting
 autocmd! BufWritePost * Neomake
 
+" Disable c/c++ makers as YCM already handle this
+let g:neomake_cpp_enabled_makers = []
+let g:neomake_c_enabled_makers = []
+
 """ Guten tag config
 let g:gutentag_enabled = 1
 
@@ -545,11 +551,6 @@ let g:gutentag_enabled = 1
 autocmd BufEnter * EnableStripWhitespaceOnSave
 " Whitespaces color
 highlight ExtraWhitespace ctermbg=darkred guibg=darkred
-
-""" Buffergator config
-Shortcut Open/close buffergator window map <Leader>v :BuffergatorToggle
-let g:buffergator_suppress_keymaps = 1
-let g:buffergator_window_statusline = 0
 
 """ CamelCaseMotion config
 map <silent> w <Plug>CamelCaseMotion_w
@@ -568,7 +569,15 @@ augroup pencil
   autocmd FileType text         call pencil#init()
 augroup END
 
-" make YCM compatible with UltiSnips (using supertab)
+""" You complete me config
+let g:ycm_global_ycm_extra_conf='~/.config/nvim/.ycm_extra_conf.py'
+let g:ycm_min_num_of_chars_for_completion = 1
+let g:ycm_complete_in_comments = 1
+let g:ycm_collect_identifiers_from_comments_and_strings = 1
+let g:ycm_seed_identifiers_with_syntax = 1
+let g:ycm_confirm_extra_conf = 0
+
+" mak YCM compatmble with UltiSnips (using supertab)
 let g:ycm_key_list_select_completion = ['<C-n>', '<Down>']
 let g:ycm_key_list_previous_completion = ['<C-p>', '<Up>']
 let g:SuperTabDefaultCompletionType = '<C-n>'
@@ -577,10 +586,3 @@ let g:SuperTabDefaultCompletionType = '<C-n>'
 let g:UltiSnipsExpandTrigger = "<tab>"
 let g:UltiSnipsJumpForwardTrigger = "<tab>"
 let g:UltiSnipsJumpBackwardTrigger = "<s-tab>"
-
-""" Shortcut.vim config
-Shortcut show shortcut menu and run chosen shortcut
-      \ noremap <silent> <Leader><Leader> :Shortcuts<Return>
-
-Shortcut fallback to shortcut menu on partial entry
-      \ noremap <silent> <Leader> :Shortcuts<Return>

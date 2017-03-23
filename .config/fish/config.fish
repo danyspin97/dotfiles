@@ -6,6 +6,8 @@ set PATH $PATH ~/.config/composer/vendor/bin ~/.gem/ruby/2.4.0/bin
 set FZF_DEFAULT_COMMAND 'rg --files --hidden --glob "!.git/*"'
 set FZF_CTRL_T_COMMAND $FZF_DEFAULT_COMMAND
 
+set EDITOR nvim
+
 function fish_mode_prompt
   # NOOP - Disable vim mode indicator
 end

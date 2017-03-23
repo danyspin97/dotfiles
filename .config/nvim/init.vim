@@ -25,10 +25,10 @@ set splitbelow          " Horizontal split below current.
 set splitright          " Vertical split to right of current.
 
 if !&scrolloff
-    set scrolloff=3       " Show next 3 lines while scrolling.
+    set scrolloff=7       " Show next 3 lines while scrolling.
 endif
 if !&sidescrolloff
-    set sidescrolloff=5   " Show next 5 columns while side-scrolling.
+    set sidescrolloff=10   " Show next 5 columns while side-scrolling.
 endif
 set display+=lastline
 set nostartofline       " Do not jump to first character with page commands.
@@ -74,7 +74,7 @@ endif
 set list                " Show problematic characters.
 
 set hlsearch            " Highlight search results.
-set ignorecase          " Make searching case insensitive
+set ignorecase          " Make searching case-insensitive
 set smartcase           " ... unless the query has capital letters.
 set incsearch           " Incremental search.
 set gdefault            " Use 'g' flag by default with :s/foo/bar/.
@@ -92,6 +92,20 @@ set tw=500
 set ai "Auto indent
 set si "Smart indent
 set wrap "Wrap lines
+
+" Remap comma to double dots
+map , :
+
+" Caps lock is now rebind to esc
+au VimEnter * !xmodmap -e 'clear Lock' -e 'keycode 0x42 = Escape'
+au VimLeave * !xmodmap -e 'clear Lock' -e 'keycode 0x42 = Caps_Lock'
+
+" Reload config on savings
+autocmd! bufwritepost ~/.config/nvim/init.vim source ~/.config/nvim/init.vim
+
+" Ex command control
+cnoremap <C-P> <Up>
+cnoremap <C-N> <Down>
 
 " Add cpp syntax for .tpp files
 autocmd BufEnter *.tpp :setlocal filetype=cpp
@@ -117,6 +131,12 @@ endfunc
 
 " Toggle between normal and relative numbering.
 nnoremap <leader>r :call NumberToggle()<cr>
+
+" Resize windows
+map + 20<C-W>+
+map - 20<C-W>-
+map < 20<C-W><
+map > 20<C-W>>
 
 " Easy window navigation
 map <C-h> <C-w>h
@@ -217,7 +237,7 @@ Plug 'mbbill/undotree'
 Plug 'tpope/vim-characterize'
 Plug 'ntpeters/vim-better-whitespace'
 Plug 'lilydjwg/colorizer'
-Plug 'airblade/vim-gitgutter'
+"Plug 'airblade/vim-gitgutter'
 
 " File management
 Plug 'scrooloose/nerdtree'
@@ -276,6 +296,7 @@ Plug 'thinca/vim-quickrun'
 
 " Writer plugins
 Plug 'reedes/vim-pencil'
+Plug 'rhysd/vim-grammarous'
 
 " Time
 Plug 'wakatime/vim-wakatime'
@@ -283,6 +304,9 @@ Plug 'wakatime/vim-wakatime'
 call plug#end()
 
 filetype plugin indent on
+
+" Remove 'Shortcut: not an editor command' error
+runtime plugin/shortcut.vim
 
 " Set theme
 syntax enable
@@ -310,7 +334,8 @@ let g:indentLine_concealcursor = ''
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 
 " Open NerdTree with ctrl+n
-map <C-n> :NERDTreeToggle<CR>
+Shortcut open nerdtree window
+            \ map <leader>n :NERDTreeToggle<CR>
 
 " Show hidden file
 let NERDTreeShowHidden=1
@@ -371,7 +396,7 @@ let g:airline_symbols.linenr = ''
 " testing rounded separators (extra-powerline-symbols):
 let g:airline_right_sep = "\uE0B6"
 
-" set the CN (column number) symbol:
+" Set the CN (column number) symbol:
 let g:airline_section_z = airline#section#create(["\uE0A1" . '%{line(".")}' . "\uE0A3" . '%{col(".")}'])
 
 let g:airline#extensions#tabline#enabled = 1
@@ -386,45 +411,51 @@ let b:cb_jump_on_close = 1
 let g:EasyMotion_do_mapping = 0 " Disable default mappings
 let g:EasyMotion_startofline = 0 " keep cursor column when JK motion
 
-" Turn on case insensitive feature
-let g:EasyMotion_smartcase = 1
+" Turn on case-insensitive feature
+let g:EasyMotio2_smartcase = 1
 
 " JK motions: Line motions
-map <Leader>l <Plug>(easymotion-lineforward)
-map <Leader>j <Plug>(easymotion-j)
-map <Leader>k <Plug>(easymotion-k)
-map <Leader>h <Plug>(easymotion-linebackward)
+Shortcut easymotion lineforward
+            \ map <Leader>l <Plug>(easymotion-lineforward)
+Shortcut easymotion down
+            \ map <Leader>j <Plug>(easymotion-j)
+Shortcut easymotion upper
+            \ map <Leader>k <Plug>(easymotion-k)
+Shortcut easymotion linebackward
+            \ map <Leader>h <Plug>(easymotion-linebackward)
 
-map <Leader>e <Plug>(easymotion-e)
-map <Leader>b <Plug>(easymotion-b)
+Shortcut easymotion e
+            \ map <Leader>e <Plug>(easymotion-e)
+Shortcut easymotion b
+            \ map <Leader>b <Plug>(easymotion-b)
 
 map / <Plug>(easymotion-sn)
 omap / <Plug>(easymotion-tn)
 map n <Plug>(easymotion-next)
 map N <Plug>(easymotion-prev)
 
-" Jump to anywhere with only `s{char}{target}`
-" `s<CR>` repeat last find motion.
-nmap s <Plug>(easymotion-s)
 " Bidirectional & within line 't' motion
 omap t <Plug>(easymotion-bd-tl)
 " Use uppercase target labels and type as a lower case
 let g:EasyMotion_use_upper = 1
- " type `l` and match `l`&`L`
+" type `l` and match `l`&`L`
 let g:EasyMotion_smartcase = 1
 " Smartsign (type `3` and match `3`&`#`)
 let g:EasyMotion_use_smartsign_us = 1
 
 " <Leader>f{char} to move to {char}
-map  <Leader>f <Plug>(easymotion-bd-f)
+Shortcut easymotion f
+            \ map  <Leader>f <Plug>(easymotion-bd-f)
 nmap <Leader>f <Plug>(easymotion-overwin-f)
 
 " Move to line
-map <Leader>L <Plug>(easymotion-bd-jk)
+Shortcut easymotion move on line
+            \ map <Leader>L <Plug>(easymotion-bd-jk)
 nmap <Leader>L <Plug>(easymotion-overwin-line)
 
 " Move to word
-map  <Leader>w <Plug>(easymotion-w)
+Shortcut easymotion w
+            \ map  <Leader>w <Plug>(easymotion-w)
 
 """ Git gutter config
 " Always show column
@@ -443,6 +474,12 @@ let g:startify_enable_unsafe = 0
 " In Neovim, you can set up fzf window using a Vim command
 let g:fzf_layout = { 'window': 'enew' }
 
+" This is the default extra key bindings
+let g:fzf_action = {
+  \ 'ctrl-t': 'tab split',
+  \ 'ctrl-x': 'split',
+  \ 'ctrl-v': 'vsplit' }
+
 " Customize fzf colors to match your color scheme
 let g:fzf_colors =
             \ { 'fg':      ['fg', 'Normal'],
@@ -459,20 +496,23 @@ let g:fzf_colors =
             \ 'header':  ['fg', 'Comment'] }
 
 " Call fzf
-map <C-z> :FZF<CR>
-map <Leader>t :BTags<CR>
+Shortcut search in files
+            \ map <Leader>z :FZF<CR>
+Shortcut search in tags
+            \ map <Leader>t :BTags<CR>
 
 """ Tagbar
-nmap <F8> :TagbarToggle<CR>
+Shortcut open tagbar window
+            \ nmap <F8> :TagbarOpen fj<CR>
 
 " Focus tag bar when showing
 let g:tagbar_autofocus = 1
 
 """ vim-smooth-scroll config
-noremap <silent> <c-u> :call smooth_scroll#up(&scroll, 0, 2)<CR>
-noremap <silent> <c-d> :call smooth_scroll#down(&scroll, 0, 2)<CR>
-noremap <silent> <c-b> :call smooth_scroll#up(&scroll*2, 0, 4)<CR>
-noremap <silent> <c-f> :call smooth_scroll#down(&scroll*2, 0, 4)<CR>
+noremap <silent> <c-u> :call smooth_scroll#up(&scroll, 5, 2)<CR>
+noremap <silent> <c-d> :call smooth_scroll#down(&scroll, 5, 2)<CR>
+noremap <silent> <c-b> :call smooth_scroll#up(&scroll*2, 5, 4)<CR>
+noremap <silent> <c-f> :call smooth_scroll#down(&scroll*2, 5, 4)<CR>
 
 """ Cpp enhanced sintax highligthing
 " Highlighting of class scope
@@ -486,29 +526,33 @@ let g:cpp_concepts_highlight = 1
 
 """ Neoformat config
 " Add a mapping
-nmap <Leader>R :Neoformat<CR>
+Shortcut format current file
+            \ nmap <Leader>R :Neoformat<CR>
 
 " Enable alignment
 let g:neoformat_basic_format_align = 1
 
-" Enable tab to spaces conversion
+" Enable tab to space conversion
 let g:neoformat_basic_format_retab = 1
 
 """ Mirrors.vim config
 " Add a mapping for pushing to the server
-nmap <Leader>p :MirrorPush<CR>
+Shortcut push file to server
+            \ nmap <Leader>p :MirrorPush<CR>
 
 """ vim-wheel config
 let g:wheel#map#up   = '<m-y>'
 let g:wheel#map#down = '<m-e>'
 
 """ Vimterm config
-nnoremap <F7> :call vimterm#toggle() <CR>
+Shortcut toggle vimterm window
+            \ nnoremap <F7> :call vimterm#toggle() <CR>
 tnoremap <F7> <C-\><C-n>:call vimterm#toggle() <CR>
 
 """ Undotree config
 " Keymap for undotree gui
-nnoremap <F5> :UndotreeToggle<cr>
+Shortcut toggle undotree window
+            \ nnoremap <F5> :UndotreeToggle<cr>
 
 " Focus undotree when showing it
 let g:undotree_SetFocusWhenToggle = 1
@@ -527,13 +571,17 @@ let g:yankring_window_height = 12
 
 " Change keys for replacing
 let g:yankring_replace_n_pkey = '<C-p>'
-let g:yankring_replace_n_nkey = '<C-m>'
+let g:yankring_replace_n_nkey = '<C-n>'
 
 """ Quick windows close
-nnoremap <C-q>h :Qh <CR>
-nnoremap <C-q>j :Qj <CR>
-nnoremap <C-q>k :Qk <CR>
-nnoremap <C-q>l :Ql <CR>
+Shortcut close left window
+            \ nnoremap <C-q>h :Qh <CR>
+Shortcut close down window
+            \ nnoremap <C-q>j :Qj <CR>
+Shortcut close upper window
+            \ nnoremap <C-q>k :Qk <CR>
+Shortcut close right window
+            \ nnoremap <C-q>l :Ql <CR>
 
 """ Neomake config
 " Run Neomake on everywriting
@@ -564,9 +612,9 @@ sunmap ge
 
 """ Vim pencil config
 augroup pencil
-  autocmd!
-  autocmd FileType markdown,mkd call pencil#init()
-  autocmd FileType text         call pencil#init()
+    autocmd!
+    autocmd FileType markdown,mkd call pencil#init()
+    autocmd FileType text         call pencil#init()
 augroup END
 
 """ You complete me config
@@ -576,6 +624,18 @@ let g:ycm_complete_in_comments = 1
 let g:ycm_collect_identifiers_from_comments_and_strings = 1
 let g:ycm_seed_identifiers_with_syntax = 1
 let g:ycm_confirm_extra_conf = 0
+let g:ycm_goto_buffer_command = 'vertical-split'
+
+Shortcut go to declaration
+            \ nnoremap <leader>jd :YcmCompleter GoToDeclaration<CR>
+Shortcut go to include
+            \ nnoremap <leader>jh :YcmCompleter GoToInclude<CR>
+Shortcut go to definition
+            \ nnoremap <leader>jk :YcmCompleter GoToDefinition<CR>
+Shortcut get type
+            \ nnoremap <leader>jt :YcmCompleter GetType<CR>
+Shortcut fix error
+            \ nnoremap <leader>jf :YcmCompleter FixIt<CR>
 
 " mak YCM compatmble with UltiSnips (using supertab)
 let g:ycm_key_list_select_completion = ['<C-n>', '<Down>']
@@ -586,3 +646,24 @@ let g:SuperTabDefaultCompletionType = '<C-n>'
 let g:UltiSnipsExpandTrigger = "<tab>"
 let g:UltiSnipsJumpForwardTrigger = "<tab>"
 let g:UltiSnipsJumpBackwardTrigger = "<s-tab>"
+
+""" Grammarous config
+" Chack grammar only for comments
+let g:grammarous#default_comments_only_filetypes = {
+            \ '*' : 1, 'help' : 0, 'markdown' : 0,
+            \ }
+" Use system laguage tool
+let g:grammarous#languagetool_cmd = 'languagetool'
+
+Shortcut move to the next grammatic error
+            \ nmap <leader>go <Plug>(grammarous-move-to-next-error)
+Shortcut fix current grammatic error
+            \ nmap <leader>gf <Plug>(grammarous-fixit)
+Shortcut remove current grammatic error
+            \ nmap <leader>gr <Plug>(grammarous-remove-error)
+
+""" vim-shortcut config
+Shortcut show shortcut menu and run chosen shortcut
+            \ noremap <silent> <Leader><Leader> :Shortcuts<Return>
+
+noremap <silent> <Leader> :Shortcuts<Return>

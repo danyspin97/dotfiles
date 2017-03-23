@@ -5,7 +5,7 @@
  *
  * font: see http://freedesktop.org/software/fontconfig/fontconfig-user.html
  */
-static char font[] = "Input:size=11:antialias=true:autohint=false:hint=hintfull";
+static char font[] = "Input:size=10:antialias=true:autohint=false:hint=hintfull";
 static int borderpx = 2;
 
 /*

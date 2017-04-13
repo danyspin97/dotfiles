@@ -139,8 +139,8 @@ bindsym $mod+Shift+6 move container to workspace $workspace6
 bindsym $mod+Shift+7 move container to workspace $workspace7
 bindsym $mod+Shift+8 move container to workspace $workspace8
 
-assign [class="Opera"]                              $workspace1
-assign [class="qutebrowser"]                              $workspace1
+assign [class="Chromium"]                           $workspace1
+assign [class="qutebrowser"]                        $workspace1
 assign [class="st-256color" title="nvim"]           $workspace3
 assign [class="st-256color" title="ranger"]         $workspace4
 assign [class="TelegramDesktop"]                    $workspace5
@@ -310,12 +310,15 @@ bindsym Print exec --no-startup-id teiler --quickcopy
 bindsym Shift+Print exec --no-startup-id teiler --screenshot
 bindsym $sup+Print exec --no-startup-id teiler
 
+# Remao caps to esc
 exec_always xrandr --output DisplayPort-0 --off --output DVI-1 --off --output DVI-0 --mode 1600x900 --pos 1920x180 --rotate normal --output HDMI-0 --primary --mode 1920x1080 --pos 0x0 --rotate normal
 exec_always feh --bg-scale $HOME/Pictures/Wallpaper_01.png
+exec --no-startup-id xmodmap -e 'clear Lock' -e 'keycode 0x42 = Escape Caps_Lock'
+
+exec --no-startup-id redshift
 exec --no-startup-id $HOME/.config/polybar/launch.sh
 exec --no-startup-id $HOME/.i3/lockscreen.sh
 #exec --no-startup-id "i3-msg 'workspace im.send(); append_layout /home/danyspin97/.i3/workspace-im.json'"
-exec --no-startup-id "i3-msg 'workspace \"Neovim\"; layout tabbed'"
-#exec --no-startup-id redshift
+#exec --no-startup-id "i3-msg 'workspace \"Neovim\"; layout tabbed'"
 
 # vim:filetype=i3

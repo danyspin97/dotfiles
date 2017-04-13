@@ -97,8 +97,8 @@ set wrap "Wrap lines
 map , :
 
 " Caps lock is now rebind to esc
-au VimEnter * !xmodmap -e 'clear Lock' -e 'keycode 0x42 = Escape'
-au VimLeave * !xmodmap -e 'clear Lock' -e 'keycode 0x42 = Caps_Lock'
+"au VimEnter * !xmodmap -e 'clear Lock' -e 'keycode 0x42 = Escape'
+"au VimLeave * !xmodmap -e 'clear Lock' -e 'keycode 0x42 = Caps_Lock'
 
 " Reload config on savings
 autocmd! bufwritepost ~/.config/nvim/init.vim source ~/.config/nvim/init.vim
@@ -291,7 +291,7 @@ Plug 'sheerun/vim-polyglot'
 
 " Terminal and make
 Plug 'wvffle/vimterm'
-Plug 'neomake/neomake'
+Plug 'w0rp/ale'
 Plug 'thinca/vim-quickrun'
 
 " Writer plugins
@@ -327,6 +327,8 @@ let g:indentLine_char = '┆'
 
 " Disable concealing
 let g:indentLine_concealcursor = ''
+
+let g:indentLine_faster=1
 
 """ NerdTree config
 
@@ -496,17 +498,26 @@ let g:fzf_colors =
             \ 'header':  ['fg', 'Comment'] }
 
 " Call fzf
-Shortcut search in files
+Shortcut search files
             \ map <Leader>z :FZF<CR>
-Shortcut search in tags
+Shortcut search tags
             \ map <Leader>t :BTags<CR>
+
+" Find command using fzf and ripgrep
+" https://medium.com/@crashybang/supercharge-vim-with-fzf-and-ripgrep-d4661fc853d2
+ command! -bang -nargs=* Find call fzf#vim#grep('rg --column --line-number --no-heading --fixed-strings --ignore-case --no-ignore --hidden --follow --glob "!.git/*" --color "always" '.shellescape(<q-args>), 1, <bang>0)
+
+ Shortcut search word in files
+            \ map <Leader>a :Find
 
 """ Tagbar
 Shortcut open tagbar window
             \ nmap <F8> :TagbarOpen fj<CR>
 
 " Focus tag bar when showing
-let g:tagbar_autofocus = 1
+let g:tagbar_autofocus = 0
+
+autocmd FileType cpp,php,python,vim :call tagbar#autoopen(0)
 
 """ vim-smooth-scroll config
 noremap <silent> <c-u> :call smooth_scroll#up(&scroll, 5, 2)<CR>
@@ -583,14 +594,6 @@ Shortcut close upper window
 Shortcut close right window
             \ nnoremap <C-q>l :Ql <CR>
 
-""" Neomake config
-" Run Neomake on everywriting
-autocmd! BufWritePost * Neomake
-
-" Disable c/c++ makers as YCM already handle this
-let g:neomake_cpp_enabled_makers = []
-let g:neomake_c_enabled_makers = []
-
 """ Guten tag config
 let g:gutentag_enabled = 1
 
@@ -617,7 +620,8 @@ augroup pencil
     autocmd FileType text         call pencil#init()
 augroup END
 
-""" You complete me config
+""" YouCompleteMe config
+let g:ycm_path_to_python_interpreter = '/usr/bin/python'
 let g:ycm_global_ycm_extra_conf='~/.config/nvim/.ycm_extra_conf.py'
 let g:ycm_min_num_of_chars_for_completion = 1
 let g:ycm_complete_in_comments = 1
@@ -625,6 +629,21 @@ let g:ycm_collect_identifiers_from_comments_and_strings = 1
 let g:ycm_seed_identifiers_with_syntax = 1
 let g:ycm_confirm_extra_conf = 0
 let g:ycm_goto_buffer_command = 'vertical-split'
+let g:ycm_python_binary_path = 'python3'
+let g:ycm_add_preview_to_completeopt = 1
+let g:ycm_autoclose_preview_window_after_insertion = 1
+let g:ycm_filetype_blacklist = {
+      \ 'tagbar' : 1,
+      \ 'qf' : 1,
+      \ 'notes' : 1,
+      \ 'markdown' : 1,
+      \ 'unite' : 1,
+      \ 'text' : 1,
+      \ 'vimwiki' : 1,
+      \ 'pandoc' : 1,
+      \ 'infolog' : 1,
+      \ 'mail' : 1
+      \}
 
 Shortcut go to declaration
             \ nnoremap <leader>jd :YcmCompleter GoToDeclaration<CR>
@@ -667,3 +686,15 @@ Shortcut show shortcut menu and run chosen shortcut
             \ noremap <silent> <Leader><Leader> :Shortcuts<Return>
 
 noremap <silent> <Leader> :Shortcuts<Return>
+
+""" Ale config
+let g:ale_linters = {
+\   'cpp': [],
+\}
+
+" Increase delay between each lint
+let g:ale_lint_delay = 1500
+let g:ale_set_loclist = 0
+let g:ale_set_quickfix = 1
+let g:ale_open_list = 1
+let g:ale_keep_list_window_open = 1

@@ -1,4 +1,4 @@
-set PATH $PATH ~/.config/composer/vendor/bin ~/.gem/ruby/2.4.0/bin
+set PATH $PATH ~./bin ~/.config/composer/vendor/bin
 
 # --files: List files that would be searched but do not search
 # --hidden: Search hidden files and folders

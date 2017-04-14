@@ -1,4 +1,4 @@
-set PATH $PATH ~./bin ~/.config/composer/vendor/bin
+set PATH $PATH ~/.bin ~/.config/composer/vendor/bin
 
 # --files: List files that would be searched but do not search
 # --hidden: Search hidden files and folders
@@ -13,4 +13,8 @@ function fish_mode_prompt
 end
 
 function fish_greeting
+end
+
+function nn
+  exec ncmpcpp
 end

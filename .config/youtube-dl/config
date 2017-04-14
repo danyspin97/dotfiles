@@ -1,0 +1,41 @@
+# Extract audio
+-x
+
+# Quality
+--audio-quality 0
+
+# Format
+--audio-format mp3
+
+# Get attributes
+--xattrs
+
+# Do not copy the mtime
+--no-mtime
+
+# Increase buffer size
+--buffer-size 16K
+
+# Use ffmpeg
+--hls-prefer-ffmpeg
+
+# Use aria2
+--external-downloader aria2c
+
+# Use aria2
+--external-downloader aria2c
+
+# Keep an archive of downloaded music
+--download-archive ~/Music/music
+
+# Do not overwrite files
+--no-post-overwrite
+
+# Skip errors
+-i
+
+# Quiet
+-q
+
+# Save files to musci directory
+-o ~/Music/%(title)s.%(ext)s

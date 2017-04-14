@@ -46,7 +46,7 @@ font-2 = "Input:style=Regular:size=12;2"
 
 modules-left = i3
 modules-center = xwindow
-modules-right = filesystem xbacklight xkeyboard memory cpu wlan battery temperature date
+modules-right = filesystem xbacklight xkeyboard memory cpu mpd wlan battery temperature date
 
 tray-position = right
 tray-padding = 2
@@ -78,8 +78,7 @@ format-spacing = 0
 
 label-indicator-padding = 2
 label-indicator-margin = 1
-label-indicator-background = #fe8019
-label-indicator-underline = #d65d0e
+label-indicator-underline = #b8bb26
 
 [module/filesystem]
 type = internal/fs
@@ -87,8 +86,8 @@ interval = 25
 
 mount-0 = /
 
-label-mounted = %{F#0a81f5}%mountpoint%%{F-}: %percentage_used%%
-label-mounted-underline = #0a81f5
+label-mounted = %{F#83a598}%mountpoint%%{F-}: %percentage_used%%
+label-mounted-underline = #83a598
 label-unmounted = %mountpoint% not mounted
 label-unmounted-foreground = ${colors.foreground-alt}
 
@@ -106,14 +105,14 @@ label-mode-foreground = #000
 label-mode-background = ${colors.primary}
 
 ; focused = Active workspace on focused monitor
-label-focused = %{F#689d6a}%icon%%{F-} %name%
+label-focused = %{F#fbf1c7}%icon%%{F-} %name%
 label-focused-background = ${bar/primary.background}
-label-focused-underline = #689d6a
+label-focused-underline = #fbf1c7
 label-focused-padding = 2
 
 ; unfocused = Inactive workspace on any monitor
-label-unfocused = %{F#fabd2f}%icon%%{F-} %name%
-label-unfocused-underline = #fabd2f
+label-unfocused = %{F#a89984}%icon%%{F-} %name%
+label-unfocused-underline = #a89984
 label-unfocused-padding = 1
 
 ; visible = Active workspace on unfocused monitor
@@ -123,7 +122,7 @@ label-visible-underline = #d79921
 label-visible-padding = ${self.label-focused-padding}
 
 ; urgent = Workspace with urgency hint set
-label-urgent = %icon% %name%
+label-urgent = %{F#cc241d}%icon%%{F-} %name%
 label-urgent-background = ${bar/primary.background}
 label-urgent-underline = #cc241d
 label-urgent-padding = 3
@@ -149,35 +148,46 @@ enable-click = false
 
 [module/mpd]
 type = internal/mpd
-format-online = <label-song>  <icon-prev> <icon-stop> <toggle> <icon-next>
+host = /home/danyspin97/.config/mpd/socket
 
-icon-prev = 
-icon-stop = 
-icon-play = 
-icon-pause = 
-icon-next = 
+format-online = <label-time> %{F#8ec07c}<icon-prev> <toggle> <icon-next>%{F-}
+format-online-underline = #8ec07c
+format-online-prefix = " "
+format-online-prefix-foreground = ${self.format-online-underline}
+
+label-offline = off
+
+label-song = %title% - %artist%
+label-time = %elapsed%/%total%
+
+icon-prev = 
+icon-stop = 
+icon-play = 
+icon-pause = 
+icon-next = 
+icon-seekb =
+icon-seekf =
+icon-random = 
+icon-repeat = 
+icon-repeatone = 
 
 label-song-maxlen = 25
-label-song-ellipsis = true
+label-song-ellipsis = false
 
 [module/xbacklight]
 type = internal/xbacklight
 
-format = <label> <bar>
-format-underline = ${self.bar-fill-foreground}
-label = ""
-label-foreground = ${self.bar-fill-foreground}
+format = <ramp> <label>
+format-underline = #9f78e1
 
-bar-width = 10
-bar-indicator = |
-bar-indicator-foreground = #ff
-bar-indicator-font = 2
-bar-fill = ─
-bar-fill-font = 2
-bar-fill-foreground = #9f78e1
-bar-empty = ─
-bar-empty-font = 2
-bar-empty-foreground = ${colors.foreground-alt}
+label = %percentage%%
+
+ramp-0 = 🌕
+ramp-1 = 🌔
+ramp-2 = 🌓
+ramp-3 = 🌒
+ramp-4 = 🌑
+ramp-foreground = ${self.format-underline}
 
 [module/backlight-acpi]
 inherit = module/xbacklight
@@ -189,7 +199,7 @@ type = internal/cpu
 interval = 2
 format-prefix = " "
 format-prefix-foreground = ${self.format-underline}
-format-underline = #f90000
+format-underline = #fe8019
 label = %percentage%%
 
 [module/memory]
@@ -197,7 +207,7 @@ type = internal/memory
 interval = 2
 format-prefix = " "
 format-prefix-foreground = ${self.format-underline}
-format-underline = #4bffdc
+format-underline = #ebdbb2
 label = %percentage_used%%
 
 [module/wlan]
@@ -208,8 +218,8 @@ interval = 3.0
 format-connected-prefix = " "
 format-connected-prefix-foreground = ${self.format-connected-underline}
 format-connected = <label-connected>
-format-connected-underline = #b16286
-label-connected = %essid%
+format-connected-underline = #d3869b
+label-connected = %signal%% %{F#d3869b}%{F-} %upspeed% %{F#d3869b}%{F-} %downspeed%
 
 ;format-disconnected =
 format-disconnected = <label-disconnected>
@@ -244,8 +254,8 @@ format-disconnected =
 type = internal/date
 interval = 1
 
-date = "%{F#0a6cf5}%{F-} %Y-%m-%d"
-date-alt =
+date =
+date-alt = "%{F#0a6cf5}%{F-} %Y-%m-%d"
 
 time = %H:%M
 time-alt = %H:%M:%S
@@ -259,39 +269,20 @@ label = %time% %date%
 [module/volume]
 type = internal/volume
 
-format-volume = <label-volume> <bar-volume>
-label-volume = VOL
+format-volume = <ramp-volume> <label-volume>
+label-volume = %percentage%%
 label-volume-foreground = ${root.foreground}
 
-format-muted-prefix = " "
-format-muted-foreground = ${colors.foreground-alt}
-label-muted = sound muted
-
-bar-volume-width = 10
-bar-volume-foreground-0 = #55aa55
-bar-volume-foreground-1 = #55aa55
-bar-volume-foreground-2 = #55aa55
-bar-volume-foreground-3 = #55aa55
-bar-volume-foreground-4 = #55aa55
-bar-volume-foreground-5 = #f5a70a
-bar-volume-foreground-6 = #ff5555
-bar-volume-gradient = false
-bar-volume-indicator = |
-bar-volume-indicator-font = 2
-bar-volume-fill = ─
-bar-volume-fill-font = 2
-bar-volume-empty = ─
-bar-volume-empty-font = 2
-bar-volume-empty-foreground = ${colors.foreground-alt}
+label-muted = 
 
 [module/battery]
 type = internal/battery
 battery = BAT0
 adapter = ADP1
-full-at = 100
+full-at = 98
 
 format-charging = <animation-charging> <label-charging>
-format-charging-underline = #ffb52a
+format-charging-underline = #fabd2f
 
 format-discharging = <ramp-capacity> <label-discharging>
 format-discharging-underline = ${self.format-charging-underline}
@@ -306,9 +297,6 @@ ramp-capacity-2 = 
 ramp-capacity-3 = 
 ramp-capacity-4 = 
 ramp-capacity-foreground = ${self.format-charging-underline}
-
-; Only applies if <bar-capacity> is used
-bar-capacity-width = 10
 
 ; Only applies if <animation-charging> is used
 animation-charging-0 = 
@@ -328,13 +316,13 @@ warn-temperature = 60
 format = <label>
 format-prefix = " "
 format-prefix-foreground = ${self.format-underline}
-format-underline = #f50a4d
+format-underline = #fb4934
 format-warn = <ramp> <label-warn>
 format-warn-underline = ${self.format-underline}
 
 label = %temperature%
-label-warn = %temperature%
-label-warn-foreground = ${colors.secondary}
+label-warn = %{F#fb4934}%{F-} %temperature%
+label-warn-foreground = ${self.format-underline}
 
 ramp-0 = 
 ramp-1 = 
@@ -377,12 +365,52 @@ token = ${file:/home/danyspin97/.polybar_github}
 ; Weather empty notifications should be displayed or not
 empty-notifications = false
 
+[module/battery-level]
+type = custom/script
+
+; Available tokens:
+;   %counter%
+; Command to be executed (using "/usr/bin/env sh -c [command]")
+exec = notify_low_battery
+
+; Seconds to sleep between updates
+interval = 300
+
 [settings]
-screenchange-reload = true
-;compositing-background = xor
-;compositing-background = screen
-;compositing-foreground = source
-;compositing-border = over
+; The throttle settings lets the eventloop swallow up til X events
+; if they happen within Y millisecond after first event was received.
+; This is done to prevent flood of update event.
+;
+; For example if 5 modules emit an update event at the same time, we really
+; just care about the last one. But if we wait too long for events to swallow
+; the bar would appear sluggish so we continue if timeout
+; expires or limit is reached.
+throttle-output = 5
+throttle-output-for = 10
+
+; Time in milliseconds that the input handler will wait between processing events
+throttle-input-for = 30
+
+; Reload upon receiving XCB_RANDR_SCREEN_CHANGE_NOTIFY events
+screenchange-reload = false
+
+; Compositing operators
+; @see: https://www.cairographics.org/manual/cairo-cairo-t.html#cairo-operator-t
+compositing-background = over
+compositing-foreground = over
+compositing-overline = over
+compositing-underline = over
+compositing-border = over
+
+; Define fallback values used by all module formats
+format-foreground =
+format-background =
+format-underline =
+format-overline =
+format-spacing =
+format-padding =
+format-margin =
+format-offset =
 
 [global/wm]
 margin-top = 1

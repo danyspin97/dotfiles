@@ -3,14 +3,13 @@
 DESCRIPTION="Critical battery level.\nPut the charger on."
 POWER_ADAPTER="/sys/class/power_supply/ADP1/online"
 BATTERY="/sys/class/power_supply/BAT0/capacity"
-CRITICAL_LEVEL=20
+CRITICAL_LEVEL=50
 
 BATTERY_LEVEL=$(cat $BATTERY)
 CHARGING=$(cat $POWER_ADAPTER)
 
 SUMMARY="Low battery: $BATTERY_LEVEL%"
 
-if [ $BATTERY_LEVEL -le $CRITICAL_LEVEL -a $CHARGING = 0 ]
-then
-notify-send -u critical -t 5000 $SUMMARY $DESCRIPTION
+if [ "$BATTERY_LEVEL" -le "$CRITICAL_LEVEL" -a "$CHARGING" = 0 ]; then
+    notify-send -u critical -t 5000 "$SUMMARY" "$DESCRIPTION"
 fi

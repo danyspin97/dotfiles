@@ -1,12 +1,9 @@
-set encoding=utf8
-
-"Map the leader key to SPACE
-let mapleader="\<SPACE>"
+let g:mapleader="\<SPACE>"
 set showcmd             " Show (partial) command in status line.
 set showmatch           " Show matching brackets.
 set showmode            " Show current mode.
 set ruler               " Show the line and column numbers of the cursor.
-set number              " Show the line numbers on the left side.
+set relativenumber      " Show the line numbers on the left side.
 set formatoptions+=o    " Continue comment marker in new lines.
 set textwidth=0         " Hard-wrap long lines as you type them.
 set expandtab           " Insert spaces when TAB is pressed.
@@ -33,20 +30,11 @@ endif
 set display+=lastline
 set nostartofline       " Do not jump to first character with page commands.
 
-set laststatus=2 " Always show status bar
 set updatetime=500 " Let plugins show effects after 500ms, not 4s
 set mouse-=a " Disable mouse click to go to position
+
 " Don't let autocomplete affect usual typing habits
 set completeopt=menuone,preview,noinsert
-
-set hidden
-set history=100
-
-" Set to auto read when a file is changed from the outside
-set autoread
-
-" Turn on the WiLd menu
-set wildmenu
 
 " Ignore compiled files
 set wildignore=*.o,*~,*.pyc,*/.git/*,*/.hg/*,*/.svn/*,*/.DS_Store
@@ -55,16 +43,16 @@ set wildignore=*.o,*~,*.pyc,*/.git/*,*/.hg/*,*/.svn/*,*/.DS_Store
 set cmdheight=2
 
 " A buffer becomes hidden when it is abandoned
-set hid
+set hidden
 
 " How many tenths of a second to blink when matching brackets
-set mat=2
+set matchtime=2
 
 " No annoying sound on errors
 set noerrorbells
 set novisualbell
 set t_vb=
-set tm=500"
+set timeoutlen=500"
 
 " Tell Vim which characters to show for expanded TABs,
 " and end-of-lines.
@@ -73,32 +61,25 @@ if &listchars ==# 'eol:$'
 endif
 set list                " Show problematic characters.
 
-set hlsearch            " Highlight search results.
 set ignorecase          " Make searching case-insensitive
 set smartcase           " ... unless the query has capital letters.
-set incsearch           " Incremental search.
 set gdefault            " Use 'g' flag by default with :s/foo/bar/.
 set magic               " Use 'magic' patterns (extended regular expressions).
 
 " Disable swap and backup
 set nobackup
 set noswapfile
-set nowb
+set nowritebackup
 
 " Linebreak on 500 characters
-set lbr
-set tw=500
+set linebreak
+set textwidth=500
 
-set ai "Auto indent
-set si "Smart indent
+set smartindent "Smart indent
 set wrap "Wrap lines
 
 " Remap comma to double dots
 map , :
-
-" Caps lock is now rebind to esc
-"au VimEnter * !xmodmap -e 'clear Lock' -e 'keycode 0x42 = Escape'
-"au VimLeave * !xmodmap -e 'clear Lock' -e 'keycode 0x42 = Caps_Lock'
 
 " Reload config on savings
 autocmd! bufwritepost ~/.config/nvim/init.vim source ~/.config/nvim/init.vim
@@ -106,9 +87,6 @@ autocmd! bufwritepost ~/.config/nvim/init.vim source ~/.config/nvim/init.vim
 " Ex command control
 cnoremap <C-P> <Up>
 cnoremap <C-N> <Down>
-
-" Add cpp syntax for .tpp files
-autocmd BufEnter *.tpp :setlocal filetype=cpp
 
 " Cancel a search with esc
 nnoremap <silent> <Esc> :nohlsearch<Bar>:echo<CR>
@@ -122,31 +100,23 @@ imap <C-delete> ø
 " Relative numbering
 function! NumberToggle()
     if(&relativenumber == 1)
-        set nornu
+        set norelativenumber
         set number
     else
-        set rnu
+        set relativenumber
     endif
 endfunc
 
 " Toggle between normal and relative numbering.
-nnoremap <leader>r :call NumberToggle()<cr>
+nnoremap <Leader>r :call NumberToggle()<cr>
 
 " Resize windows
-map + 20<C-W>+
-map - 20<C-W>-
-map < 20<C-W><
-map > 20<C-W>>
-
-" Easy window navigation
-map <C-h> <C-w>h
-map <C-j> <C-w>j
-map <C-k> <C-w>k
-map <C-l> <C-w>l
+map + 10<C-W>+
+map - 10<C-W>-
+map < 10<C-W><
+map > 10<C-W>>
 
 """ Terminal Mapping
-tnoremap <Esc> <C-\><C-n>
-
 " Remapping for switching windows when in terminal
 tnoremap <C-h> <C-\><C-n><C-w>h
 tnoremap <C-j> <C-\><C-n><C-w>j
@@ -189,7 +159,7 @@ augroup END
 set lazyredraw
 syntax sync minlines=128
 
-" vp doesn't replace paste buffer
+" Wvp doesn't replace paste buffer
 function! RestoreRegister()
     let @" = s:restore_reg
     return ''
@@ -199,10 +169,6 @@ function! s:Repl()
     return "p@=RestoreRegister()\<cr>"
 endfunction
 vmap <silent> <expr> p <sid>Repl()
-
-" Autosave when focus is lost from window
-" (disable it when using mirrors.vim)
-au FocusLost * wa
 
 " Send lines in range to hastebin.com and copy url to clipboard
 command! -range -bar Haste <line1>,<line2>w !haste | xsel -b
@@ -225,11 +191,26 @@ let g:terminal_color_13 = '#d3869b'
 let g:terminal_color_14 = '#8ec07c'
 let g:terminal_color_15 = '#ebdbb2'
 
+function! BuildYCM(info)
+    if a:info.status == 'installed' || a:info.force
+        !./install.py --clang-completer --system-libclang --system-boost
+    endif
+endfunction
+
+function! BuildComposer(info)
+    if a:info.status != 'unchanged' || a:info.force
+        if has('nvim')
+            !cargo build --release
+        else
+            !cargo build --release --no-default-features --features json-rpc
+        endif
+    endif
+endfunction
+
 call plug#begin()
 
-" UI plugins
+""" UI plugins
 Plug 'vim-airline/vim-airline'
-Plug 'freeo/vim-kalisi'
 Plug 'morhetz/gruvbox'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'ryanoasis/vim-devicons'
@@ -237,13 +218,8 @@ Plug 'mbbill/undotree'
 Plug 'tpope/vim-characterize'
 Plug 'ntpeters/vim-better-whitespace'
 Plug 'lilydjwg/colorizer'
-"Plug 'airblade/vim-gitgutter'
 
 " File management
-Plug 'scrooloose/nerdtree'
-Plug 'Xuyuanp/nerdtree-git-plugin'
-Plug 'zenbro/mirror.vim'
-Plug 'mhinz/vim-startify'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'tpope/vim-fugitive'
@@ -251,6 +227,10 @@ Plug 'dietsche/vim-lastplace'
 Plug 'tpope/vim-eunuch'
 Plug 'vim-scripts/quit-another-window'
 Plug 'pbrisbin/vim-mkdir'
+
+" Save session
+Plug 'xolox/vim-misc'
+Plug 'xolox/vim-session'
 
 " Vim motion and bindings
 Plug 'ervandew/supertab'
@@ -264,23 +244,30 @@ Plug 'powerman/vim-plugin-viewdoc'
 Plug 'bkad/CamelCaseMotion'
 Plug 'matze/vim-move'
 Plug 'sunaku/vim-shortcut'
+Plug 'PeterRincker/vim-argumentative'
+Plug 'wesQ3/vim-windowswap'
+
+" Tmux integration
+Plug 'christoomey/vim-tmux-navigator'
+Plug 'tmux-plugins/vim-tmux-focus-events'
+Plug 'benmills/vimux'
 
 " Cliboard management
 Plug 'vim-scripts/YankRing.vim'
 
-" Indenting and autocompletition
+" Indenting
 Plug 'Yggdroot/indentLine'
 Plug 'editorconfig/editorconfig-vim'
-Plug 'Valloric/YouCompleteMe'
+Plug 'sbdchd/neoformat'
+
+" Autocompletion
+Plug 'Valloric/YouCompleteMe', { 'do': function('BuildYCM') }
 Plug 'rdnetto/YCM-Generator', { 'branch': 'stable'}
 Plug 'jiangmiao/auto-pairs'
-Plug 'sbdchd/neoformat'
 Plug 'tpope/vim-endwise'
 
-" Snippets
-Plug 'SirVer/ultisnips'
-Plug 'honza/vim-snippets'
-Plug 'sniphpets/sniphpets-phpunit'
+" Doxygen integration
+Plug 'vim-scripts/DoxygenToolkit.vim'
 
 " Ctags and language plugins
 Plug 'ludovicchabant/vim-gutentags'
@@ -288,32 +275,49 @@ Plug 'majutsushi/tagbar'
 Plug 'shawncplus/phpcomplete.vim'
 Plug 'mattn/emmet-vim'
 Plug 'sheerun/vim-polyglot'
+Plug 'lyuts/vim-rtags'
 
-" Terminal and make
-Plug 'wvffle/vimterm'
+" Linting
 Plug 'w0rp/ale'
-Plug 'thinca/vim-quickrun'
 
 " Writer plugins
 Plug 'reedes/vim-pencil'
 Plug 'rhysd/vim-grammarous'
+Plug 'euclio/vim-markdown-composer', { 'do': function('BuildComposer') }
+Plug 'junegunn/goyo.vim'
+Plug 'junegunn/limelight.vim'
 
 " Time
 Plug 'wakatime/vim-wakatime'
 
 call plug#end()
 
-filetype plugin indent on
-
 " Remove 'Shortcut: not an editor command' error
 runtime plugin/shortcut.vim
 
+augroup OnSave
+    autocmd!
+    " Autoformat code using neoformat
+    autocmd BufWritePre * :Neoformat
+    " Stripe whitespaces
+    autocmd BufWritePre * :StripWhitespace
+    " Check Grammar
+    autocmd BufWritePre * :GrammarousCheck --no-move-to-first-error
+augroup END
+
+""" vim-plug shortcts
+Shortcut install plugins
+            \ map <Leader>pi :PlugInstall<CR>
+Shortcut update plugins
+            \ map <Leader>pu :PlugUpdate<CR>
+Shortcut update vim-plug
+            \ map <Leader>pp :PlugUpgrade<CR>
+
 " Set theme
-syntax enable
 set background=dark
 
 """ Gruvbox config
-let g:gruvbox_contrast_dark = "hard"
+let g:gruvbox_contrast_dark = 'hard'
 let g:gruvbox_italic=1
 colorscheme gruvbox
 set termguicolors
@@ -330,39 +334,7 @@ let g:indentLine_concealcursor = ''
 
 let g:indentLine_faster=1
 
-""" NerdTree config
-
-" Close NerdTree if it is the onyl windows open
-autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
-
-" Open NerdTree with ctrl+n
-Shortcut open nerdtree window
-            \ map <leader>n :NERDTreeToggle<CR>
-
-" Show hidden file
-let NERDTreeShowHidden=1
-
-" Ignore file
-let NERDTreeIgnore=['\.DS_Store', '\~$', '\.swp']
-
-" Arrows
-let g:NERDTreeDirArrowExpandable = ''
-let g:NERDTreeDirArrowCollapsible = ''
-
-" Symbols
-let g:NERDTreeIndicatorMapCustom = {
-            \ "Modified"  : "✹",
-            \ "Staged"    : "✚",
-            \ "Untracked" : "✭",
-            \ "Renamed"   : "➜",
-            \ "Unmerged"  : "═",
-            \ "Deleted"   : "✖",
-            \ "Dirty"     : "✗",
-            \ "Clean"     : "✔︎",
-            \ "Unknown"   : "?"
-            \ }
-
-""" air-line config
+""" airline config
 let g:airline_powerline_fonts = 1
 
 " Set kalisi theme
@@ -403,8 +375,8 @@ let g:airline_section_z = airline#section#create(["\uE0A1" . '%{line(".")}' . "\
 
 let g:airline#extensions#tabline#enabled = 1
 
-let g:airline#extensions#tabline#left_sep =  ""
-let g:airline#extensions#tabline#left_alt_sep =  ""
+let g:airline#extensions#tabline#left_sep =  ''
+let g:airline#extensions#tabline#left_alt_sep =  ''
 
 let b:usemarks         = 1
 let b:cb_jump_on_close = 1
@@ -459,28 +431,15 @@ nmap <Leader>L <Plug>(easymotion-overwin-line)
 Shortcut easymotion w
             \ map  <Leader>w <Plug>(easymotion-w)
 
-""" Git gutter config
-" Always show column
-"let g:gitgutter_sign_column_always=1
-" Stop git gutter when there are 500+ modifications
-let g:gitgutter_max_signs = 500
-
-" Speed up gitgutter
-let g:gitgutter_realtime = 0
-let g:gitgutter_eager = 0
-
-""" Startify config
-let g:startify_enable_unsafe = 0
-
 """ FZF config
 " In Neovim, you can set up fzf window using a Vim command
 let g:fzf_layout = { 'window': 'enew' }
 
 " This is the default extra key bindings
 let g:fzf_action = {
-  \ 'ctrl-t': 'tab split',
-  \ 'ctrl-x': 'split',
-  \ 'ctrl-v': 'vsplit' }
+            \ 'ctrl-t': 'tab split',
+            \ 'ctrl-x': 'split',
+            \ 'ctrl-v': 'vsplit' }
 
 " Customize fzf colors to match your color scheme
 let g:fzf_colors =
@@ -505,10 +464,10 @@ Shortcut search tags
 
 " Find command using fzf and ripgrep
 " https://medium.com/@crashybang/supercharge-vim-with-fzf-and-ripgrep-d4661fc853d2
- command! -bang -nargs=* Find call fzf#vim#grep('rg --column --line-number --no-heading --fixed-strings --ignore-case --no-ignore --hidden --follow --glob "!.git/*" --color "always" '.shellescape(<q-args>), 1, <bang>0)
+command! -bang -nargs=* Look call fzf#vim#grep('rg --column --line-number --no-heading --fixed-strings --ignore-case --no-ignore --hidden --follow --glob "!.git/*" --glob "!docs/*" --glob "!build/*" --glob "!opt/*" --glob "!vendor/*" --glob "!tags" --color "always" --threads 0 '.shellescape(<q-args>), 1, <bang>0)
 
- Shortcut search word in files
-            \ map <Leader>a :Find
+Shortcut search word in files
+            \ map <Leader>a :Look<CR>
 
 """ Tagbar
 Shortcut open tagbar window
@@ -516,8 +475,6 @@ Shortcut open tagbar window
 
 " Focus tag bar when showing
 let g:tagbar_autofocus = 0
-
-autocmd FileType cpp,php,python,vim :call tagbar#autoopen(0)
 
 """ vim-smooth-scroll config
 noremap <silent> <c-u> :call smooth_scroll#up(&scroll, 5, 2)<CR>
@@ -546,19 +503,9 @@ let g:neoformat_basic_format_align = 1
 " Enable tab to space conversion
 let g:neoformat_basic_format_retab = 1
 
-""" Mirrors.vim config
-" Add a mapping for pushing to the server
-Shortcut push file to server
-            \ nmap <Leader>p :MirrorPush<CR>
-
 """ vim-wheel config
 let g:wheel#map#up   = '<m-y>'
 let g:wheel#map#down = '<m-e>'
-
-""" Vimterm config
-Shortcut toggle vimterm window
-            \ nnoremap <F7> :call vimterm#toggle() <CR>
-tnoremap <F7> <C-\><C-n>:call vimterm#toggle() <CR>
 
 """ Undotree config
 " Keymap for undotree gui
@@ -569,8 +516,7 @@ Shortcut toggle undotree window
 let g:undotree_SetFocusWhenToggle = 1
 
 " Add persistent undo history between files
-if has("persistent_undo")
-    set undodir=~/.undodir/
+if has('persistent_undo')
     set undofile
 endif
 
@@ -586,20 +532,19 @@ let g:yankring_replace_n_nkey = '<C-n>'
 
 """ Quick windows close
 Shortcut close left window
-            \ nnoremap <C-q>h :Qh <CR>
+            \ nnoremap <Leader>qh :Qh <CR>
 Shortcut close down window
-            \ nnoremap <C-q>j :Qj <CR>
+            \ nnoremap <Leader>qj :Qj <CR>
 Shortcut close upper window
-            \ nnoremap <C-q>k :Qk <CR>
+            \ nnoremap <Leader>qk :Qk <CR>
 Shortcut close right window
-            \ nnoremap <C-q>l :Ql <CR>
+            \ nnoremap <Leader>ql :Ql <CR>
 
 """ Guten tag config
 let g:gutentag_enabled = 1
+let g:gutentags_cache_dir = '~./cache/tags'
 
 """ vim-better-whitespace config
-" Enable stripping on save
-autocmd BufEnter * EnableStripWhitespaceOnSave
 " Whitespaces color
 highlight ExtraWhitespace ctermbg=darkred guibg=darkred
 
@@ -613,58 +558,22 @@ sunmap b
 sunmap e
 sunmap ge
 
+function! EnterWriterMode()
+    Limelight
+    " execute `Goyo` if it's not already active
+    if !exists('#goyo')
+        Goyo
+    endif
+endfunction
+
+autocmd! User GoyoLeave Limelight!
+
 """ Vim pencil config
-augroup pencil
+augroup Pencil
     autocmd!
     autocmd FileType markdown,mkd call pencil#init()
-    autocmd FileType text         call pencil#init()
+                \ | call EnterWriterMode()
 augroup END
-
-""" YouCompleteMe config
-let g:ycm_path_to_python_interpreter = '/usr/bin/python'
-let g:ycm_global_ycm_extra_conf='~/.config/nvim/.ycm_extra_conf.py'
-let g:ycm_min_num_of_chars_for_completion = 1
-let g:ycm_complete_in_comments = 1
-let g:ycm_collect_identifiers_from_comments_and_strings = 1
-let g:ycm_seed_identifiers_with_syntax = 1
-let g:ycm_confirm_extra_conf = 0
-let g:ycm_goto_buffer_command = 'vertical-split'
-let g:ycm_python_binary_path = 'python3'
-let g:ycm_add_preview_to_completeopt = 1
-let g:ycm_autoclose_preview_window_after_insertion = 1
-let g:ycm_filetype_blacklist = {
-      \ 'tagbar' : 1,
-      \ 'qf' : 1,
-      \ 'notes' : 1,
-      \ 'markdown' : 1,
-      \ 'unite' : 1,
-      \ 'text' : 1,
-      \ 'vimwiki' : 1,
-      \ 'pandoc' : 1,
-      \ 'infolog' : 1,
-      \ 'mail' : 1
-      \}
-
-Shortcut go to declaration
-            \ nnoremap <leader>jd :YcmCompleter GoToDeclaration<CR>
-Shortcut go to include
-            \ nnoremap <leader>jh :YcmCompleter GoToInclude<CR>
-Shortcut go to definition
-            \ nnoremap <leader>jk :YcmCompleter GoToDefinition<CR>
-Shortcut get type
-            \ nnoremap <leader>jt :YcmCompleter GetType<CR>
-Shortcut fix error
-            \ nnoremap <leader>jf :YcmCompleter FixIt<CR>
-
-" mak YCM compatmble with UltiSnips (using supertab)
-let g:ycm_key_list_select_completion = ['<C-n>', '<Down>']
-let g:ycm_key_list_previous_completion = ['<C-p>', '<Up>']
-let g:SuperTabDefaultCompletionType = '<C-n>'
-
-" better key bindings for UltiSnipsExpandTrigger
-let g:UltiSnipsExpandTrigger = "<tab>"
-let g:UltiSnipsJumpForwardTrigger = "<tab>"
-let g:UltiSnipsJumpBackwardTrigger = "<s-tab>"
 
 """ Grammarous config
 " Chack grammar only for comments
@@ -674,12 +583,14 @@ let g:grammarous#default_comments_only_filetypes = {
 " Use system laguage tool
 let g:grammarous#languagetool_cmd = 'languagetool'
 
-Shortcut move to the next grammatic error
-            \ nmap <leader>go <Plug>(grammarous-move-to-next-error)
-Shortcut fix current grammatic error
-            \ nmap <leader>gf <Plug>(grammarous-fixit)
-Shortcut remove current grammatic error
-            \ nmap <leader>gr <Plug>(grammarous-remove-error)
+Shortcut Check grammar errors
+            \ nmap <Leader>gg :GrammarousCheck<CR>
+Shortcut Move to the next grammatic error
+            \ nmap <Leader>go <Plug>(grammarous-move-to-next-error)
+Shortcut Fix current grammatic error
+            \ nmap <Leader>gf <Plug>(grammarous-fixit)
+Shortcut Remove current grammatic error
+            \ nmap <Leader>gr <Plug>(grammarous-remove-error)
 
 """ vim-shortcut config
 Shortcut show shortcut menu and run chosen shortcut
@@ -688,13 +599,98 @@ Shortcut show shortcut menu and run chosen shortcut
 noremap <silent> <Leader> :Shortcuts<Return>
 
 """ Ale config
+" Disable some linters
 let g:ale_linters = {
-\   'cpp': [],
-\}
+            \   'cpp': [],
+            \   'c': []
+            \}
 
-" Increase delay between each lint
-let g:ale_lint_delay = 1500
+" Disable automatic lining on writing
+let g:ale_lint_on_text_changed = 'never'
 let g:ale_set_loclist = 0
 let g:ale_set_quickfix = 1
 let g:ale_open_list = 1
-let g:ale_keep_list_window_open = 1
+let g:ale_keep_list_window_open = 0
+
+""" netrw config
+let g:netrw_liststyle = 3
+
+" Disable banner
+let g:netrw_banner = 0
+
+" Open files in previous window
+let g:netrw_browse_split = 4
+let g:netrw_altv = 1
+
+" Set window Siie
+let g:netrw_winsize = 25
+
+" Toggle Vexplore
+function! ToggleVExplorer()
+    if exists('t:expl_buf_num')
+        let l:expl_win_num = bufwinnr(t:expl_buf_num)
+        if l:expl_win_num != -1
+            let l:cur_win_nr = winnr()
+            exec l:expl_win_num . 'wincmd w'
+            close
+            exec l:cur_win_nr . 'wincmd w'
+            unlet t:expl_buf_num
+        else
+            unlet t:expl_buf_num
+        endif
+    else
+        exec '1wincmd w'
+        Vexplore
+        let t:expl_buf_num = bufnr('%')
+    endif
+endfunction
+
+Shortcut open file browser
+            \ noremap <Leader>n :call ToggleVExplorer()<CR>
+
+""" vim-tmux-navigator config
+let g:tmux_navigator_no_mappings = 1
+
+nnoremap <silent> <C-H> :TmuxNavigateLeft<CR>
+nnoremap <silent> <C-J> :TmuxNavigateDown<CR>
+nnoremap <silent> <C-K> :TmuxNavigateUp<CR>
+nnoremap <silent> <C-L> :TmuxNavigateRight<CR>
+nnoremap <silent> <C-\> :TmuxNavigatePrevious<CR>
+
+""" vim-session config
+" Don't save help windows
+set sessionoptions-=help
+
+" Don't save hidden and unloaded buffers in sessions.
+set sessionoptions-=buffers
+
+" Don't persist options and mappings because it can corrupt sessions.
+set sessionoptions-=options
+
+" Save without asking prompt
+let g:session_autosave = 'yes'
+let g:session_autosave_periodic = 5
+let g:session_autoload = 'no'
+let g:session_lock_enabled = 0
+
+""" Vimux
+let g:VimuxUseNearest = 1
+
+Shortcut Build c++ projects using makefile
+            \ map <Leader>sm :call VimuxRunCommand("make")<CR>
+Shortcut Run last vimux command
+            \ map <Leader>ss :VimuxRunLastCommand<CR>
+Shortcut Prompt command to run in vimux pane
+            \ map <Leader>sp :VimuxPromptCommand<CR>
+
+""" vim argumentative
+nmap [, <Plug>Argumentative_Prev
+nmap ], <Plug>Argumentative_Next
+xmap [, <Plug>Argumentative_XPrev
+xmap ], <Plug>Argumentative_XNext
+nmap <, <Plug>Argumentative_MoveLeft
+nmap >, <Plug>Argumentative_MoveRight
+xmap i, <Plug>Argumentative_InnerTextObject
+xmap a, <Plug>Argumentative_OuterTextObject
+omap i, <Plug>Argumentative_OpPendingInnerTextObject
+omap a, <Plug>Argumentative_OpPendingOuterTextObject

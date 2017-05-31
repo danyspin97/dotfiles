@@ -139,7 +139,7 @@ assign [class="Chromium"]                           $workspace1
 assign [class="qutebrowser"]                        $workspace1
 assign [class="st-256color" title="ranger"]         $workspace4
 assign [class="TelegramDesktop"]                    $workspace3
-assign [class="discord"]                            $workspace5
+assign [class="discord"]                            $workspace3
 assign [class="st-256color" title="mpsyt"]          $workspace6
 assign [class="^Vlc$"]                              $workspace6
 assign [class="mpv"]                                $workspace6
@@ -226,12 +226,10 @@ workspace $workspace7 output $monitor1
 workspace $workspace8 output $monitor1
 
 # Program shortcut
-bindsym $mod+c exec chromium
+bindsym $mod+c exec --no-startup-id chromium
 bindsym $mod+t exec Telegram
 bindsym $mod+z exec zathura
 bindsym $mod+p exec --no-startup-id pavucontrol
-bindsym $mod+n exec st -e ncmpcpp
-
 
 client.focused          #665c54 #665c54 #eddbb2 #2e9ef4   #665c54
 client.focused_inactive #282828 #5f676a #ffffff #484e50   #5f676a
@@ -299,13 +297,7 @@ mode "$mode_gaps_outer" {
 exec_always xrandr --output DisplayPort-0 --off --output DVI-1 --off --output DVI-0 --mode 1600x900 --pos 1920x180 --rotate normal --output HDMI-0 --primary --mode 1920x1080 --pos 0x0 --rotate normal
 exec_always feh --bg-scale --randomize $HOME/Pictures/
 
-# make CapsLock behave like Ctrl:
-exec --no-startup-id setxkbmap -option ctrl:nocaps
-# make short-pressed Ctrl behave like Escape:
-exec --no-startup-id xcape -e 'Control_L=Escape'
-
-exec --no-startup-id redshift
-exec --no-startup-id $HOME/.i3/lockscreen.sh
+exec ~/.i3/lockscreen.sh
 #exec --no-startup-id "i3-msg 'workspace im.send(); append_layout /home/danyspin97/.i3/workspace-im.json'"
 #exec --no-startup-id "i3-msg 'workspace \"Neovim\"; layout tabbed'"
 

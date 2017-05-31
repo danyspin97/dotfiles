@@ -4,6 +4,7 @@ set showmatch           " Show matching brackets.
 set showmode            " Show current mode.
 set ruler               " Show the line and column numbers of the cursor.
 set relativenumber      " Show the line numbers on the left side.
+set number              " Show the current line number
 set formatoptions+=o    " Continue comment marker in new lines.
 set textwidth=0         " Hard-wrap long lines as you type them.
 set expandtab           " Insert spaces when TAB is pressed.
@@ -13,7 +14,6 @@ set shiftwidth=4        " Indentation amount for < and > commands.
 set noshowmode          " Hide the default mode text (e.g. -- INSERT -- below the statusline)
 
 set modeline            " Enable modeline.
-set esckeys             " Cursor keys in insert mode.
 set linespace=0         " Set line-spacing to minimum.
 set nojoinspaces        " Prevents inserting two spaces after punctuation on a join (J)
 
@@ -59,6 +59,7 @@ set timeoutlen=500"
 if &listchars ==# 'eol:$'
     set listchars=tab:>\ ,trail:-,extends:>,precedes:<,nbsp:+
 endif
+
 set list                " Show problematic characters.
 
 set ignorecase          " Make searching case-insensitive
@@ -101,7 +102,6 @@ imap <C-delete> ø
 function! NumberToggle()
     if(&relativenumber == 1)
         set norelativenumber
-        set number
     else
         set relativenumber
     endif
@@ -266,13 +266,16 @@ Plug 'rdnetto/YCM-Generator', { 'branch': 'stable'}
 Plug 'jiangmiao/auto-pairs'
 Plug 'tpope/vim-endwise'
 
+" Build
+Plug 'tpope/vim-dispatch'
+
 " Doxygen integration
 Plug 'vim-scripts/DoxygenToolkit.vim'
 
 " Ctags and language plugins
 Plug 'ludovicchabant/vim-gutentags'
 Plug 'majutsushi/tagbar'
-Plug 'shawncplus/phpcomplete.vim'
+Plug 'lvht/phpcd.vim', { 'for': 'php', 'do': 'composer install' }
 Plug 'mattn/emmet-vim'
 Plug 'sheerun/vim-polyglot'
 Plug 'lyuts/vim-rtags'
@@ -301,8 +304,6 @@ augroup OnSave
     autocmd BufWritePre * :Neoformat
     " Stripe whitespaces
     autocmd BufWritePre * :StripWhitespace
-    " Check Grammar
-    autocmd BufWritePre * :GrammarousCheck --no-move-to-first-error
 augroup END
 
 """ vim-plug shortcts
@@ -498,10 +499,10 @@ Shortcut format current file
             \ nmap <Leader>R :Neoformat<CR>
 
 " Enable alignment
-let g:neoformat_basic_format_align = 1
+let g:neoformat_basic_format_align = 0
 
 " Enable tab to space conversion
-let g:neoformat_basic_format_retab = 1
+let g:neoformat_basic_format_retab = 0
 
 """ vim-wheel config
 let g:wheel#map#up   = '<m-y>'
@@ -542,7 +543,7 @@ Shortcut close right window
 
 """ Guten tag config
 let g:gutentag_enabled = 1
-let g:gutentags_cache_dir = '~./cache/tags'
+let g:gutentags_cache_dir = '~/.cache/tags'
 
 """ vim-better-whitespace config
 " Whitespaces color
@@ -612,6 +613,52 @@ let g:ale_set_quickfix = 1
 let g:ale_open_list = 1
 let g:ale_keep_list_window_open = 0
 
+aug QuickFixClose
+    au!
+    au WinEnter * if winnr('$') == 1 && getbufvar(winbufnr(winnr()), "&buftype") == "quickfix"|q|endif
+aug END
+
+""" YouCompleteMe config
+let g:ycm_path_to_python_interpreter = '/usr/bin/python'
+let g:ycm_global_ycm_extra_conf='~/.config/nvim/.ycm_extra_conf.py'
+let g:ycm_min_num_of_chars_for_completion = 1
+let g:ycm_complete_in_comments = 1
+let g:ycm_collect_identifiers_from_comments_and_strings = 1
+let g:ycm_seed_identifiers_with_syntax = 1
+let g:ycm_confirm_extra_conf = 0
+let g:ycm_goto_buffer_command = 'vertical-split'
+let g:ycm_python_binary_path = 'python3'
+let g:ycm_add_preview_to_completeopt = 1
+let g:ycm_autoclose_preview_window_after_insertion = 1
+let g:ycm_filetype_blacklist = {
+            \ 'tagbar' : 1,
+            \ 'qf' : 1,
+            \ 'notes' : 1,
+            \ 'markdown' : 1,
+            \ 'unite' : 1,
+            \ 'text' : 1,
+            \ 'vimwiki' : 1,
+            \ 'pandoc' : 1,
+            \ 'infolog' : 1,
+            \ 'mail' : 1
+            \}
+
+Shortcut go to declaration
+            \ nnoremap <leader>jd :YcmCompleter GoToDeclaration<CR>
+Shortcut go to include
+            \ nnoremap <leader>jh :YcmCompleter GoToInclude<CR>
+Shortcut go to definition
+            \ nnoremap <leader>jk :YcmCompleter GoToDefinition<CR>
+Shortcut get type
+            \ nnoremap <leader>jt :YcmCompleter GetType<CR>
+Shortcut fix error
+            \ nnoremap <leader>jf :YcmCompleter FixIt<CR>
+
+" mak YCM compatmble with UltiSnips (using supertab)
+let g:ycm_key_list_select_completion = ['<C-n>', '<Down>']
+let g:ycm_key_list_previous_completion = ['<C-p>', '<Up>']
+let g:SuperTabDefaultCompletionType = '<C-n>'
+
 """ netrw config
 let g:netrw_liststyle = 3
 
@@ -649,8 +696,10 @@ Shortcut open file browser
             \ noremap <Leader>n :call ToggleVExplorer()<CR>
 
 """ vim-tmux-navigator config
+" Don't import mappings
 let g:tmux_navigator_no_mappings = 1
 
+" Set movement mappings
 nnoremap <silent> <C-H> :TmuxNavigateLeft<CR>
 nnoremap <silent> <C-J> :TmuxNavigateDown<CR>
 nnoremap <silent> <C-K> :TmuxNavigateUp<CR>
@@ -694,3 +743,6 @@ xmap i, <Plug>Argumentative_InnerTextObject
 xmap a, <Plug>Argumentative_OuterTextObject
 omap i, <Plug>Argumentative_OpPendingInnerTextObject
 omap a, <Plug>Argumentative_OpPendingOuterTextObject
+
+""" rtags
+let g:rtagsAutoLaunchRdm = 1

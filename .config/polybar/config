@@ -82,7 +82,7 @@ label-indicator-underline = #b8bb26
 
 [module/filesystem]
 type = internal/fs
-interval = 25
+interval = 3600
 
 mount-0 = /
 
@@ -144,16 +144,30 @@ index-sort = true
 
 ; Create click handler used to focus workspace
 ; Default: true
-enable-click = false
+enable-click = true
 
 [module/mpd]
 type = internal/mpd
 host = 127.0.0.1
 
-format-online = <label-song> : <label-time> %{F#8ec07c}<icon-prev> <toggle> <icon-next>%{F-}
-format-online-underline = #8ec07c
-format-online-prefix = " "
+format-online-prefix = ""
 format-online-prefix-foreground = ${self.format-online-underline}
+format-online-underline = #83a598
+
+format-playing = <label-song>: <label-time> %{F#8ec07c}<icon-prev> <toggle> <icon-stop> <icon-next>%{F-}
+format-playing-underline = #8ec07c
+format-playing-prefix = " "
+format-playing-prefix-foreground = ${self.format-playing-underline}
+
+format-paused-prefix = " "
+format-paused-prefix-foreground = ${self.format-paused-underline}
+format-paused = <label-song>: <label-time> %{F#fabd2f}<toggle>%{F-}
+format-paused-underline = #fabd2f
+
+format-stopped-prefix = " "
+format-stopped-prefix-foreground = ${self.format-stopped-underline}
+format-stopped = Stopped %{F#fb4934}<icon-play>%{F-}
+format-stopped-underline = #fb4934
 
 label-offline = off
 
@@ -171,7 +185,7 @@ icon-random = 
 icon-repeat = 
 icon-repeatone = 
 
-label-song-maxlen = 25
+label-song-maxlen = 75
 label-song-ellipsis = false
 
 [module/xbacklight]
@@ -204,7 +218,7 @@ label = %percentage%%
 
 [module/memory]
 type = internal/memory
-interval = 2
+interval = 25
 format-prefix = " "
 format-prefix-foreground = ${self.format-underline}
 format-underline = #ebdbb2

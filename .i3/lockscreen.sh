@@ -1,9 +1,11 @@
-#!bin/bash
+#!/usr/bin/sh
 
 # Turn off screen after 90 seconds
-exec xset dpms 90 0 300
+xset dpms 240 240 240
 
-exec xautolock -detectsleep \
-    -time 3 -locker "i3lock-fancy" \
+xautolock -enable \
+    -detectsleep \
+    -time 3 \
+    -locker "i3lock-fancy" \
     -notify 30 \
-    -notifier "notify-send -u critical -t 1000 -- 'Locking screen in 30 seconds'"
+    -notifier "notify-send -u critical -t 1000 'Locking screen in 30 seconds'" &

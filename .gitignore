@@ -10,3 +10,4 @@ vendor/
 docs
 fishd.*
 *.kdbx
+.tmuxp.yaml

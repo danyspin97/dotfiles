@@ -82,7 +82,7 @@ label-indicator-underline = #b8bb26
 
 [module/filesystem]
 type = internal/fs
-interval = 3600
+interval = 25
 
 mount-0 = /
 
@@ -218,7 +218,7 @@ label = %percentage%%
 
 [module/memory]
 type = internal/memory
-interval = 25
+interval = 2
 format-prefix = " "
 format-prefix-foreground = ${self.format-underline}
 format-underline = #ebdbb2

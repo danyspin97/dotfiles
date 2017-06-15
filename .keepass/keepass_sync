@@ -4,6 +4,6 @@
 
 scp $USER@$ADDRESS:/home/$USER/$FILENAME ~/.keepass/Sync.kdbx
 
-keepass $FILENAME
+keepass ~/.keepass/$FILENAME
 
 scp ~/.keepass/Sync.kdbx $USER@$ADDRESS:/home/$USER/$FILENAME

@@ -135,7 +135,7 @@ bindsym $mod+Shift+6 move container to workspace $workspace6
 bindsym $mod+Shift+7 move container to workspace $workspace7
 bindsym $mod+Shift+8 move container to workspace $workspace8
 
-assign [class="Chromium"]                           $workspace1
+assign [class="Firefox"]                           $workspace1
 assign [class="qutebrowser"]                        $workspace1
 assign [class="st-256color" title="ranger"]         $workspace4
 assign [class="TelegramDesktop"]                    $workspace3
@@ -226,9 +226,10 @@ workspace $workspace7 output $monitor1
 workspace $workspace8 output $monitor1
 
 # Program shortcut
-bindsym $mod+c exec --no-startup-id chromium
-bindsym $mod+t exec Telegram
-bindsym $mod+z exec zathura
+bindsym $mod+c exec --no-startup-id firefox-nightly
+bindsym $mod+m exec --no-startup-id spotify
+bindsym $mod+t exec --no-startup-id Telegram
+bindsym $mod+z exec --no-startup-id zathura
 bindsym $mod+p exec --no-startup-id pavucontrol
 
 client.focused          #665c54 #665c54 #eddbb2 #2e9ef4   #665c54

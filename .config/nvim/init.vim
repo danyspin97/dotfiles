@@ -52,7 +52,9 @@ set matchtime=2
 set noerrorbells
 set novisualbell
 set t_vb=
-set timeoutlen=500"
+
+set ttimeout
+set ttimeoutlen=0
 
 " Tell Vim which characters to show for expanded TABs,
 " and end-of-lines.
@@ -76,8 +78,17 @@ set nowritebackup
 set linebreak
 set textwidth=500
 
-set smartindent "Smart indent
-set wrap "Wrap lines
+"Smart indent
+set smartindent
+"Wrap lines
+set wrap
+
+set grepprg=rg\ --vimgrep
+
+" Enable sql query syntax hightlighting in php files
+let php_sql_query = 1
+" Enable html syntax hightlighting in php files
+let php_htmlInStrings = 1
 
 " Remap comma to double dots
 map , :
@@ -109,19 +120,6 @@ endfunc
 
 " Toggle between normal and relative numbering.
 nnoremap <Leader>r :call NumberToggle()<cr>
-
-" Resize windows
-map + 10<C-W>+
-map - 10<C-W>-
-map < 10<C-W><
-map > 10<C-W>>
-
-""" Terminal Mapping
-" Remapping for switching windows when in terminal
-tnoremap <C-h> <C-\><C-n><C-w>h
-tnoremap <C-j> <C-\><C-n><C-w>j
-tnoremap <C-k> <C-\><C-n><C-w>k
-tnoremap <C-l> <C-\><C-n><C-w>l
 
 " Get terminal get input focus when switching to terminal window
 au BufEnter * if &buftype == 'terminal' | :startinsert | endif
@@ -212,12 +210,14 @@ call plug#begin()
 """ UI plugins
 Plug 'vim-airline/vim-airline'
 Plug 'morhetz/gruvbox'
+Plug 'freeo/vim-kalisi'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'ryanoasis/vim-devicons'
 Plug 'mbbill/undotree'
 Plug 'tpope/vim-characterize'
 Plug 'ntpeters/vim-better-whitespace'
 Plug 'lilydjwg/colorizer'
+Plug 'jlanzarotta/bufexplorer'
 
 " File management
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
@@ -246,14 +246,20 @@ Plug 'matze/vim-move'
 Plug 'sunaku/vim-shortcut'
 Plug 'PeterRincker/vim-argumentative'
 Plug 'wesQ3/vim-windowswap'
+Plug 'kshenoy/vim-signature'
+
+" Snippets
+Plug 'SirVer/ultisnips'
+Plug 'honza/vim-snippets'
 
 " Tmux integration
 Plug 'christoomey/vim-tmux-navigator'
 Plug 'tmux-plugins/vim-tmux-focus-events'
 Plug 'benmills/vimux'
 
-" Cliboard management
+" Cliboard and register management
 Plug 'vim-scripts/YankRing.vim'
+Plug 'junegunn/vim-peekaboo'
 
 " Indenting
 Plug 'Yggdroot/indentLine'
@@ -261,13 +267,10 @@ Plug 'editorconfig/editorconfig-vim'
 Plug 'sbdchd/neoformat'
 
 " Autocompletion
+"Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'Valloric/YouCompleteMe', { 'do': function('BuildYCM') }
-Plug 'rdnetto/YCM-Generator', { 'branch': 'stable'}
 Plug 'jiangmiao/auto-pairs'
 Plug 'tpope/vim-endwise'
-
-" Build
-Plug 'tpope/vim-dispatch'
 
 " Doxygen integration
 Plug 'vim-scripts/DoxygenToolkit.vim'
@@ -275,10 +278,18 @@ Plug 'vim-scripts/DoxygenToolkit.vim'
 " Ctags and language plugins
 Plug 'ludovicchabant/vim-gutentags'
 Plug 'majutsushi/tagbar'
-Plug 'lvht/phpcd.vim', { 'for': 'php', 'do': 'composer install' }
 Plug 'mattn/emmet-vim'
 Plug 'sheerun/vim-polyglot'
-Plug 'lyuts/vim-rtags'
+Plug 'artur-shaik/vim-javacomplete2'
+Plug 'arakashic/chromatica.nvim'
+Plug 'lvht/phpcd.vim', { 'for': 'php', 'do': 'composer install' }
+
+" Refactoring
+Plug 'brooth/far.vim'
+
+" Debugging
+Plug 'joonty/vdebug'
+Plug 'critiqjo/lldb.nvim'
 
 " Linting
 Plug 'w0rp/ale'
@@ -289,6 +300,7 @@ Plug 'rhysd/vim-grammarous'
 Plug 'euclio/vim-markdown-composer', { 'do': function('BuildComposer') }
 Plug 'junegunn/goyo.vim'
 Plug 'junegunn/limelight.vim'
+Plug 'Rykka/riv.vim'
 
 " Time
 Plug 'wakatime/vim-wakatime'
@@ -298,13 +310,18 @@ call plug#end()
 " Remove 'Shortcut: not an editor command' error
 runtime plugin/shortcut.vim
 
+syntax on
+
 augroup OnSave
     autocmd!
     " Autoformat code using neoformat
-    autocmd BufWritePre * :Neoformat
+    autocmd BufWritePre * Neoformat
     " Stripe whitespaces
     autocmd BufWritePre * :StripWhitespace
 augroup END
+
+Shortcut close all window
+                \ noremap <C-q><C-q> :confirm qall<CR>
 
 """ vim-plug shortcts
 Shortcut install plugins
@@ -457,15 +474,23 @@ let g:fzf_colors =
             \ 'spinner': ['fg', 'Label'],
             \ 'header':  ['fg', 'Comment'] }
 
+" [Buffers] Jump to the existing window if possible
+let g:fzf_buffers_jump = 1
+
 " Call fzf
 Shortcut search files
-            \ map <Leader>z :FZF<CR>
+            \ map <Leader>z :Files<CR>
 Shortcut search tags
             \ map <Leader>t :BTags<CR>
+Shortcut search lines
+            \ map <Leader>ll :Lines<CR>
 
 " Find command using fzf and ripgrep
-" https://medium.com/@crashybang/supercharge-vim-with-fzf-and-ripgrep-d4661fc853d2
-command! -bang -nargs=* Look call fzf#vim#grep('rg --column --line-number --no-heading --fixed-strings --ignore-case --no-ignore --hidden --follow --glob "!.git/*" --glob "!docs/*" --glob "!build/*" --glob "!opt/*" --glob "!vendor/*" --glob "!tags" --color "always" --threads 0 '.shellescape(<q-args>), 1, <bang>0)
+command! -bang -nargs=* Look
+  \ call fzf#vim#grep('rg --column --line-number --no-heading --fixed-strings --ignore-case --no-ignore --hidden --follow --glob "!.git/*" --glob "!docs/*" --glob "!build/*" --glob "!opt/*" --glob "!vendor/*" --color "always" --threads 0 '
+  \   .shellescape(<q-args>), 1,
+  \   fzf#vim#with_preview('up:60%'),
+  \   <bang>0)
 
 Shortcut search word in files
             \ map <Leader>a :Look<CR>
@@ -483,16 +508,6 @@ noremap <silent> <c-d> :call smooth_scroll#down(&scroll, 5, 2)<CR>
 noremap <silent> <c-b> :call smooth_scroll#up(&scroll*2, 5, 4)<CR>
 noremap <silent> <c-f> :call smooth_scroll#down(&scroll*2, 5, 4)<CR>
 
-""" Cpp enhanced sintax highligthing
-" Highlighting of class scope
-let g:cpp_class_scope_highlight = 1
-
-" Hightlight template functions
-let g:cpp_experimental_simple_template_highlight = 1
-
-" Highlighting of library concepts
-let g:cpp_concepts_highlight = 1
-
 """ Neoformat config
 " Add a mapping
 Shortcut format current file
@@ -504,14 +519,16 @@ let g:neoformat_basic_format_align = 0
 " Enable tab to space conversion
 let g:neoformat_basic_format_retab = 0
 
+let g:neoformat_enabled_sql = []
+
 """ vim-wheel config
 let g:wheel#map#up   = '<m-y>'
 let g:wheel#map#down = '<m-e>'
 
 """ Undotree config
 " Keymap for undotree gui
-Shortcut toggle undotree window
-            \ nnoremap <F5> :UndotreeToggle<cr>
+"Shortcut toggle undotree window
+            "\ nnoremap <F5> :UndotreeToggle<cr>
 
 " Focus undotree when showing it
 let g:undotree_SetFocusWhenToggle = 1
@@ -618,47 +635,6 @@ aug QuickFixClose
     au WinEnter * if winnr('$') == 1 && getbufvar(winbufnr(winnr()), "&buftype") == "quickfix"|q|endif
 aug END
 
-""" YouCompleteMe config
-let g:ycm_path_to_python_interpreter = '/usr/bin/python'
-let g:ycm_global_ycm_extra_conf='~/.config/nvim/.ycm_extra_conf.py'
-let g:ycm_min_num_of_chars_for_completion = 1
-let g:ycm_complete_in_comments = 1
-let g:ycm_collect_identifiers_from_comments_and_strings = 1
-let g:ycm_seed_identifiers_with_syntax = 1
-let g:ycm_confirm_extra_conf = 0
-let g:ycm_goto_buffer_command = 'vertical-split'
-let g:ycm_python_binary_path = 'python3'
-let g:ycm_add_preview_to_completeopt = 1
-let g:ycm_autoclose_preview_window_after_insertion = 1
-let g:ycm_filetype_blacklist = {
-            \ 'tagbar' : 1,
-            \ 'qf' : 1,
-            \ 'notes' : 1,
-            \ 'markdown' : 1,
-            \ 'unite' : 1,
-            \ 'text' : 1,
-            \ 'vimwiki' : 1,
-            \ 'pandoc' : 1,
-            \ 'infolog' : 1,
-            \ 'mail' : 1
-            \}
-
-Shortcut go to declaration
-            \ nnoremap <leader>jd :YcmCompleter GoToDeclaration<CR>
-Shortcut go to include
-            \ nnoremap <leader>jh :YcmCompleter GoToInclude<CR>
-Shortcut go to definition
-            \ nnoremap <leader>jk :YcmCompleter GoToDefinition<CR>
-Shortcut get type
-            \ nnoremap <leader>jt :YcmCompleter GetType<CR>
-Shortcut fix error
-            \ nnoremap <leader>jf :YcmCompleter FixIt<CR>
-
-" mak YCM compatmble with UltiSnips (using supertab)
-let g:ycm_key_list_select_completion = ['<C-n>', '<Down>']
-let g:ycm_key_list_previous_completion = ['<C-p>', '<Up>']
-let g:SuperTabDefaultCompletionType = '<C-n>'
-
 """ netrw config
 let g:netrw_liststyle = 3
 
@@ -746,3 +722,93 @@ omap a, <Plug>Argumentative_OpPendingOuterTextObject
 
 """ rtags
 let g:rtagsAutoLaunchRdm = 1
+
+""" Deoplete
+" Use deoplete.
+let g:deoplete#enable_at_startup = 1
+
+augroup omnifuncs
+    autocmd FileType java setlocal omnifunc=javacomplete#Complete
+augroup END
+
+""" YouCompleteMe config
+let g:ycm_path_to_python_interpreter = '/usr/bin/python'
+let g:ycm_global_ycm_extra_conf='~/.config/nvim/.ycm_extra_conf.py'
+let g:ycm_min_num_of_chars_for_completion = 1
+let g:ycm_complete_in_comments = 1
+let g:ycm_collect_identifiers_from_comments_and_strings = 1
+let g:ycm_seed_identifiers_with_syntax = 1
+let g:ycm_confirm_extra_conf = 0
+let g:ycm_goto_buffer_command = 'vertical-split'
+let g:ycm_python_binary_path = '/usr/bin/python3'
+let g:ycm_add_preview_to_completeopt = 1
+let g:ycm_autoclose_preview_window_after_insertion = 1
+let g:ycm_filetype_blacklist = {
+            \ 'tagbar' : 1,
+            \ 'qf' : 1,
+            \ 'notes' : 1,
+            \ 'markdown' : 1,
+            \ 'unite' : 1,
+            \ 'text' : 1,
+            \ 'vimwiki' : 1,
+            \ 'pandoc' : 1,
+            \ 'infolog' : 1,
+            \ 'mail' : 1,
+\}
+
+""" Chromatica
+let g:chromatica#enable_at_startup=1
+
+""" vim-peekaboo
+Shortcut! " Open register window
+Shortcut! @ Open register window
+
+""" vim-shortcut
+Shortcut! m, Place the next available mark
+Shortcut! m. If no mark on line, place the next available mark. Otherwise, remove (first) existing mark.
+Shortcut! m- Delete all marks from the current line
+Shortcut! m<Space> Delete all marks from the current buffer
+Shortcut! ]` Jump to next mark
+Shortcut! [` Jump to prev mark
+Shortcut! ]' Jump to start of next line containing a mark
+Shortcut! [' Jump to start of prev line containing a mark
+Shortcut! `] Jump by alphabetical order to next mark
+Shortcut! `[ Jump by alphabetical order to prev mark
+Shortcut! '] Jump by alphabetical order to start of next line having a mark
+Shortcut! '[ Jump by alphabetical order to start of prev line having a mark
+Shortcut! m/ Open location list and display marks from current buffer
+Shortcut! ]- Jump to next line having a marker of the same type
+Shortcut! [- Jump to prev line having a marker of the same type
+Shortcut! ]= Jump to next line having a marker of any type
+Shortcut! [= Jump to prev line having a marker of any type
+Shortcut! m? Open location list and display markers from current buffer
+
+""" phpcd
+let g:phpcd_php_cli_executable = '/home/danyspin97/Projects/php-7.2.0alpha1/sapi/cli/php'
+
+""" vdebug
+ let g:vdebug_options= {
+    \    "port" : 9000,
+    \    "server" : '',
+    \    "timeout" : 20,
+    \    "on_close" : 'detach',
+    \    "break_on_open" : 1,
+    \    "ide_key" : 'xdebug',
+    \    "path_maps" : {},
+    \    "debug_window_level" : 0,
+    \    "debug_file_level" : 0,
+    \    "debug_file" : "",
+    \    "watch_window_style" : 'expanded',
+    \    "marker_default" : '⬦',
+    \    "marker_closed_tree" : '▸',
+    \    "marker_open_tree" : '▾'
+\}
+
+""" Ultisnips
+" UltiSnips triggering
+let g:UltiSnipsExpandTrigger = '<C-j>'
+let g:UltiSnipsJumpForwardTrigger = '<C-j>'
+let g:UltiSnipsJumpBackwardTrigger = '<C-k>'
+
+" If you want :UltiSnipsEdit to split your window.
+let g:UltiSnipsEditSplit="vertical"

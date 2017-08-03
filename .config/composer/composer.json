@@ -1,5 +1,10 @@
 {
-    "require": {
-        "mmoreram/php-formatter": "dev-master"
-    }
+  "minimum-stability": "dev",
+  "require": {
+    "mmoreram/php-formatter": "dev-master",
+    "couscous/couscous": "dev-master",
+    "squizlabs/php_codesniffer": "*",
+    "phpmd/phpmd": "@stable",
+    "phpstan/phpstan": "^0.7.0@dev"
+  }
 }

@@ -48,7 +48,7 @@ focus_on_window_activation urgent
 popup_during_fullscreen smart
 
 # start a terminal
-bindsym $mod+Return exec st
+bindsym $mod+Return exec termite
 
 
 # Application launcher
@@ -135,7 +135,7 @@ bindsym $mod+Shift+6 move container to workspace $workspace6
 bindsym $mod+Shift+7 move container to workspace $workspace7
 bindsym $mod+Shift+8 move container to workspace $workspace8
 
-assign [class="Firefox"]                           $workspace1
+assign [class="Firefox"]                            $workspace1
 assign [class="qutebrowser"]                        $workspace1
 assign [class="st-256color" title="ranger"]         $workspace4
 assign [class="TelegramDesktop"]                    $workspace3
@@ -227,10 +227,14 @@ workspace $workspace8 output $monitor1
 
 # Program shortcut
 bindsym $mod+c exec --no-startup-id firefox-nightly
-bindsym $mod+m exec --no-startup-id spotify
 bindsym $mod+t exec --no-startup-id Telegram
 bindsym $mod+z exec --no-startup-id zathura
-bindsym $mod+p exec --no-startup-id pavucontrol
+bindsym $mod+p exec --no-startup-id termite -e pulsemixer
+bindsym $mod+m exec --no-startup-id thunderbird-nightly
+bindsym $mod+comma exec --no-startup-id keepass
+bindsym $mod+o exec --no-startup-id spotify
+bindsym $mod+x exec --no-startup-id primusrun steam
+bindsym Print exec --no-startup-id scrot
 
 client.focused          #665c54 #665c54 #eddbb2 #2e9ef4   #665c54
 client.focused_inactive #282828 #5f676a #ffffff #484e50   #5f676a
@@ -298,7 +302,9 @@ mode "$mode_gaps_outer" {
 exec_always xrandr --output DisplayPort-0 --off --output DVI-1 --off --output DVI-0 --mode 1600x900 --pos 1920x180 --rotate normal --output HDMI-0 --primary --mode 1920x1080 --pos 0x0 --rotate normal
 exec_always feh --bg-scale --randomize $HOME/Pictures/
 
-exec ~/.i3/lockscreen.sh
+exec --no-startup-id compton -b
+exec --no-startup-id safeeyes
+
 #exec --no-startup-id "i3-msg 'workspace im.send(); append_layout /home/danyspin97/.i3/workspace-im.json'"
 #exec --no-startup-id "i3-msg 'workspace \"Neovim\"; layout tabbed'"
 

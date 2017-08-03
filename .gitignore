@@ -7,7 +7,7 @@ build/
 tags
 *.log
 vendor/
-docs
 fishd.*
 *.kdbx
 .tmuxp.yaml
+_build/

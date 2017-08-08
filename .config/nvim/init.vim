@@ -121,18 +121,53 @@ endfunc
 " Toggle between normal and relative numbering.
 nnoremap <Leader>r :call NumberToggle()<cr>
 
+" Easy window navigation
+noremap <C-h> <C-w>h
+noremap <C-j> <C-w>j
+noremap <C-k> <C-w>k
+noremap <C-l> <C-w>l
+
+""" Terminal Mapping
+tnoremap <C-A><ESC> <C-\><C-n>
+
+" Remapping for switching windows when in terminal
+tnoremap <C-h> <C-\><C-n><C-w>h
+tnoremap <C-j> <C-\><C-n><C-w>j
+tnoremap <C-k> <C-\><C-n><C-w>k
+tnoremap <C-l> <C-\><C-n><C-w>l
+
+inoremap <C-h> <Esc><C-w>h
+inoremap <C-j> <Esc><C-w>j
+inoremap <C-k> <Esc><C-w>k
+inoremap <C-l> <Esc><C-w>l
+
 " Get terminal get input focus when switching to terminal window
 au BufEnter * if &buftype == 'terminal' | :startinsert | endif
 
-" Easy switch between vims tab
-nnoremap tc :tabnew<CR>
-nnoremap td :tabclose<CR>
-nnoremap tp :tabprev<CR>
-nnoremap tn :tabnext<CR>
+" Create new tab
+noremap <C-A>c :tabnew<CR>
+inoremap <C-A>c <ESC>:tabnew<CR>
+tnoremap <C-A>c <C-\><C-N>:tabnew<CR>
 
-" Use Q for formatting the current paragraph (or selection)
-vmap Q gq
-nmap Q gqap
+" Create new terminal in a new tab
+noremap <C-A>t :tabnew<CR>:term<CR>
+inoremap <C-A>t <ESC>:tabnew<CR>:term<CR>
+tnoremap <C-A>t <C-\><C-N>:tabnew<CR>:term<CR>
+
+" Close current tab
+noremap <C-A>x :tabclose<CR>
+inoremap <C-A>x <ESC>:tabclose<CR>
+tnoremap <C-A>x <C-D> <C-\><C-N>:tabclose<CR>
+
+" Go to previous tab
+noremap <C-A>p :tabprev<CR>
+inoremap <C-A>p <ESC>:tabprev<CR>
+tnoremap <C-A>p <C-\><C-N>:tabprev<CR>
+
+" Go to next tab
+noremap <C-A>n :tabnext<CR>
+inoremap <C-A>n <ESC>:tabnext<CR>
+tnoremap <C-A>n <C-\><C-N>:tabnext<CR>
 
 " Move in wrapped lines instead of jumping over them
 nnoremap j gj
@@ -189,6 +224,12 @@ let g:terminal_color_13 = '#d3869b'
 let g:terminal_color_14 = '#8ec07c'
 let g:terminal_color_15 = '#ebdbb2'
 
+if empty(glob('~/.vim/autoload/plug.vim'))
+  silent !curl -fLo ~/.config/nvim/autoload/plug.vim --create-dirs
+    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+endif
+
 function! BuildYCM(info)
     if a:info.status == 'installed' || a:info.force
         !./install.py --clang-completer --system-libclang --system-boost
@@ -207,34 +248,47 @@ endfunction
 
 call plug#begin()
 
-""" UI plugins
+" UI plugins
+Plug 'mbbill/undotree'
+Plug 'ntpeters/vim-better-whitespace'
+
+" Status line
 Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+
+" Appereance
 Plug 'morhetz/gruvbox'
 Plug 'freeo/vim-kalisi'
-Plug 'vim-airline/vim-airline-themes'
 Plug 'ryanoasis/vim-devicons'
-Plug 'mbbill/undotree'
-Plug 'tpope/vim-characterize'
-Plug 'ntpeters/vim-better-whitespace'
 Plug 'lilydjwg/colorizer'
-Plug 'jlanzarotta/bufexplorer'
+
+
+" Information
+Plug 'tpope/vim-characterize'
 
 " File management
+Plug 'scrooloose/nerdtree'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
-Plug 'tpope/vim-fugitive'
-Plug 'dietsche/vim-lastplace'
-Plug 'tpope/vim-eunuch'
-Plug 'vim-scripts/quit-another-window'
 Plug 'pbrisbin/vim-mkdir'
 
-" Save session
-Plug 'xolox/vim-misc'
-Plug 'xolox/vim-session'
+" HTML syntax
+Plug 'tpope/vim-eunuch'
+
+" Window management
+Plug 'dietsche/vim-lastplace'
+Plug 'vim-scripts/quit-another-window'
+Plug 'wesQ3/vim-windowswap'
+
+" Search
+Plug 'nelstrom/vim-visual-star-search'
+Plug 'dyng/ctrlsf.vim'
+
+" Version control
+Plug 'tpope/vim-fugitive'
 
 " Vim motion and bindings
 Plug 'ervandew/supertab'
-Plug 'easymotion/vim-easymotion'
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-surround'
 Plug 'scrooloose/nerdcommenter'
@@ -244,18 +298,10 @@ Plug 'powerman/vim-plugin-viewdoc'
 Plug 'bkad/CamelCaseMotion'
 Plug 'matze/vim-move'
 Plug 'sunaku/vim-shortcut'
-Plug 'PeterRincker/vim-argumentative'
-Plug 'wesQ3/vim-windowswap'
-Plug 'kshenoy/vim-signature'
 
 " Snippets
 Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
-
-" Tmux integration
-Plug 'christoomey/vim-tmux-navigator'
-Plug 'tmux-plugins/vim-tmux-focus-events'
-Plug 'benmills/vimux'
 
 " Cliboard and register management
 Plug 'vim-scripts/YankRing.vim'
@@ -265,17 +311,11 @@ Plug 'junegunn/vim-peekaboo'
 Plug 'Yggdroot/indentLine'
 Plug 'editorconfig/editorconfig-vim'
 Plug 'sbdchd/neoformat'
-
-" Autocompletion
-"Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-Plug 'Valloric/YouCompleteMe', { 'do': function('BuildYCM') }
-Plug 'jiangmiao/auto-pairs'
 Plug 'tpope/vim-endwise'
 
-" Doxygen integration
-Plug 'vim-scripts/DoxygenToolkit.vim'
-
 " Ctags and language plugins
+Plug 'Valloric/YouCompleteMe', { 'do': function('BuildYCM') }
+Plug 'jiangmiao/auto-pairs'
 Plug 'ludovicchabant/vim-gutentags'
 Plug 'majutsushi/tagbar'
 Plug 'mattn/emmet-vim'
@@ -301,9 +341,6 @@ Plug 'euclio/vim-markdown-composer', { 'do': function('BuildComposer') }
 Plug 'junegunn/goyo.vim'
 Plug 'junegunn/limelight.vim'
 Plug 'Rykka/riv.vim'
-
-" Time
-Plug 'wakatime/vim-wakatime'
 
 call plug#end()
 
@@ -339,6 +376,38 @@ let g:gruvbox_contrast_dark = 'hard'
 let g:gruvbox_italic=1
 colorscheme gruvbox
 set termguicolors
+
+""" NerdTree config
+
+" Close NerdTree if it is the onyl windows open
+autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+
+" Open NerdTree with ctrl+n
+Shortcut open nerdtree window
+            \ map <leader>n :NERDTreeToggle<CR>
+
+" Show hidden file
+let NERDTreeShowHidden=1
+
+" Ignore file
+let NERDTreeIgnore=['\.DS_Store', '\~$', '\.swp']
+
+" Arrows
+let g:NERDTreeDirArrowExpandable = ''
+let g:NERDTreeDirArrowCollapsible = ''
+
+" Symbols
+let g:NERDTreeIndicatorMapCustom = {
+            \ "Modified"  : "✹",
+            \ "Staged"    : "✚",
+            \ "Untracked" : "✭",
+            \ "Renamed"   : "➜",
+            \ "Unmerged"  : "═",
+            \ "Deleted"   : "✖",
+            \ "Dirty"     : "✗",
+            \ "Clean"     : "✔︎",
+            \ "Unknown"   : "?"
+            \ }
 
 """" indentLine config
 " Set color for indenting character
@@ -399,56 +468,6 @@ let g:airline#extensions#tabline#left_alt_sep =  ''
 let b:usemarks         = 1
 let b:cb_jump_on_close = 1
 
-""" Easymotion configuration
-let g:EasyMotion_do_mapping = 0 " Disable default mappings
-let g:EasyMotion_startofline = 0 " keep cursor column when JK motion
-
-" Turn on case-insensitive feature
-let g:EasyMotio2_smartcase = 1
-
-" JK motions: Line motions
-Shortcut easymotion lineforward
-            \ map <Leader>l <Plug>(easymotion-lineforward)
-Shortcut easymotion down
-            \ map <Leader>j <Plug>(easymotion-j)
-Shortcut easymotion upper
-            \ map <Leader>k <Plug>(easymotion-k)
-Shortcut easymotion linebackward
-            \ map <Leader>h <Plug>(easymotion-linebackward)
-
-Shortcut easymotion e
-            \ map <Leader>e <Plug>(easymotion-e)
-Shortcut easymotion b
-            \ map <Leader>b <Plug>(easymotion-b)
-
-map / <Plug>(easymotion-sn)
-omap / <Plug>(easymotion-tn)
-map n <Plug>(easymotion-next)
-map N <Plug>(easymotion-prev)
-
-" Bidirectional & within line 't' motion
-omap t <Plug>(easymotion-bd-tl)
-" Use uppercase target labels and type as a lower case
-let g:EasyMotion_use_upper = 1
-" type `l` and match `l`&`L`
-let g:EasyMotion_smartcase = 1
-" Smartsign (type `3` and match `3`&`#`)
-let g:EasyMotion_use_smartsign_us = 1
-
-" <Leader>f{char} to move to {char}
-Shortcut easymotion f
-            \ map  <Leader>f <Plug>(easymotion-bd-f)
-nmap <Leader>f <Plug>(easymotion-overwin-f)
-
-" Move to line
-Shortcut easymotion move on line
-            \ map <Leader>L <Plug>(easymotion-bd-jk)
-nmap <Leader>L <Plug>(easymotion-overwin-line)
-
-" Move to word
-Shortcut easymotion w
-            \ map  <Leader>w <Plug>(easymotion-w)
-
 """ FZF config
 " In Neovim, you can set up fzf window using a Vim command
 let g:fzf_layout = { 'window': 'enew' }
@@ -479,11 +498,17 @@ let g:fzf_buffers_jump = 1
 
 " Call fzf
 Shortcut search files
-            \ map <Leader>z :Files<CR>
+            \ noremap <Leader>z :Files<CR>
 Shortcut search tags
-            \ map <Leader>t :BTags<CR>
+            \ noremap <Leader>t :BTags<CR>
 Shortcut search lines
-            \ map <Leader>ll :Lines<CR>
+            \ noremap <Leader>l :Lines<CR>
+Shortcut search buffers
+            \ noremap <Leader>b :Buffers<CR>
+Shortcut search history
+            \ noremap <Leader>h :History<CR>
+Shortcut search word under cursor
+            \ noremap <Leader>d :exe ':Look ' . expand('<cword>')<CR>
 
 " Find command using fzf and ripgrep
 command! -bang -nargs=* Look
@@ -635,97 +660,8 @@ aug QuickFixClose
     au WinEnter * if winnr('$') == 1 && getbufvar(winbufnr(winnr()), "&buftype") == "quickfix"|q|endif
 aug END
 
-""" netrw config
-let g:netrw_liststyle = 3
-
-" Disable banner
-let g:netrw_banner = 0
-
-" Open files in previous window
-let g:netrw_browse_split = 4
-let g:netrw_altv = 1
-
-" Set window Siie
-let g:netrw_winsize = 25
-
-" Toggle Vexplore
-function! ToggleVExplorer()
-    if exists('t:expl_buf_num')
-        let l:expl_win_num = bufwinnr(t:expl_buf_num)
-        if l:expl_win_num != -1
-            let l:cur_win_nr = winnr()
-            exec l:expl_win_num . 'wincmd w'
-            close
-            exec l:cur_win_nr . 'wincmd w'
-            unlet t:expl_buf_num
-        else
-            unlet t:expl_buf_num
-        endif
-    else
-        exec '1wincmd w'
-        Vexplore
-        let t:expl_buf_num = bufnr('%')
-    endif
-endfunction
-
-Shortcut open file browser
-            \ noremap <Leader>n :call ToggleVExplorer()<CR>
-
-""" vim-tmux-navigator config
-" Don't import mappings
-let g:tmux_navigator_no_mappings = 1
-
-" Set movement mappings
-nnoremap <silent> <C-H> :TmuxNavigateLeft<CR>
-nnoremap <silent> <C-J> :TmuxNavigateDown<CR>
-nnoremap <silent> <C-K> :TmuxNavigateUp<CR>
-nnoremap <silent> <C-L> :TmuxNavigateRight<CR>
-nnoremap <silent> <C-\> :TmuxNavigatePrevious<CR>
-
-""" vim-session config
-" Don't save help windows
-set sessionoptions-=help
-
-" Don't save hidden and unloaded buffers in sessions.
-set sessionoptions-=buffers
-
-" Don't persist options and mappings because it can corrupt sessions.
-set sessionoptions-=options
-
-" Save without asking prompt
-let g:session_autosave = 'yes'
-let g:session_autosave_periodic = 5
-let g:session_autoload = 'no'
-let g:session_lock_enabled = 0
-
-""" Vimux
-let g:VimuxUseNearest = 1
-
-Shortcut Build c++ projects using makefile
-            \ map <Leader>sm :call VimuxRunCommand("make")<CR>
-Shortcut Run last vimux command
-            \ map <Leader>ss :VimuxRunLastCommand<CR>
-Shortcut Prompt command to run in vimux pane
-            \ map <Leader>sp :VimuxPromptCommand<CR>
-
-""" vim argumentative
-nmap [, <Plug>Argumentative_Prev
-nmap ], <Plug>Argumentative_Next
-xmap [, <Plug>Argumentative_XPrev
-xmap ], <Plug>Argumentative_XNext
-nmap <, <Plug>Argumentative_MoveLeft
-nmap >, <Plug>Argumentative_MoveRight
-xmap i, <Plug>Argumentative_InnerTextObject
-xmap a, <Plug>Argumentative_OuterTextObject
-omap i, <Plug>Argumentative_OpPendingInnerTextObject
-omap a, <Plug>Argumentative_OpPendingOuterTextObject
-
 """ rtags
 let g:rtagsAutoLaunchRdm = 1
-
-""" Deoplete
-" Use deoplete.
-let g:deoplete#enable_at_startup = 1
 
 augroup omnifuncs
     autocmd FileType java setlocal omnifunc=javacomplete#Complete
@@ -763,26 +699,6 @@ let g:chromatica#enable_at_startup=1
 Shortcut! " Open register window
 Shortcut! @ Open register window
 
-""" vim-shortcut
-Shortcut! m, Place the next available mark
-Shortcut! m. If no mark on line, place the next available mark. Otherwise, remove (first) existing mark.
-Shortcut! m- Delete all marks from the current line
-Shortcut! m<Space> Delete all marks from the current buffer
-Shortcut! ]` Jump to next mark
-Shortcut! [` Jump to prev mark
-Shortcut! ]' Jump to start of next line containing a mark
-Shortcut! [' Jump to start of prev line containing a mark
-Shortcut! `] Jump by alphabetical order to next mark
-Shortcut! `[ Jump by alphabetical order to prev mark
-Shortcut! '] Jump by alphabetical order to start of next line having a mark
-Shortcut! '[ Jump by alphabetical order to start of prev line having a mark
-Shortcut! m/ Open location list and display marks from current buffer
-Shortcut! ]- Jump to next line having a marker of the same type
-Shortcut! [- Jump to prev line having a marker of the same type
-Shortcut! ]= Jump to next line having a marker of any type
-Shortcut! [= Jump to prev line having a marker of any type
-Shortcut! m? Open location list and display markers from current buffer
-
 """ phpcd
 let g:phpcd_php_cli_executable = '/home/danyspin97/Projects/php-7.2.0alpha1/sapi/cli/php'
 
@@ -812,3 +728,6 @@ let g:UltiSnipsJumpBackwardTrigger = '<C-k>'
 
 " If you want :UltiSnipsEdit to split your window.
 let g:UltiSnipsEditSplit="vertical"
+
+""" Ctrlsf
+let g:ctrlsf_ackprg = 'rg'

@@ -226,11 +226,11 @@ workspace $workspace7 output $monitor1
 workspace $workspace8 output $monitor1
 
 # Program shortcut
-bindsym $mod+c exec --no-startup-id firefox-nightly
+bindsym $mod+c exec --no-startup-id firefox
 bindsym $mod+t exec --no-startup-id Telegram
 bindsym $mod+z exec --no-startup-id zathura
 bindsym $mod+p exec --no-startup-id termite -e pulsemixer
-bindsym $mod+m exec --no-startup-id thunderbird-nightly
+bindsym $mod+m exec --no-startup-id thunderbird
 bindsym $mod+comma exec --no-startup-id keepass
 bindsym $mod+o exec --no-startup-id spotify
 bindsym $mod+x exec --no-startup-id primusrun steam

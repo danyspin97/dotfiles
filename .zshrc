@@ -1,4 +1,9 @@
-# Created by newuser for 5.3.1
+# Check if zplug is installed
+if [[ ! -d ~/.zplug ]]; then
+  git clone https://github.com/zplug/zplug ~/.zplug
+  source ~/.zplug/init.zsh && zplug update --self
+fi
+
 source ~/.zplug/init.zsh
 
 zplug 'zplug/zplug', hook-build:'zplug --self-manage'
@@ -10,6 +15,17 @@ zplug "zdharma/fast-syntax-highlighting", defer:2
 zplug "subnixr/minimal", use:minimal.zsh
 
 zplug "zsh-users/zsh-autosuggestions"
+
+zplug "b4b4r07/enhancd", use:init.sh
+
+zplug "djui/alias-tips"
+
+zplug "Tarrasch/zsh-bd"
+
+zplug "zsh-users/zsh-completions", defer:2
+
+ENHANCD_FILTER=fzf
+export ENHANCD_FILTER
 
 # Install plugins if there are plugins that have not been installed
 if ! zplug check --verbose; then
@@ -99,6 +115,9 @@ export PATH=~/.bin/:~/.config/composer/vendor/bin:$PATH
 export GTK_IM_MODULE=ibus
 export XMODIFIERS=@im=ibus
 export QT_IM_MODULE=ibus
+
+### aliases
+alias ga='git add'
 
 if ls --color -d . >/dev/null 2>&1; then  # GNU ls
   export COLUMNS  # Remember columns for subprocesses.

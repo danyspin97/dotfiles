@@ -24,8 +24,7 @@ zplug "Tarrasch/zsh-bd"
 
 zplug "zsh-users/zsh-completions", defer:2
 
-ENHANCD_FILTER=fzf
-export ENHANCD_FILTER
+zstyle ':completion::complete:*' use-cache 1
 
 # Install plugins if there are plugins that have not been installed
 if ! zplug check --verbose; then
@@ -51,34 +50,8 @@ _fzf_compgen_path() {
     ag -g "" "$1"
 }
 
-FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow --glob "!.git/*"'
-FZF_DEFAULT_OPTS='--inline-info --preview "ccat -C always {}"
-  --color=bg+:#3c3836,bg:#1d2021,spinner:#fb4934,hl:#586e75
-  --color=fg:#ebdbb2,header:#928374,info:#689d6a,pointer:#fb4934
-  --color=marker:#fb4934,fg+:#ebdbb2,prompt:#fb4934,hl+:#fb4934'
-FZF_CTRL_T_COMMAND='rg --files --no-heading --fixed-strings --ignore-case --no-ignore --hidden --follow --glob "!.git/*" --glob "!docs/*" --glob "!build/*" --glob "!opt/*" --glob "!vendor/*" --threads 0'
-FZF_CTRL_R_OPTS="--preview-window up:1 --preview 'echo {}'"
-FZF_ALT_C_OPTS="--preview-window right:40% --preview 'ls {}'"
-FZF_CTRL_T_OPTS="--preview-window right:70% --preview '(termpix --width 100 {} || ccat -C always {}) 2> /dev/null'"
-FZF_TMUX=1
-FZF_TMUX_HEIGHT="70%"
-
-export FZF_DEFAULT_COMMAND FZF_DEFAULT_OPTS FZF_CTRL_T_COMMAND FZF_TMUX FZF_CTRL_R_OPTS FZF_ALT_C_OPTS
-
 setopt share_history
 setopt hist_ignore_dups
-
-SAVEHIST=100000
-HISTFILE=~/.zsh_history
-HISTSIZE=100000000
-export SAVEHIST HISTFILE HISTSIZE
-
-# Reduce delay between esc and mode change
-export KEYTIMEOUT=1
-
-# Change default C and C++ compiler
-export CC=/usr/bin/clang
-export CXX=/usr/bin/clang++
 
 vi-append-x-selection () { RBUFFER=$(xsel -o -p </dev/null)$RBUFFER; }
 zle -N vi-append-x-selection
@@ -105,19 +78,12 @@ bindkey '^w' backward-kill-word
 bindkey '^ ' autosuggest-accept
 bindkey '^o' autosuggest-execute
 
-VISUAL=nvim
-EDITOR=nvim
-SUDO_EDITOR=nvim
-export VISUAL EDITOR SUDO_EDITOR
-
-export PATH=~/.bin/:~/.config/composer/vendor/bin:$PATH
-
-export GTK_IM_MODULE=ibus
-export XMODIFIERS=@im=ibus
-export QT_IM_MODULE=ibus
-
 ### aliases
 alias ga='git add'
+alias v='NVIM_LISTEN_ADDRESS=/tmp/nvimsocket nvr -s'
+alias vs='NVIM_LISTEN_ADDRESS=/tmp/nvimsocket nvr -s -o'
+alias vv='NVIM_LISTEN_ADDRESS=/tmp/nvimsocket nvr -s -O'
+alias vt='NVIM_LISTEN_ADDRESS=/tmp/nvimsocket nvr -s -cc "tabnew"'
 
 if ls --color -d . >/dev/null 2>&1; then  # GNU ls
   export COLUMNS  # Remember columns for subprocesses.

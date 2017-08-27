@@ -22,10 +22,10 @@ set splitbelow          " Horizontal split below current.
 set splitright          " Vertical split to right of current.
 
 if !&scrolloff
-    set scrolloff=7       " Show next 3 lines while scrolling.
+    set scrolloff=7       " Show next 7 lines while scrolling.
 endif
 if !&sidescrolloff
-    set sidescrolloff=10   " Show next 5 columns while side-scrolling.
+    set sidescrolloff=10   " Show next 10 columns while side-scrolling.
 endif
 set display+=lastline
 set nostartofline       " Do not jump to first character with page commands.
@@ -92,6 +92,8 @@ let php_htmlInStrings = 1
 
 " Remap comma to double dots
 map , :
+
+nnoremap <Leader>w :SudoWrite<CR>
 
 " Reload config on savings
 autocmd! bufwritepost ~/.config/nvim/init.vim source ~/.config/nvim/init.vim
@@ -169,13 +171,33 @@ noremap <C-A>n :tabnext<CR>
 inoremap <C-A>n <ESC>:tabnext<CR>
 tnoremap <C-A>n <C-\><C-N>:tabnext<CR>
 
+" Open a new window in a vertical split
+noremap <C-A>\| :vnew<CR>
+inoremap <C-A>\| :vnew<CR>
+tnoremap <C-A>\| <C-\><C-N>:vnew<CR>
+
+" Open a new terminal in a vertical split
+noremap <C-A>\|t :vnew<CR>:term<CR>
+inoremap <C-A>\|t :vnew<CR>:term<CR>
+tnoremap <C-A>\|t <C-\><C-N>:vnew<CR>:term<CR>
+
+" Open a new window in a horizontal split
+noremap <C-A>- :new<CR>
+inoremap <C-A>- :new<CR>
+tnoremap <C-A>- <C-\><C-N>:new<CR>
+
+" Open a new window in a horizontal split
+noremap <C-A>-t :new<CR>:term<CR>
+inoremap <C-A>-t :new<CR>:term<CR>
+tnoremap <C-A>-t <C-\><C-N>:new<CR>:term<CR>
+
 " Move in wrapped lines instead of jumping over them
 nnoremap j gj
 nnoremap k gk
 
-" Edit files with permission even after opened them
-" (http://nvie.com/posts/how-i-boosted-my-vim/)
-cmap w!! w !sudo tee % >/dev/null
+" Close all open windows
+noremap <C-q><C-q> :confirm qall<CR>
+
 
 " Current line highlithing
 hi CursorLineNR cterm=bold
@@ -203,8 +225,14 @@ function! s:Repl()
 endfunction
 vmap <silent> <expr> p <sid>Repl()
 
+au BufEnter * set noro
+
 " Send lines in range to hastebin.com and copy url to clipboard
 command! -range -bar Haste <line1>,<line2>w !haste | xsel -b
+
+if has('nvim')
+  let $VISUAL = 'nvr -cc split --remote-wait'
+endif
 
 " Neovim Terminal Colors
 let g:terminal_color_0  = '#1d2021'
@@ -224,17 +252,12 @@ let g:terminal_color_13 = '#d3869b'
 let g:terminal_color_14 = '#8ec07c'
 let g:terminal_color_15 = '#ebdbb2'
 
-if empty(glob('~/.vim/autoload/plug.vim'))
+" Donwload vim-plug if missing
+if empty(glob('~/.config/nvim/autoload/plug.vim'))
   silent !curl -fLo ~/.config/nvim/autoload/plug.vim --create-dirs
     \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
   autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
 endif
-
-function! BuildYCM(info)
-    if a:info.status == 'installed' || a:info.force
-        !./install.py --clang-completer --system-libclang --system-boost
-    endif
-endfunction
 
 function! BuildComposer(info)
     if a:info.status != 'unchanged' || a:info.force
@@ -246,156 +269,59 @@ function! BuildComposer(info)
     endif
 endfunction
 
+""" vim-plug shortcuts
+map <Leader>pi :PlugInstall<CR>
+map <Leader>pu :PlugUpdate<CR>
+map <Leader>pp :PlugUpgrade<CR>
+map <Leader>pc :PlugClean<CR>
+
 call plug#begin()
 
-" UI plugins
+" Undo changes
 Plug 'mbbill/undotree'
+" Open undotree window
+nnoremap <F5> :UndotreeToggle<cr>
+" Focus undotree when showing it
+let g:undotree_SetFocusWhenToggle = 1
+" Add persistent undo history between files
+if has('persistent_undo')
+    set undofile
+endif
+
+" Strip whitespaces from files
 Plug 'ntpeters/vim-better-whitespace'
+" Whitespaces color
+highlight ExtraWhitespace ctermbg=darkred guibg=darkred
 
-" Status line
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
-
-" Appereance
+" Theme
 Plug 'morhetz/gruvbox'
-Plug 'freeo/vim-kalisi'
-Plug 'ryanoasis/vim-devicons'
-Plug 'lilydjwg/colorizer'
-
-
-" Information
-Plug 'tpope/vim-characterize'
-
-" File management
-Plug 'scrooloose/nerdtree'
-Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
-Plug 'junegunn/fzf.vim'
-Plug 'pbrisbin/vim-mkdir'
-
-" HTML syntax
-Plug 'tpope/vim-eunuch'
-
-" Window management
-Plug 'dietsche/vim-lastplace'
-Plug 'vim-scripts/quit-another-window'
-Plug 'wesQ3/vim-windowswap'
-
-" Search
-Plug 'nelstrom/vim-visual-star-search'
-Plug 'dyng/ctrlsf.vim'
-
-" Version control
-Plug 'tpope/vim-fugitive'
-
-" Vim motion and bindings
-Plug 'ervandew/supertab'
-Plug 'tpope/vim-repeat'
-Plug 'tpope/vim-surround'
-Plug 'scrooloose/nerdcommenter'
-Plug 'terryma/vim-smooth-scroll'
-Plug 'reedes/vim-wheel'
-Plug 'powerman/vim-plugin-viewdoc'
-Plug 'bkad/CamelCaseMotion'
-Plug 'matze/vim-move'
-Plug 'sunaku/vim-shortcut'
-
-" Snippets
-Plug 'SirVer/ultisnips'
-Plug 'honza/vim-snippets'
-
-" Cliboard and register management
-Plug 'vim-scripts/YankRing.vim'
-Plug 'junegunn/vim-peekaboo'
-
-" Indenting
-Plug 'Yggdroot/indentLine'
-Plug 'editorconfig/editorconfig-vim'
-Plug 'sbdchd/neoformat'
-Plug 'tpope/vim-endwise'
-
-" Ctags and language plugins
-Plug 'Valloric/YouCompleteMe', { 'do': function('BuildYCM') }
-Plug 'jiangmiao/auto-pairs'
-Plug 'ludovicchabant/vim-gutentags'
-Plug 'majutsushi/tagbar'
-Plug 'mattn/emmet-vim'
-Plug 'sheerun/vim-polyglot'
-Plug 'artur-shaik/vim-javacomplete2'
-Plug 'arakashic/chromatica.nvim'
-Plug 'lvht/phpcd.vim', { 'for': 'php', 'do': 'composer install' }
-
-" Refactoring
-Plug 'brooth/far.vim'
-
-" Debugging
-Plug 'joonty/vdebug'
-Plug 'critiqjo/lldb.nvim'
-
-" Linting
-Plug 'w0rp/ale'
-
-" Writer plugins
-Plug 'reedes/vim-pencil'
-Plug 'rhysd/vim-grammarous'
-Plug 'euclio/vim-markdown-composer', { 'do': function('BuildComposer') }
-Plug 'junegunn/goyo.vim'
-Plug 'junegunn/limelight.vim'
-Plug 'Rykka/riv.vim'
-
-call plug#end()
-
-" Remove 'Shortcut: not an editor command' error
-runtime plugin/shortcut.vim
-
-syntax on
-
-augroup OnSave
-    autocmd!
-    " Autoformat code using neoformat
-    autocmd BufWritePre * Neoformat
-    " Stripe whitespaces
-    autocmd BufWritePre * :StripWhitespace
-augroup END
-
-Shortcut close all window
-                \ noremap <C-q><C-q> :confirm qall<CR>
-
-""" vim-plug shortcts
-Shortcut install plugins
-            \ map <Leader>pi :PlugInstall<CR>
-Shortcut update plugins
-            \ map <Leader>pu :PlugUpdate<CR>
-Shortcut update vim-plug
-            \ map <Leader>pp :PlugUpgrade<CR>
-
-" Set theme
-set background=dark
-
-""" Gruvbox config
 let g:gruvbox_contrast_dark = 'hard'
 let g:gruvbox_italic=1
-colorscheme gruvbox
-set termguicolors
 
-""" NerdTree config
+" Another theme
+"Plug 'freeo/vim-kalisi'
 
+" Add icons
+Plug 'ryanoasis/vim-devicons'
+
+" Hightlight html color tags
+Plug 'lilydjwg/colorizer'
+
+" File explorer
+Plug 'scrooloose/nerdtree'
 " Close NerdTree if it is the onyl windows open
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
-
 " Open NerdTree with ctrl+n
-Shortcut open nerdtree window
-            \ map <leader>n :NERDTreeToggle<CR>
-
+map <Leader>n :NERDTreeToggle<CR>
+" and toggle with double n
+map <Leader>nn :NERDTreeToggle<CR>
 " Show hidden file
 let NERDTreeShowHidden=1
-
 " Ignore file
 let NERDTreeIgnore=['\.DS_Store', '\~$', '\.swp']
-
 " Arrows
 let g:NERDTreeDirArrowExpandable = ''
 let g:NERDTreeDirArrowCollapsible = ''
-
 " Symbols
 let g:NERDTreeIndicatorMapCustom = {
             \ "Modified"  : "✹",
@@ -409,76 +335,12 @@ let g:NERDTreeIndicatorMapCustom = {
             \ "Unknown"   : "?"
             \ }
 
-"""" indentLine config
-" Set color for indenting character
-let g:indentLine_color_term = 241
-
-" Set new indenting char
-let g:indentLine_char = '┆'
-
-" Disable concealing
-let g:indentLine_concealcursor = ''
-
-let g:indentLine_faster=1
-
-""" airline config
-let g:airline_powerline_fonts = 1
-
-" Set kalisi theme
-let g:airline_theme='gruvbox'
-
-if !exists('g:airline_symbols')
-    let g:airline_symbols = {}
-endif
-
-" unicode symbols
-let g:airline_left_sep = '»'
-let g:airline_left_sep = '▶'
-let g:airline_right_sep = '«'
-let g:airline_right_sep = '◀'
-let g:airline_symbols.linenr = '␊'
-let g:airline_symbols.linenr = '␤'
-let g:airline_symbols.linenr = '¶'
-let g:airline_symbols.branch = '⎇'
-let g:airline_symbols.paste = 'ρ'
-let g:airline_symbols.paste = 'Þ'
-let g:airline_symbols.paste = '∥'
-let g:airline_symbols.whitespace = 'Ξ'
-
-" airline symbols
-let g:airline_left_sep = ''
-let g:airline_left_alt_sep = ''
-let g:airline_right_sep = ''
-let g:airline_right_alt_sep = ''
-let g:airline_symbols.branch = ''
-let g:airline_symbols.readonly = ''
-let g:airline_symbols.linenr = ''
-
-" testing rounded separators (extra-powerline-symbols):
-let g:airline_right_sep = "\uE0B6"
-
-" Set the CN (column number) symbol:
-let g:airline_section_z = airline#section#create(["\uE0A1" . '%{line(".")}' . "\uE0A3" . '%{col(".")}'])
-
-let g:airline#extensions#tabline#enabled = 1
-
-let g:airline#extensions#tabline#left_sep =  ''
-let g:airline#extensions#tabline#left_alt_sep =  ''
-
-let b:usemarks         = 1
-let b:cb_jump_on_close = 1
-
-""" FZF config
+" Fuzzy finder
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+Plug 'junegunn/fzf.vim'
 " In Neovim, you can set up fzf window using a Vim command
 let g:fzf_layout = { 'window': 'enew' }
-
-" This is the default extra key bindings
-let g:fzf_action = {
-            \ 'ctrl-t': 'tab split',
-            \ 'ctrl-x': 'split',
-            \ 'ctrl-v': 'vsplit' }
-
-" Customize fzf colors to match your color scheme
+" Fzz colors
 let g:fzf_colors =
             \ { 'fg':      ['fg', 'Normal'],
             \ 'bg':      ['bg', 'Normal'],
@@ -492,106 +354,98 @@ let g:fzf_colors =
             \ 'marker':  ['fg', 'Keyword'],
             \ 'spinner': ['fg', 'Label'],
             \ 'header':  ['fg', 'Comment'] }
-
-" [Buffers] Jump to the existing window if possible
+" Jump to the existing window if possible
 let g:fzf_buffers_jump = 1
-
 " Call fzf
-Shortcut search files
-            \ noremap <Leader>z :Files<CR>
-Shortcut search tags
-            \ noremap <Leader>t :BTags<CR>
-Shortcut search lines
-            \ noremap <Leader>l :Lines<CR>
-Shortcut search buffers
-            \ noremap <Leader>b :Buffers<CR>
-Shortcut search history
-            \ noremap <Leader>h :History<CR>
-Shortcut search word under cursor
-            \ noremap <Leader>d :exe ':Look ' . expand('<cword>')<CR>
-
+noremap <Leader>z :Files<CR>
+noremap <Leader>t :BTags<CR>
+noremap <Leader>l :Lines<CR>
+noremap <Leader>b :Buffers<CR>
+noremap <Leader>h :History<CR>
+noremap <Leader>d :exe ':Look ' . expand('<cword>')<CR>
 " Find command using fzf and ripgrep
 command! -bang -nargs=* Look
   \ call fzf#vim#grep('rg --column --line-number --no-heading --fixed-strings --ignore-case --no-ignore --hidden --follow --glob "!.git/*" --glob "!docs/*" --glob "!build/*" --glob "!opt/*" --glob "!vendor/*" --color "always" --threads 0 '
   \   .shellescape(<q-args>), 1,
   \   fzf#vim#with_preview('up:60%'),
   \   <bang>0)
+map <Leader>a :Look<CR>
 
-Shortcut search word in files
-            \ map <Leader>a :Look<CR>
+" Automaticcaly create dir when saving files
+Plug 'pbrisbin/vim-mkdir'
 
-""" Tagbar
-Shortcut open tagbar window
-            \ nmap <F8> :TagbarOpen fj<CR>
+" HTML syntax
+Plug 'tpope/vim-eunuch'
 
-" Focus tag bar when showing
-let g:tagbar_autofocus = 0
+" Open the file where it was closed
+Plug 'dietsche/vim-lastplace'
 
-""" vim-smooth-scroll config
+" Quick windows close
+Plug 'vim-scripts/quit-another-window'
+nnoremap <Leader>qh :Qh <CR>
+nnoremap <Leader>qj :Qj <CR>
+nnoremap <Leader>qk :Qk <CR>
+nnoremap <Leader>ql :Ql <CR>
+
+" Swap windows
+Plug 'wesQ3/vim-windowswap'
+let g:windowswap_map_keys = 0 "prevent default bindings
+nnoremap <silent> <leader>yy :call WindowSwap#EasyWindowSwap()<CR>
+
+" Search the selected text using *
+Plug 'nelstrom/vim-visual-star-search'
+
+" Search the text between projects files
+Plug 'dyng/ctrlsf.vim'
+" Use ripgrep for searching
+let g:ctrlsf_ackprg = 'rg'
+
+" Version control
+Plug 'tpope/vim-fugitive'
+
+" Integration with github
+Plug 'roxma/ncm-github'
+
+" Autocompletition
+Plug 'roxma/nvim-completion-manager'
+set shortmess+=c
+inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+
+" Handle python dependencies
+Plug 'roxma/python-support.nvim'
+" for python completions
+let g:python_support_python3_requirements = add(get(g:,'python_support_python3_requirements',[]),'jedi')
+" language specific completions on markdown file
+let g:python_support_python3_requirements = add(get(g:,'python_support_python3_requirements',[]),'mistune')
+
+" utils, optional
+let g:python_support_python3_requirements = add(get(g:,'python_support_python3_requirements',[]),'psutil')
+let g:python_support_python3_requirements = add(get(g:,'python_support_python3_requirements',[]),'setproctitle')
+
+" Enhance repeat key
+Plug 'tpope/vim-repeat'
+
+Plug 'tpope/vim-surround'
+
+" Comment lines
+Plug 'scrooloose/nerdcommenter'
+
+" Better scrolling
+Plug 'terryma/vim-smooth-scroll'
 noremap <silent> <c-u> :call smooth_scroll#up(&scroll, 5, 2)<CR>
 noremap <silent> <c-d> :call smooth_scroll#down(&scroll, 5, 2)<CR>
 noremap <silent> <c-b> :call smooth_scroll#up(&scroll*2, 5, 4)<CR>
 noremap <silent> <c-f> :call smooth_scroll#down(&scroll*2, 5, 4)<CR>
 
-""" Neoformat config
-" Add a mapping
-Shortcut format current file
-            \ nmap <Leader>R :Neoformat<CR>
-
-" Enable alignment
-let g:neoformat_basic_format_align = 0
-
-" Enable tab to space conversion
-let g:neoformat_basic_format_retab = 0
-
-let g:neoformat_enabled_sql = []
-
-""" vim-wheel config
+Plug 'reedes/vim-wheel'
+" Remap keys
 let g:wheel#map#up   = '<m-y>'
 let g:wheel#map#down = '<m-e>'
 
-""" Undotree config
-" Keymap for undotree gui
-"Shortcut toggle undotree window
-            "\ nnoremap <F5> :UndotreeToggle<cr>
-
-" Focus undotree when showing it
-let g:undotree_SetFocusWhenToggle = 1
-
-" Add persistent undo history between files
-if has('persistent_undo')
-    set undofile
-endif
-
-""" YangRink config
-nnoremap <silent> <F6> :YRShow<CR>
-
-" Increase window height
-let g:yankring_window_height = 12
-
-" Change keys for replacing
-let g:yankring_replace_n_pkey = '<C-p>'
-let g:yankring_replace_n_nkey = '<C-n>'
-
-""" Quick windows close
-Shortcut close left window
-            \ nnoremap <Leader>qh :Qh <CR>
-Shortcut close down window
-            \ nnoremap <Leader>qj :Qj <CR>
-Shortcut close upper window
-            \ nnoremap <Leader>qk :Qk <CR>
-Shortcut close right window
-            \ nnoremap <Leader>ql :Ql <CR>
-
-""" Guten tag config
-let g:gutentag_enabled = 1
-let g:gutentags_cache_dir = '~/.cache/tags'
-
-""" vim-better-whitespace config
-" Whitespaces color
-highlight ExtraWhitespace ctermbg=darkred guibg=darkred
-
-""" CamelCaseMotion config
+" Move between text objects using CamelCase
+Plug 'bkad/CamelCaseMotion'
+" Map keys
 map <silent> w <Plug>CamelCaseMotion_w
 map <silent> b <Plug>CamelCaseMotion_b
 map <silent> e <Plug>CamelCaseMotion_e
@@ -600,6 +454,159 @@ sunmap w
 sunmap b
 sunmap e
 sunmap ge
+
+Plug 'matze/vim-move'
+
+" Snippets
+Plug 'SirVer/ultisnips'
+" Change keymaps
+let g:UltiSnipsExpandTrigger = '<C-j>'
+let g:UltiSnipsJumpForwardTrigger = '<C-j>'
+let g:UltiSnipsJumpBackwardTrigger = '<C-k>'
+" Split window as default action
+let g:UltiSnipsEditSplit="vertical"
+
+" Snippets for ultisnips
+Plug 'honza/vim-snippets'
+
+" Clipboard management
+Plug 'vim-scripts/YankRing.vim'
+" Show yankes
+nnoremap <silent> <F6> :YRShow<CR>
+" Increase window height
+let g:yankring_window_height = 12
+" Change keys for replacing
+let g:yankring_replace_n_pkey = '<C-P>'
+let g:yankring_replace_n_nkey = '<C-N>'
+
+" Intend guides
+Plug 'Yggdroot/indentLine'
+" Set color for indenting character
+let g:indentLine_color_term = 241
+" Set new indenting char
+let g:indentLine_char = '┆'
+" Disable concealing
+let g:indentLine_concealcursor = ''
+" Set faster mode
+let g:indentLine_faster=1
+
+" Use editor config settings per project
+Plug 'editorconfig/editorconfig-vim'
+
+" Format using external tools
+Plug 'sbdchd/neoformat'
+" Disable alignment
+let g:neoformat_basic_format_align = 0
+" Disable tab to space conversion
+let g:neoformat_basic_format_retab = 0
+" Disable sql formatting
+let g:neoformat_enabled_sql = []
+
+" Automatically close Conditional statement in shell scripting
+Plug 'tpope/vim-endwise'
+
+" Enhance brackets and paranthesis
+Plug 'jiangmiao/auto-pairs'
+
+" Generate tags for code
+Plug 'ludovicchabant/vim-gutentags'
+" Enable
+let g:gutentag_enabled = 1
+" Set cache dir
+let g:gutentags_cache_dir = '~/.cache/tags'
+
+" Show code tags
+Plug 'majutsushi/tagbar'
+nmap <F8> :TagbarOpen fj<CR>
+" Focus tag bar when showing
+let g:tagbar_autofocus = 0
+
+" HTML shortcuts
+Plug 'mattn/emmet-vim'
+
+" Language pack
+Plug 'sheerun/vim-polyglot'
+
+" Java autocompletion
+Plug 'artur-shaik/vim-javacomplete2'
+augroup omnifuncs
+    autocmd FileType java setlocal omnifunc=javacomplete#Complete
+augroup END
+
+" Better syntax hightlighting for c++ code
+Plug 'arakashic/chromatica.nvim'
+
+" Php completion
+Plug 'lvht/phpcd.vim', { 'for': 'php', 'do': 'composer install' }
+
+" Asynchronous build and make
+Plug 'tpope/vim-dispatch'
+
+" Golang plugin
+Plug 'fatih/vim-go'
+
+" Refactoring
+Plug 'brooth/far.vim'
+
+" Debugging for php
+"Plug 'joonty/vdebug'
+" Debugging using clang
+"Plug 'critiqjo/lldb.nvim'
+
+" Linting
+Plug 'w0rp/ale'
+" Disable some linters
+let g:ale_linters = {
+            \   'cpp': [],
+            \   'c': []
+            \}
+" Disable automatic lining on writing
+let g:ale_lint_on_text_changed = 'never'
+let g:ale_set_loclist = 0
+let g:ale_set_quickfix = 1
+let g:ale_open_list = 1
+let g:ale_keep_list_window_open = 0
+" Close vim if the last window open is quickfix
+aug QuickFixClose
+    au!
+    au WinEnter * if winnr('$') == 1 && getbufvar(winbufnr(winnr()), "&buftype") == "quickfix"|q|endif
+aug END
+
+" Writer plugins
+Plug 'reedes/vim-pencil'
+augroup Pencil
+    autocmd!
+    autocmd FileType markdown,mkd call pencil#init()
+                \ | call EnterWriterMode()
+augroup END
+
+" Markdown preview in firefox
+Plug 'euclio/vim-markdown-composer', { 'do': function('BuildComposer') }
+
+" Distraction free writing
+Plug 'junegunn/goyo.vim'
+
+" Enhance current line, hide useless information in other lines
+Plug 'junegunn/limelight.vim'
+
+call plug#end()
+
+colorscheme gruvbox
+set background=dark
+set termguicolors
+
+" Path to python interpreter for neovim
+let g:python3_host_prog  = '/usr/bin/python3'
+" Skip the check of neovim module
+let g:python3_host_skip_check = 1
+
+augroup OnSave
+    autocmd!
+    " Autoformat code using neoformat
+    autocmd BufWritePre * Neoformat
+    " Stripe whitespaces
+    autocmd BufWritePre * :StripWhitespace
+augroup END
 
 function! EnterWriterMode()
     Limelight
@@ -610,124 +617,3 @@ function! EnterWriterMode()
 endfunction
 
 autocmd! User GoyoLeave Limelight!
-
-""" Vim pencil config
-augroup Pencil
-    autocmd!
-    autocmd FileType markdown,mkd call pencil#init()
-                \ | call EnterWriterMode()
-augroup END
-
-""" Grammarous config
-" Chack grammar only for comments
-let g:grammarous#default_comments_only_filetypes = {
-            \ '*' : 1, 'help' : 0, 'markdown' : 0,
-            \ }
-" Use system laguage tool
-let g:grammarous#languagetool_cmd = 'languagetool'
-
-Shortcut Check grammar errors
-            \ nmap <Leader>gg :GrammarousCheck<CR>
-Shortcut Move to the next grammatic error
-            \ nmap <Leader>go <Plug>(grammarous-move-to-next-error)
-Shortcut Fix current grammatic error
-            \ nmap <Leader>gf <Plug>(grammarous-fixit)
-Shortcut Remove current grammatic error
-            \ nmap <Leader>gr <Plug>(grammarous-remove-error)
-
-""" vim-shortcut config
-Shortcut show shortcut menu and run chosen shortcut
-            \ noremap <silent> <Leader><Leader> :Shortcuts<Return>
-
-noremap <silent> <Leader> :Shortcuts<Return>
-
-""" Ale config
-" Disable some linters
-let g:ale_linters = {
-            \   'cpp': [],
-            \   'c': []
-            \}
-
-" Disable automatic lining on writing
-let g:ale_lint_on_text_changed = 'never'
-let g:ale_set_loclist = 0
-let g:ale_set_quickfix = 1
-let g:ale_open_list = 1
-let g:ale_keep_list_window_open = 0
-
-aug QuickFixClose
-    au!
-    au WinEnter * if winnr('$') == 1 && getbufvar(winbufnr(winnr()), "&buftype") == "quickfix"|q|endif
-aug END
-
-""" rtags
-let g:rtagsAutoLaunchRdm = 1
-
-augroup omnifuncs
-    autocmd FileType java setlocal omnifunc=javacomplete#Complete
-augroup END
-
-""" YouCompleteMe config
-let g:ycm_path_to_python_interpreter = '/usr/bin/python'
-let g:ycm_global_ycm_extra_conf='~/.config/nvim/.ycm_extra_conf.py'
-let g:ycm_min_num_of_chars_for_completion = 1
-let g:ycm_complete_in_comments = 1
-let g:ycm_collect_identifiers_from_comments_and_strings = 1
-let g:ycm_seed_identifiers_with_syntax = 1
-let g:ycm_confirm_extra_conf = 0
-let g:ycm_goto_buffer_command = 'vertical-split'
-let g:ycm_python_binary_path = '/usr/bin/python3'
-let g:ycm_add_preview_to_completeopt = 1
-let g:ycm_autoclose_preview_window_after_insertion = 1
-let g:ycm_filetype_blacklist = {
-            \ 'tagbar' : 1,
-            \ 'qf' : 1,
-            \ 'notes' : 1,
-            \ 'markdown' : 1,
-            \ 'unite' : 1,
-            \ 'text' : 1,
-            \ 'vimwiki' : 1,
-            \ 'pandoc' : 1,
-            \ 'infolog' : 1,
-            \ 'mail' : 1,
-\}
-
-""" Chromatica
-let g:chromatica#enable_at_startup=1
-
-""" vim-peekaboo
-Shortcut! " Open register window
-Shortcut! @ Open register window
-
-""" phpcd
-let g:phpcd_php_cli_executable = '/home/danyspin97/Projects/php-7.2.0alpha1/sapi/cli/php'
-
-""" vdebug
- let g:vdebug_options= {
-    \    "port" : 9000,
-    \    "server" : '',
-    \    "timeout" : 20,
-    \    "on_close" : 'detach',
-    \    "break_on_open" : 1,
-    \    "ide_key" : 'xdebug',
-    \    "path_maps" : {},
-    \    "debug_window_level" : 0,
-    \    "debug_file_level" : 0,
-    \    "debug_file" : "",
-    \    "watch_window_style" : 'expanded',
-    \    "marker_default" : '⬦',
-    \    "marker_closed_tree" : '▸',
-    \    "marker_open_tree" : '▾'
-\}
-
-""" Ultisnips
-" UltiSnips triggering
-let g:UltiSnipsExpandTrigger = '<C-j>'
-let g:UltiSnipsJumpForwardTrigger = '<C-j>'
-let g:UltiSnipsJumpBackwardTrigger = '<C-k>'
-
-" If you want :UltiSnipsEdit to split your window.
-let g:UltiSnipsEditSplit="vertical"
-
-""" Ctrlsf
-let g:ctrlsf_ackprg = 'rg'

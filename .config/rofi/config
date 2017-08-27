@@ -5,12 +5,16 @@ rofi.lines: 15
 ! Border width
 rofi.width: 200
 rofi.bw: 4
-rofi.terminal: st
+rofi.terminal: alacritty
 rofi.fullscreen: true
 rofi.eh: 2
 rofi.padding: 200
 rofi.opacity: 85
-rofi.matching: regex
+rofi.matching: fuzzy
 rofi.hide-scrollbar: true
 rofi.separator-style: solid
 rofi.fake-transparency: true
+rofi.auto-select: true
+rofi.case-sensitive: false
+
+rofi.threads: 0

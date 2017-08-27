@@ -1,0 +1,9 @@
+#!/bin/sh
+
+setxkbmap -layout it
+compton -b
+safeeyes &
+#greenclip daemon &
+redshift &
+pulseaudio --start
+i3

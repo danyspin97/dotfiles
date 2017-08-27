@@ -5,22 +5,22 @@ lock() {
 
 case "$1" in
     lock)
-        i3lock-fancy
+        i3lock
         ;;
     logout)
         i3-msg exit
         ;;
     suspend)
-        systemctl suspend && i3lock-fancy
+        pm-suspend && i3lock
         ;;
     hibernate)
         systemctl hibernate && i3lock-fancy
         ;;
     reboot)
-        systemctl reboot
+        openrc-shutdown -r
         ;;
     shutdown)
-        systemctl poweroff
+        sudo openrc-shudtdown -p
         ;;
     *)
         echo "Usage: $0 {lock|logout|suspend|hibernate|reboot|shutdown}"

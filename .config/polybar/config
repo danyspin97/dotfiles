@@ -9,15 +9,15 @@
 
 [colors]
 background = #282828
-background-alt = #444
-foreground = #ebdbb2
-foreground-alt = #555
+background-alt = #7c6f64
+foreground = #fbf1c7
+foreground-alt = #bdae93
 primary = #ffb52a
 secondary = #e60053
 alert = #bd2c40
 
 [bar/primary]
-monitor = ${env:POLYBAR_MONITOR:eDP-1}
+monitor = ${env:POLYBAR_MONITOR}
 width = 100%
 height = 30
 ;offset-x = 1%
@@ -26,7 +26,7 @@ radius = 6.0
 fixed-center = false
 
 background = #282828
-foreground = #ebdbb2
+foreground = #fbf1c7
 
 line-size = 3
 line-color = #a89984
@@ -37,19 +37,19 @@ border-color = #a89984
 padding-left = 0
 padding-right = 0
 
-module-margin-left = 2
-module-margin-right = 2
+module-margin-left = 1
+module-margin-right = 1
 
-font-0 = "Iosevka Nerd Font:style=Regular:size=12;2"
+font-0 = "Iosevka Nerd Font:style=Regular:size=11;0"
 font-1 = unifont:fontformat=truetype:size=8:antialias=false;0
 font-2 = "Input:style=Regular:size=12;2"
 
-modules-left = i3
-modules-center = xwindow
-modules-right = filesystem xbacklight xkeyboard memory cpu wlan battery temperature date
+modules-left = i3 xwindow
+modules-center =
+modules-right = filesystem xkeyboard backlight-acpi memory cpu wlan eth battery battery-level temperature date
 
 tray-position = right
-tray-padding = 2
+tray-padding = 0
 ;tray-transparent = true
 ;tray-background = #0063ff
 
@@ -65,9 +65,9 @@ type = internal/xwindow
 
 format-prefix= " "
 format-underline = #928374
-format-padding = 2
+format-padding = 0
 
-label = %title:0:30:...%
+label = %title:0:45:...%
 
 [module/xkeyboard]
 type = internal/xkeyboard
@@ -76,8 +76,8 @@ blacklist-0 = scroll lock
 format = <label-indicator>
 format-spacing = 0
 
-label-indicator-padding = 2
-label-indicator-margin = 1
+label-indicator-padding = 0
+label-indicator-margin = 0
 label-indicator-underline = #b8bb26
 
 [module/filesystem]
@@ -85,6 +85,7 @@ type = internal/fs
 interval = 25
 
 mount-0 = /
+mount-1 = /home
 
 label-mounted = %{F#83a598}%mountpoint%%{F-}: %percentage_used%%
 label-mounted-underline = #83a598
@@ -100,7 +101,7 @@ wrapping-scroll = false
 pin-workspaces = false
 
 label-mode = %mode%
-label-mode-padding = 2
+label-mode-padding = 0
 label-mode-foreground = #000
 label-mode-background = ${colors.primary}
 
@@ -113,7 +114,7 @@ label-focused-padding = 2
 ; unfocused = Inactive workspace on any monitor
 label-unfocused = %{F#a89984}%icon%%{F-} %name%
 label-unfocused-underline = #a89984
-label-unfocused-padding = 1
+label-unfocused-padding = 0
 
 ; visible = Active workspace on unfocused monitor
 label-visible = %icon% %name%
@@ -125,7 +126,7 @@ label-visible-padding = ${self.label-focused-padding}
 label-urgent = %{F#cc241d}%icon%%{F-} %name%
 label-urgent-background = ${bar/primary.background}
 label-urgent-underline = #cc241d
-label-urgent-padding = 3
+label-urgent-padding = 1
 
 ; ws-icon-[0-9]+ = label;icon
 ; ; NOTE: The label needs to match the name of the i3 workspace
@@ -208,6 +209,13 @@ inherit = module/xbacklight
 type = internal/backlight
 card = intel_backlight
 
+format = <label>
+format-prefix = " "
+format-prefix-foreground = ${self.format-underline}
+format-underline = #9f78e1
+
+label = %percentage%%
+
 [module/cpu]
 type = internal/cpu
 interval = 2
@@ -221,7 +229,7 @@ type = internal/memory
 interval = 2
 format-prefix = " "
 format-prefix-foreground = ${self.format-underline}
-format-underline = #ebdbb2
+format-underline = #fbf1c7
 label = %percentage_used%%
 
 [module/wlan]
@@ -233,7 +241,7 @@ format-connected-prefix = " "
 format-connected-prefix-foreground = ${self.format-connected-underline}
 format-connected = <label-connected>
 format-connected-underline = #d3869b
-label-connected = %signal%% %{F#d3869b}%{F-} %upspeed% %{F#d3869b}%{F-} %downspeed%
+label-connected = %essid% %{F#d3869b}%{F-} %signal%% %{F#d3869b}%{F-} %upspeed% %{F#d3869b}%{F-} %downspeed%
 
 ;format-disconnected =
 format-disconnected = <label-disconnected>
@@ -250,19 +258,19 @@ ramp-signal-foreground = ${colors.foreground-alt}
 
 [module/eth]
 type = internal/network
-interface = enp2s0
+interface = eno1
 interval = 3.0
 
 format-connected-underline = #55aa55
-format-connected-prefix = " "
-format-connected-prefix-foreground = ${colors.foreground-alt}
-label-connected = %local_ip%
+format-connected-prefix = " "
+format-connected-prefix-foreground = ${self.format-connected-underline}
+label-connected = %ifname% %{F#55aa55}%{F-} %upspeed% %{F#55aa55}%{F-} %downspeed%
 
-format-disconnected =
-;format-disconnected = <label-disconnected>
-;format-disconnected-underline = ${self.format-connected-underline}
-;label-disconnected = %ifname% disconnected
-;label-disconnected-foreground = ${colors.foreground-alt}
+format-disconnected-prefix = " "
+format-disconnected-prefix-foreground = ${self.format-connected-underline}
+format-disconnected-underline = ${self.format-connected-underline}
+label-disconnected = %ifname%: disconnected
+label-disconnected-foreground = ${colors.foreground-alt}
 
 [module/date]
 type = internal/date
@@ -300,6 +308,8 @@ format-charging-underline = #fabd2f
 
 format-discharging = <ramp-capacity> <label-discharging>
 format-discharging-underline = ${self.format-charging-underline}
+
+label-discharging = %percentage%% %{F#fabd2f}%{F-} %time:0:5%
 
 format-full-prefix = " "
 format-full-prefix-foreground = ${self.format-charging-underline}

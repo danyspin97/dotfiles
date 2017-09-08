@@ -1,4 +1,4 @@
-#!/usr/bin/sh
+#!/bin/sh
 
 DESCRIPTION="Critical battery level.\nPut the charger on."
 POWER_ADAPTER="/sys/class/power_supply/ADP1/online"

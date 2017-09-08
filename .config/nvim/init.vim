@@ -1,7 +1,7 @@
 let g:mapleader="\<SPACE>"
 set showcmd             " Show (partial) command in status line.
 set showmatch           " Show matching brackets.
-set showmode            " Show current mode.
+set showmode           " Show current mode.
 set ruler               " Show the line and column numbers of the cursor.
 set relativenumber      " Show the line numbers on the left side.
 set number              " Show the current line number
@@ -146,58 +146,12 @@ inoremap <C-l> <Esc><C-w>l
 " Get terminal get input focus when switching to terminal window
 au BufEnter * if &buftype == 'terminal' | :startinsert | endif
 
-" Create new tab
-noremap <C-A>c :tabnew<CR>
-inoremap <C-A>c <ESC>:tabnew<CR>
-tnoremap <C-A>c <C-\><C-N>:tabnew<CR>
-
-" Create new terminal in a new tab
-noremap <C-A>t :tabnew<CR>:term<CR>
-inoremap <C-A>t <ESC>:tabnew<CR>:term<CR>
-tnoremap <C-A>t <C-\><C-N>:tabnew<CR>:term<CR>
-
-" Close current tab
-noremap <C-A>x :tabclose<CR>
-inoremap <C-A>x <ESC>:tabclose<CR>
-tnoremap <C-A>x <C-D> <C-\><C-N>:tabclose<CR>
-
-" Go to previous tab
-noremap <C-A>p :tabprev<CR>
-inoremap <C-A>p <ESC>:tabprev<CR>
-tnoremap <C-A>p <C-\><C-N>:tabprev<CR>
-
-" Go to next tab
-noremap <C-A>n :tabnext<CR>
-inoremap <C-A>n <ESC>:tabnext<CR>
-tnoremap <C-A>n <C-\><C-N>:tabnext<CR>
-
-" Open a new window in a vertical split
-noremap <C-A>\| :vnew<CR>
-inoremap <C-A>\| :vnew<CR>
-tnoremap <C-A>\| <C-\><C-N>:vnew<CR>
-
-" Open a new terminal in a vertical split
-noremap <C-A>\|t :vnew<CR>:term<CR>
-inoremap <C-A>\|t :vnew<CR>:term<CR>
-tnoremap <C-A>\|t <C-\><C-N>:vnew<CR>:term<CR>
-
-" Open a new window in a horizontal split
-noremap <C-A>- :new<CR>
-inoremap <C-A>- :new<CR>
-tnoremap <C-A>- <C-\><C-N>:new<CR>
-
-" Open a new window in a horizontal split
-noremap <C-A>-t :new<CR>:term<CR>
-inoremap <C-A>-t :new<CR>:term<CR>
-tnoremap <C-A>-t <C-\><C-N>:new<CR>:term<CR>
-
 " Move in wrapped lines instead of jumping over them
 nnoremap j gj
 nnoremap k gk
 
 " Close all open windows
 noremap <C-q><C-q> :confirm qall<CR>
-
 
 " Current line highlithing
 hi CursorLineNR cterm=bold
@@ -356,6 +310,7 @@ let g:fzf_colors =
             \ 'header':  ['fg', 'Comment'] }
 " Jump to the existing window if possible
 let g:fzf_buffers_jump = 1
+let $FZF_DEFAULT_COMMAND = 'rg --files --no-messages'
 " Call fzf
 noremap <Leader>z :Files<CR>
 noremap <Leader>t :BTags<CR>
@@ -365,11 +320,22 @@ noremap <Leader>h :History<CR>
 noremap <Leader>d :exe ':Look ' . expand('<cword>')<CR>
 " Find command using fzf and ripgrep
 command! -bang -nargs=* Look
-  \ call fzf#vim#grep('rg --column --line-number --no-heading --fixed-strings --ignore-case --no-ignore --hidden --follow --glob "!.git/*" --glob "!docs/*" --glob "!build/*" --glob "!opt/*" --glob "!vendor/*" --color "always" --threads 0 '
+  \ call fzf#vim#grep('rg --column --line-number --no-heading --fixed-strings --ignore-case --no-ignore --hidden --follow --glob "!.git/*" --glob "!docs/*" --glob "!build/*" --glob "!opt/*" --color "always" --threads 0 --no-messages '
   \   .shellescape(<q-args>), 1,
   \   fzf#vim#with_preview('up:60%'),
   \   <bang>0)
 map <Leader>a :Look<CR>
+
+" Fuzzy search over the text
+Plug 'ggVGc/vim-fuzzysearch'
+let g:fuzzysearch_hlsearch = 1
+let g:fuzzysearch_ignorecase = 1
+let g:fuzzysearch_max_history = 30
+let g:fuzzysearch_match_spaces = 1
+" Open fuzzy search
+nnoremap <Leader>/ :FuzzySearch<CR>
+" Fast replace text
+nnoremap <Leader>R :%s///g<left><left>
 
 " Automaticcaly create dir when saving files
 Plug 'pbrisbin/vim-mkdir'
@@ -589,6 +555,14 @@ Plug 'junegunn/goyo.vim'
 " Enhance current line, hide useless information in other lines
 Plug 'junegunn/limelight.vim'
 
+" Tab keymaps
+Plug 'DanySpin97/TabSwitch.vim'
+" Change key
+let g:tabswitch_prefix = "<C-A>"
+let g:tabswitch_terminal_open = 1
+let g:tabswitch_insert_mapping = 1
+let g:tabswitch_terminal_mapping = 1
+
 call plug#end()
 
 colorscheme gruvbox
@@ -603,7 +577,7 @@ let g:python3_host_skip_check = 1
 augroup OnSave
     autocmd!
     " Autoformat code using neoformat
-    autocmd BufWritePre * Neoformat
+    autocmd BufWritePre * undojoin | Neoformat
     " Stripe whitespaces
     autocmd BufWritePre * :StripWhitespace
 augroup END

@@ -11,16 +11,16 @@ case "$1" in
         i3-msg exit
         ;;
     suspend)
-        pm-suspend && i3lock
+        i3lock && sudo pm-suspend
         ;;
     hibernate)
-        systemctl hibernate && i3lock-fancy
+        i3lock && sudo pm-hibernate
         ;;
     reboot)
-        openrc-shutdown -r
+        sudo openrc-shutdown -r
         ;;
     shutdown)
-        sudo openrc-shudtdown -p
+        sudo openrc-shutdown -p
         ;;
     *)
         echo "Usage: $0 {lock|logout|suspend|hibernate|reboot|shutdown}"

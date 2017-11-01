@@ -3,3 +3,5 @@
 	email = danyspin.ds@gmail.com
 [core]
 	excludesfile = ~/.gitignore
+[color]
+	ui = auto

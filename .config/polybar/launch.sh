@@ -28,6 +28,7 @@ fi
 export POLYBAR_MONITOR
 
 # Launch bar1 and bar2
-polybar primary &
+polybar top &
+polybar bottom &
 
 echo "Bar launched..."

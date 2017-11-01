@@ -16,14 +16,14 @@ primary = #ffb52a
 secondary = #e60053
 alert = #bd2c40
 
-[bar/primary]
+[bar/top]
 monitor = ${env:POLYBAR_MONITOR}
 width = 100%
-height = 30
-;offset-x = 1%
-;offset-y = 1%
+height = 33
+offset-x = 0
+offset-y = 0
 radius = 6.0
-fixed-center = false
+fixed-center = true
 
 background = #282828
 foreground = #fbf1c7
@@ -44,21 +44,32 @@ font-0 = "Iosevka Nerd Font:style=Regular:size=11;0"
 font-1 = unifont:fontformat=truetype:size=8:antialias=false;0
 font-2 = "Input:style=Regular:size=12;2"
 
-modules-left = i3 xwindow
+modules-left = i3
+modules-center = xwindow
+modules-right = wlan eth
+
+wm-restack = i3
+override-redirect = true
+
+scroll-up = i3wm-wsnext
+scroll-down = i3wm-wsprev
+
+
+[bar/bottom]
+inherit = bar/top
+modules-left = mpd
 modules-center =
-modules-right = filesystem xkeyboard backlight-acpi memory cpu wlan eth battery battery-level temperature date
+modules-right = filesystem xkeyboard backlight-acpi memory cpu battery battery-level temperature date
+offset-x = 0
+offset-y = 1045
 
 tray-position = right
 tray-padding = 0
 ;tray-transparent = true
 ;tray-background = #0063ff
 
-;wm-restack = i3
-
-;override-redirect = false
-
-scroll-up = i3wm-wsnext
-scroll-down = i3wm-wsprev
+override-redirect = true
+wm-restack = i3
 
 [module/xwindow]
 type = internal/xwindow
@@ -107,7 +118,7 @@ label-mode-background = ${colors.primary}
 
 ; focused = Active workspace on focused monitor
 label-focused = %{F#fbf1c7}%icon%%{F-} %name%
-label-focused-background = ${bar/primary.background}
+label-focused-background = ${bar/top.background}
 label-focused-underline = #fbf1c7
 label-focused-padding = 2
 
@@ -124,7 +135,7 @@ label-visible-padding = ${self.label-focused-padding}
 
 ; urgent = Workspace with urgency hint set
 label-urgent = %{F#cc241d}%icon%%{F-} %name%
-label-urgent-background = ${bar/primary.background}
+label-urgent-background = ${bar/top.background}
 label-urgent-underline = #cc241d
 label-urgent-padding = 1
 
@@ -241,9 +252,11 @@ format-connected-prefix = " "
 format-connected-prefix-foreground = ${self.format-connected-underline}
 format-connected = <label-connected>
 format-connected-underline = #d3869b
-label-connected = %essid% %{F#d3869b}%{F-} %signal%% %{F#d3869b}%{F-} %upspeed% %{F#d3869b}%{F-} %downspeed%
+label-connected = %essid% %{F#d3869b}%{F-} %signal%%
+; %{F#d3869b}%{F-} %upspeed% %{F#d3869b}%{F-} %downspeed%
 
-;format-disconnected =
+format-disconnected-prefix = " "
+format-disconnected-prefix-foreground = ${self.format-connected-underline}
 format-disconnected = <label-disconnected>
 format-disconnected-underline = ${self.format-connected-underline}
 label-disconnected = %ifname% disconnected
@@ -264,7 +277,8 @@ interval = 3.0
 format-connected-underline = #55aa55
 format-connected-prefix = " "
 format-connected-prefix-foreground = ${self.format-connected-underline}
-label-connected = %ifname% %{F#55aa55}%{F-} %upspeed% %{F#55aa55}%{F-} %downspeed%
+label-connected = %ifname% %{F#55aa55}%{F-}
+; %upspeed% %{F#55aa55}%{F-} %downspeed%
 
 format-disconnected-prefix = " "
 format-disconnected-prefix-foreground = ${self.format-connected-underline}

@@ -11,3 +11,4 @@ fishd.*
 *.kdbx
 .tmuxp.yaml
 _build/
+.php_cs.cache

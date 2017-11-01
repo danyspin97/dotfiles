@@ -1,9 +1,9 @@
 let g:mapleader="\<SPACE>"
+set encoding=utf8
 set showcmd             " Show (partial) command in status line.
 set showmatch           " Show matching brackets.
 set showmode           " Show current mode.
 set ruler               " Show the line and column numbers of the cursor.
-set relativenumber      " Show the line numbers on the left side.
 set number              " Show the current line number
 set formatoptions+=o    " Continue comment marker in new lines.
 set textwidth=0         " Hard-wrap long lines as you type them.
@@ -12,6 +12,12 @@ set nosmarttab
 set tabstop=4           " Render TABs using this many spaces.
 set shiftwidth=4        " Indentation amount for < and > commands.
 set noshowmode          " Hide the default mode text (e.g. -- INSERT -- below the statusline)
+
+set cursorline
+set cursorcolumn
+
+set relativenumber      " Show the line numbers on the left side.
+setglobal relativenumber
 
 set modeline            " Enable modeline.
 set linespace=0         " Set line-spacing to minimum.
@@ -93,10 +99,12 @@ let php_htmlInStrings = 1
 " Remap comma to double dots
 map , :
 
-nnoremap <Leader>w :SudoWrite<CR>
+nnoremap <Leader>w :w<CR>
 
 " Reload config on savings
 autocmd! bufwritepost ~/.config/nvim/init.vim source ~/.config/nvim/init.vim
+
+map <Leader>c :tabedit ~/.config/nvim/init.vim<CR>
 
 " Ex command control
 cnoremap <C-P> <Up>
@@ -146,24 +154,10 @@ inoremap <C-l> <Esc><C-w>l
 " Get terminal get input focus when switching to terminal window
 au BufEnter * if &buftype == 'terminal' | :startinsert | endif
 
-" Move in wrapped lines instead of jumping over them
-nnoremap j gj
-nnoremap k gk
+map <leader>cd :cd %:p:h<cr>:pwd<cr>
 
 " Close all open windows
 noremap <C-q><C-q> :confirm qall<CR>
-
-" Current line highlithing
-hi CursorLineNR cterm=bold
-augroup CLNRSet
-    autocmd! ColorScheme * hi CursorLineNR cterm=bold
-augroup END
-
-augroup CursorLine
-    au!
-    au VimEnter,WinEnter,BufWinEnter * setlocal cursorline
-    au WinLeave * setlocal nocursorline
-augroup END
 
 set lazyredraw
 syntax sync minlines=128
@@ -205,6 +199,11 @@ let g:terminal_color_12 = '#83a598'
 let g:terminal_color_13 = '#d3869b'
 let g:terminal_color_14 = '#8ec07c'
 let g:terminal_color_15 = '#ebdbb2'
+
+augroup term
+    au TermOpen * :IndentLinesDisable
+augroup END
+"set shell=/home/danyspin97/go/bin/elvish
 
 " Donwload vim-plug if missing
 if empty(glob('~/.config/nvim/autoload/plug.vim'))
@@ -252,11 +251,23 @@ Plug 'morhetz/gruvbox'
 let g:gruvbox_contrast_dark = 'hard'
 let g:gruvbox_italic=1
 
+" Status line
+Plug 'vim-airline/vim-airline'
+" Use powerline fonts
+let g:airline_powerline_fonts = 1
+" Use caching
+let g:airline_highlighting_cache = 1
+" Use gruvbox theme
+let g:airline_theme='gruvbox'
+
+let g:airline#extensions#tabline#enabled = 1
+
 " Another theme
 "Plug 'freeo/vim-kalisi'
 
 " Add icons
-Plug 'ryanoasis/vim-devicons'
+"Plug 'ryanoasis/vim-devicons'
+let g:WebDevIconsOS = 'Linux'
 
 " Hightlight html color tags
 Plug 'lilydjwg/colorizer'
@@ -270,23 +281,23 @@ map <Leader>n :NERDTreeToggle<CR>
 " and toggle with double n
 map <Leader>nn :NERDTreeToggle<CR>
 " Show hidden file
-let NERDTreeShowHidden=1
+let g:NERDTreeShowHidden=1
 " Ignore file
-let NERDTreeIgnore=['\.DS_Store', '\~$', '\.swp']
+let g:NERDTreeIgnore=['\.DS_Store', '\~$', '\.swp']
 " Arrows
 let g:NERDTreeDirArrowExpandable = ''
 let g:NERDTreeDirArrowCollapsible = ''
 " Symbols
 let g:NERDTreeIndicatorMapCustom = {
-            \ "Modified"  : "✹",
-            \ "Staged"    : "✚",
-            \ "Untracked" : "✭",
-            \ "Renamed"   : "➜",
-            \ "Unmerged"  : "═",
-            \ "Deleted"   : "✖",
-            \ "Dirty"     : "✗",
-            \ "Clean"     : "✔︎",
-            \ "Unknown"   : "?"
+            \ 'Modified'  : '✹',
+            \ 'Staged'    : '✚',
+            \ 'Untracked' : '✭',
+            \ 'Renamed'   : '➜',
+            \ 'Unmerged'  : '═',
+            \ 'Deleted'   : '✖',
+            \ 'Dirty'     : '✗',
+            \ 'Clean'     : '✔︎',
+            \ 'Unknown'   : '?'
             \ }
 
 " Fuzzy finder
@@ -359,10 +370,10 @@ let g:windowswap_map_keys = 0 "prevent default bindings
 nnoremap <silent> <leader>yy :call WindowSwap#EasyWindowSwap()<CR>
 
 " Search the selected text using *
-Plug 'nelstrom/vim-visual-star-search'
+"Plug 'nelstrom/vim-visual-star-search'
 
 " Search the text between projects files
-Plug 'dyng/ctrlsf.vim'
+"Plug 'dyng/ctrlsf.vim'
 " Use ripgrep for searching
 let g:ctrlsf_ackprg = 'rg'
 
@@ -370,7 +381,7 @@ let g:ctrlsf_ackprg = 'rg'
 Plug 'tpope/vim-fugitive'
 
 " Integration with github
-Plug 'roxma/ncm-github'
+"Plug 'roxma/ncm-github'
 
 " Autocompletition
 Plug 'roxma/nvim-completion-manager'
@@ -404,7 +415,7 @@ noremap <silent> <c-d> :call smooth_scroll#down(&scroll, 5, 2)<CR>
 noremap <silent> <c-b> :call smooth_scroll#up(&scroll*2, 5, 4)<CR>
 noremap <silent> <c-f> :call smooth_scroll#down(&scroll*2, 5, 4)<CR>
 
-Plug 'reedes/vim-wheel'
+"Plug 'reedes/vim-wheel'
 " Remap keys
 let g:wheel#map#up   = '<m-y>'
 let g:wheel#map#down = '<m-e>'
@@ -424,7 +435,7 @@ sunmap ge
 Plug 'matze/vim-move'
 
 " Snippets
-Plug 'SirVer/ultisnips'
+"Plug 'SirVer/ultisnips'
 " Change keymaps
 let g:UltiSnipsExpandTrigger = '<C-j>'
 let g:UltiSnipsJumpForwardTrigger = '<C-j>'
@@ -433,7 +444,7 @@ let g:UltiSnipsJumpBackwardTrigger = '<C-k>'
 let g:UltiSnipsEditSplit="vertical"
 
 " Snippets for ultisnips
-Plug 'honza/vim-snippets'
+"Plug 'honza/vim-snippets'
 
 " Clipboard management
 Plug 'vim-scripts/YankRing.vim'
@@ -448,13 +459,16 @@ let g:yankring_replace_n_nkey = '<C-N>'
 " Intend guides
 Plug 'Yggdroot/indentLine'
 " Set color for indenting character
-let g:indentLine_color_term = 241
+let g:indentLine_color_gui = '#7c6f64'
 " Set new indenting char
 let g:indentLine_char = '┆'
 " Disable concealing
 let g:indentLine_concealcursor = ''
 " Set faster mode
 let g:indentLine_faster=1
+let g:indentLine_showFirstIndentLevel = 1
+
+"let g:indentLine_setColors=0
 
 " Use editor config settings per project
 Plug 'editorconfig/editorconfig-vim'
@@ -463,8 +477,8 @@ Plug 'editorconfig/editorconfig-vim'
 Plug 'sbdchd/neoformat'
 " Disable alignment
 let g:neoformat_basic_format_align = 0
-" Disable tab to space conversion
-let g:neoformat_basic_format_retab = 0
+" Enable tab to space conversion
+let g:neoformat_basic_format_retab = 1
 " Disable sql formatting
 let g:neoformat_enabled_sql = []
 
@@ -499,17 +513,22 @@ augroup omnifuncs
     autocmd FileType java setlocal omnifunc=javacomplete#Complete
 augroup END
 
-" Better syntax hightlighting for c++ code
-Plug 'arakashic/chromatica.nvim'
-
-" Php completion
-Plug 'lvht/phpcd.vim', { 'for': 'php', 'do': 'composer install' }
-
 " Asynchronous build and make
 Plug 'tpope/vim-dispatch'
 
 " Golang plugin
 Plug 'fatih/vim-go'
+" Disable formatting on save, let neoformat handle this
+let g:go_fmt_autosave = 0
+
+augroup go_commands
+    autocmd!
+
+    autocmd FileType go nnoremap <Leader>gd :exe ':GoDoc ' . expand('<cword>')<CR>
+    autocmd FileType go nnoremap <Leader>gb :GoBuild<CR>
+    autocmd FileType go nnoremap <Leader>gr :GoRename<CR>
+
+augroup END
 
 " Refactoring
 Plug 'brooth/far.vim'
@@ -521,11 +540,6 @@ Plug 'brooth/far.vim'
 
 " Linting
 Plug 'w0rp/ale'
-" Disable some linters
-let g:ale_linters = {
-            \   'cpp': [],
-            \   'c': []
-            \}
 " Disable automatic lining on writing
 let g:ale_lint_on_text_changed = 'never'
 let g:ale_set_loclist = 0
@@ -537,9 +551,13 @@ aug QuickFixClose
     au!
     au WinEnter * if winnr('$') == 1 && getbufvar(winbufnr(winnr()), "&buftype") == "quickfix"|q|endif
 aug END
+let g:ale_linters = {
+    \   'cpp': ['clang'],
+    \}
+autocmd BufEnter *.cpp,*.h,*.hpp,*.hxx let g:ale_cpp_clang_options = join(ncm_clang#compilation_info()['args'], ' ')
 
 " Writer plugins
-Plug 'reedes/vim-pencil'
+"Plug 'reedes/vim-pencil'
 augroup Pencil
     autocmd!
     autocmd FileType markdown,mkd call pencil#init()
@@ -547,21 +565,68 @@ augroup Pencil
 augroup END
 
 " Markdown preview in firefox
-Plug 'euclio/vim-markdown-composer', { 'do': function('BuildComposer') }
+"Plug 'euclio/vim-markdown-composer', { 'do': function('BuildComposer') }
 
 " Distraction free writing
-Plug 'junegunn/goyo.vim'
+"Plug 'junegunn/goyo.vim'
 
 " Enhance current line, hide useless information in other lines
-Plug 'junegunn/limelight.vim'
+"Plug 'junegunn/limelight.vim'
 
 " Tab keymaps
 Plug 'DanySpin97/TabSwitch.vim'
 " Change key
-let g:tabswitch_prefix = "<C-A>"
+let g:tabswitch_prefix = '<C-A>'
 let g:tabswitch_terminal_open = 1
 let g:tabswitch_insert_mapping = 1
 let g:tabswitch_terminal_mapping = 1
+
+Plug 'IN3D/vim-raml'
+
+" requires phpactor
+Plug 'phpactor/phpactor' ,  {'do': 'composer install'}
+
+Plug 'roxma/ncm-phpactor'
+
+Plug 'Shougo/neco-vim'
+Plug 'Shougo/neco-syntax'
+Plug 'Shougo/neoinclude.vim'
+Plug 'calebeby/ncm-css'
+Plug 'roxma/nvim-cm-tern',  {'do': 'npm install'}
+Plug 'roxma/ncm-clang'
+
+
+" Browse documentation
+Plug 'KabbAmine/zeavim.vim', {'on': [
+            \   'Zeavim', 'Docset',
+            \   '<Plug>Zeavim',
+            \   '<Plug>ZVVisSelection',
+            \   '<Plug>ZVKeyDocset',
+            \   '<Plug>ZVMotion'
+            \ ]}
+
+Plug 'justinmk/vim-sneak'
+let g:sneak#label = 1
+" Use one-character sneak instead of f
+map f <Plug>Sneak_f
+map F <Plug>Sneak_F
+map t <Plug>Sneak_t
+map T <Plug>Sneak_T
+
+Plug 'takac/vim-hardtime'
+" Enable hardtime by default
+let g:hardtime_default_on = 1
+
+Plug 'dmix/elvish.vim', { 'on_ft': ['elvish']}
+
+Plug 'jaxbot/browserlink.vim'
+
+Plug 'metakirby5/codi.vim'
+let g:codi#rightsplit = 0
+
+Plug 'arakashic/chromatica.nvim'
+let g:chromatica#libclang_path = '/usr/lib/llvm/5/lib64/libclang.so'
+let g:chromatica#enable_at_startup = 1
 
 call plug#end()
 
@@ -577,7 +642,7 @@ let g:python3_host_skip_check = 1
 augroup OnSave
     autocmd!
     " Autoformat code using neoformat
-    autocmd BufWritePre * undojoin | Neoformat
+    autocmd BufWritePre * Neoformat
     " Stripe whitespaces
     autocmd BufWritePre * :StripWhitespace
 augroup END

@@ -26,9 +26,9 @@ CXX=/usr/lib/llvm/4/bin/clang++
 VISUAL=nvim
 EDITOR=nvim
 SUDO_EDITOR=nvim
-MANPAGER="nvr -cc 'tabnew' -c 'set ft=man' -"
+MANPAGER="nvr --remote-tab-wait-silent -c 'set ft=man' -"
 
-PATH=~/.bin:~/.config/composer/vendor/bin:/sbin:/usr/sbin:~/go/bin:~/.local/bin:~/.gem/ruby/2.2.0/bin:~/.cargo/bin:$PATH
+PATH=$PATH:~/.bin:~/.config/composer/vendor/bin:/sbin:/usr/sbin:~/go/bin:~/.local/bin:~/.gem/ruby/2.2.0/bin:~/.cargo/bin
 
 XDG_CONFIG_HOME="$HOME/.config"
 XDG_CACHE_HOME="$HOME/.cache"

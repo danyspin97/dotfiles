@@ -1,4 +1,4 @@
-#!/usr/bin/sh
+#!/bin/env sh
 
 # Get fields from mpc, split by tabs.
 IFS=$'\t' read FILENAME ARTIST TITLE ALBUM \

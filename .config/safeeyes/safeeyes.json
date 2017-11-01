@@ -1,38 +1,6 @@
 {
-    "active_window_class": {
-        "skip_break": [],
-        "take_break": []
-    },
-    "allow_postpone": true,
-    "audible_alert": false,
+    "allow_postpone": false,
     "break_interval": 15,
-    "custom_exercises": {},
-    "disable_options": [
-        {
-            "label": "for_x_minutes",
-            "time": 30,
-            "unit": "minute"
-        },
-        {
-            "label": "for_x_hour",
-            "time": 1,
-            "unit": "hour"
-        },
-        {
-            "label": "for_x_hours",
-            "time": 2,
-            "unit": "hour"
-        },
-        {
-            "label": "for_x_hours",
-            "time": 3,
-            "unit": "hour"
-        }
-    ],
-    "enable_screen_lock": false,
-    "idle_time": 1,
-    "language": "system",
-    "lock_screen_command": [],
     "long_break_duration": 120,
     "long_breaks": [
         {
@@ -43,13 +11,83 @@
         }
     ],
     "meta": {
-        "config_version": "5.0.1"
+        "config_version": "6.0.0"
     },
     "no_of_short_breaks_per_long_break": 4,
     "persist_state": true,
-    "plugins": [],
+    "plugins": [
+        {
+            "enabled": false,
+            "id": "audiblealert",
+            "version": "0.0.1"
+        },
+        {
+            "enabled": false,
+            "id": "donotdisturb",
+            "settings": {
+                "skip_break_windows": "",
+                "take_break_windows": "",
+                "unfullscreen": true
+            },
+            "version": "0.0.1"
+        },
+        {
+            "enabled": false,
+            "id": "healthstats",
+            "version": "0.0.1"
+        },
+        {
+            "enabled": false,
+            "id": "notification",
+            "version": "0.0.1"
+        },
+        {
+            "enabled": false,
+            "id": "screensaver",
+            "settings": {
+                "command": "",
+                "min_seconds": 3
+            },
+            "version": "0.0.1"
+        },
+        {
+            "enabled": false,
+            "id": "smartpause",
+            "settings": {
+                "idle_time": 3
+            },
+            "version": "0.0.1"
+        },
+        {
+            "enabled": false,
+            "id": "trayicon",
+            "settings": {
+                "disable_options": [
+                    {
+                        "time": 30,
+                        "unit": "minute"
+                    },
+                    {
+                        "time": 1,
+                        "unit": "hour"
+                    },
+                    {
+                        "time": 2,
+                        "unit": "hour"
+                    },
+                    {
+                        "time": 3,
+                        "unit": "hour"
+                    }
+                ],
+                "show_time_in_tray": false
+            },
+            "version": "0.0.1"
+        }
+    ],
     "postpone_duration": 5,
     "pre_break_warning_time": 60,
+    "rpc_port": 7200,
     "short_break_duration": 60,
     "short_breaks": [
         {
@@ -74,10 +112,8 @@
             "name": "short_break_drink_water"
         }
     ],
-    "shortcut_disable_time": 2,
+    "shortcut_disable_time": 5,
     "shortcut_postpone": 65,
     "shortcut_skip": 9,
-    "show_time_in_tray": false,
-    "strict_break": false,
-    "time_to_screen_lock": 5
+    "strict_break": true
 }

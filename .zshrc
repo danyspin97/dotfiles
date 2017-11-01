@@ -79,11 +79,17 @@ bindkey '^ ' autosuggest-accept
 bindkey '^o' autosuggest-execute
 
 ### aliases
+# git
 alias ga='git add'
+
+# neovim
 alias v='NVIM_LISTEN_ADDRESS=/tmp/nvimsocket nvr -s'
 alias vs='NVIM_LISTEN_ADDRESS=/tmp/nvimsocket nvr -s -o'
 alias vv='NVIM_LISTEN_ADDRESS=/tmp/nvimsocket nvr -s -O'
 alias vt='NVIM_LISTEN_ADDRESS=/tmp/nvimsocket nvr -s -cc "tabnew"'
+
+# termbin
+alias tb='nc termbin.com 9999'
 
 if ls --color -d . >/dev/null 2>&1; then  # GNU ls
   export COLUMNS  # Remember columns for subprocesses.

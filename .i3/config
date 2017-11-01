@@ -48,10 +48,11 @@ focus_on_window_activation urgent
 popup_during_fullscreen smart
 
 # start a terminal
-bindsym $mod+Return exec --no-startup-id i3-sensible-terminal
+bindsym $mod+Return exec --no-startup-id termite -e /home/danyspin97/go/bin/elvish
 
 # Application launcher
-bindsym $mod+d exec --no-startup-id j4-dmenu-desktop --dmenu='rofi -dmenu -p "run:"'
+bindsym $mod+d exec --no-startup-id rofi -show drun
+bindsym $mod+Shift+d exec --no-startup-id rofi -show run
 bindsym $mod+y exec --no-startup-id rofi -show ssh
 
 # move in workspaces
@@ -213,6 +214,11 @@ bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute 0 toggle
 bindsym XF86MonBrightnessUp exec "xbacklight -inc 5; notify-send 'Brightness up (+5)'"
 bindsym XF86MonBrightnessDown exec "xbacklight -dec 5; notify-send 'Brightness down (-5)'"
 
+# scrot & gimp - root
+bindsym Print exec scrot -e 'mv $f /tmp/ && gimp /tmp/$f'
+# scrot & gimp - select window or rectangle
+bindsym $mod+Print exec scrot -s -e 'mv $f /tmp/ && gimp /tmp/$f'
+
 # Move the current workspace to the next output
 # (effectively toggles when you only have two outputs)
 bindsym $mod+Shift+w move workspace to output right
@@ -236,9 +242,8 @@ bindsym $mod+m exec --no-startup-id thunderbird
 bindsym $mod+comma exec --no-startup-id keepass
 bindsym $mod+o exec --no-startup-id Spotify
 bindsym $mod+x exec --no-startup-id primusrun steam
-bindsym Print exec --no-startup-id scrot
 
-client.focused          #665c54 #665c54 #eddbb2 #2e9ef4   #665c54
+client.focused          #665c54 #665c54 #eddbb2 #458588   #665c54
 client.focused_inactive #282828 #5f676a #ffffff #484e50   #5f676a
 client.unfocused        #3c3836 #3c3836 #a89984 #292d2e   #222222
 client.urgent           #cc241d #cc241d #ebdbb2 #cc241d   #cc241d
@@ -249,8 +254,8 @@ client.background       #ffffff
 for_window [class="^.*"] border pixel 3
 
 # Set inner/outer gaps
-gaps inner 2
-gaps outer 4
+gaps inner 25
+gaps outer 30
 
 # Additionally, you can issue commands with the following syntax. This is useful to bind keys to changi$
 # gaps inner|outer current|all set|plus|minus <px>
@@ -258,11 +263,11 @@ gaps outer 4
 #gaps outer all plus 5
 
 # Smart gaps (gaps used if only more than one container on the workspace)
-smart_gaps on
+#smart_gaps on
 
 # Smart borders (draw borders around container only if it is not the only container on this workspace)
 # on|no_gaps (on=always activate and no_gaps=only activate if the gap size to the edge of the screen is$
-        smart_borders on
+        #smart_borders on
 
 # Press $mod+Shift+g to enter the gap mode. Choose o or i for modifying outer/inner gaps. Press one of $
         bindsym $mod+g mode "$mode_gaps"

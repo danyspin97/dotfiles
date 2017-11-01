@@ -1,20 +1,15 @@
-#include "/usr/share/rofi/themes//gruvbox-dark.theme"
-
-rofi.font: Input Regular 22
-rofi.lines: 15
-! Border width
-rofi.width: 200
-rofi.bw: 4
-rofi.terminal: alacritty
-rofi.fullscreen: true
-rofi.eh: 2
-rofi.padding: 200
+rofi.font: Iosevka Term Regular 22
+#rofi.lines: 7
+rofi.terminal: termite
+rofi.fullscreen: false
 rofi.opacity: 85
 rofi.matching: fuzzy
 rofi.hide-scrollbar: true
 rofi.separator-style: solid
 rofi.fake-transparency: true
-rofi.auto-select: true
+rofi.auto-select: false
 rofi.case-sensitive: false
+rofi.show-icons: true
 
 rofi.threads: 0
+rofi.theme: /usr/share/rofi/themes//gruvbox-dark-soft.rasi

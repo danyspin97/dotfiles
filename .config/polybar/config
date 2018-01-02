@@ -40,9 +40,9 @@ padding-right = 0
 module-margin-left = 1
 module-margin-right = 1
 
-font-0 = "Iosevka Nerd Font:style=Regular:size=11;0"
+font-0 = "Overpass:style=Regular:size=12;2"
 font-1 = unifont:fontformat=truetype:size=8:antialias=false;0
-font-2 = "Input:style=Regular:size=12;2"
+font-2 = "Iosevka Nerd Font:style=Regular:size=11;0"
 
 modules-left = i3
 modules-center = xwindow
@@ -120,12 +120,12 @@ label-mode-background = ${colors.primary}
 label-focused = %{F#fbf1c7}%icon%%{F-} %name%
 label-focused-background = ${bar/top.background}
 label-focused-underline = #fbf1c7
-label-focused-padding = 2
+label-focused-padding = 3
 
 ; unfocused = Inactive workspace on any monitor
 label-unfocused = %{F#a89984}%icon%%{F-} %name%
 label-unfocused-underline = #a89984
-label-unfocused-padding = 0
+label-unfocused-padding = 1
 
 ; visible = Active workspace on unfocused monitor
 label-visible = %icon% %name%
@@ -137,16 +137,18 @@ label-visible-padding = ${self.label-focused-padding}
 label-urgent = %{F#cc241d}%icon%%{F-} %name%
 label-urgent-background = ${bar/top.background}
 label-urgent-underline = #cc241d
-label-urgent-padding = 1
+label-urgent-padding = 4
 
 ; ws-icon-[0-9]+ = label;icon
 ; ; NOTE: The label needs to match the name of the i3 workspace
 ws-icon-0 = Internet;
-ws-icon-1 = Tmux;
-ws-icon-2 = IM;
-ws-icon-3 = Files;
-ws-icon-4 = Office;
+ws-icon-1 = Terminal;
+ws-icon-2 = Projects;
+ws-icon-3 = Chat;
+ws-icon-4 = Office;
 ws-icon-5 = Media;
+ws-icon-6 = Games;
+ws-icon-7 = Settings;
 ws-icon-default = ♟
 
 ; Sort the workspaces by index instead of the default
@@ -220,8 +222,8 @@ inherit = module/xbacklight
 type = internal/backlight
 card = intel_backlight
 
-format = <label>
-format-prefix = " "
+format = <ramp> <label>
+format-prefix = " "
 format-prefix-foreground = ${self.format-underline}
 format-underline = #9f78e1
 
@@ -355,7 +357,7 @@ format = <label>
 format-prefix = " "
 format-prefix-foreground = ${self.format-underline}
 format-underline = #fb4934
-format-warn = <ramp> <label-warn>
+format-warn = <label-warn>
 format-warn-underline = ${self.format-underline}
 
 label = %temperature%

@@ -1,0 +1,34 @@
+# Useful customizations
+set smart_wrap = yes
+set sort = 'threads'
+set sort_aux = 'last-date-received'
+set imap_check_subscribed
+#
+hdr_order Date From To Cc
+#
+set signature="~/.signature"
+set pager_stop = yes
+set markers = no
+set include = yes
+set reply_to = yes
+set fast_reply = yes
+
+set index_format = '%4C [%Z] %D %-25.25L (%?l?%4l&%4c?) %s'
+color index_author color12 default '.*'
+color index_subject color1 default '.*'
+color index_subject white default '\[(Bitbucket|JIRA|Confluence)\].*'
+color index_date yellow default
+color index_flags white color12 '~F'
+color index_flags white red '~N'
+
+set editor=nvim
+
+auto_view text/html
+alternative_order text/plain text/enriched text/html
+
+source ~/.mutt/email.gmail
+
+macro index <f1> '<enter-command>source ~/.mutt/email.gmail<enter><change-folder>!<enter>'
+#macro index <f2> '<enter-command>source ~/.mutt/email.work<enter><change-folder>!<enter>'
+
+macro index,pager d "<save-message>=trash<enter>" "Trash"

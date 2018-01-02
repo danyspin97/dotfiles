@@ -1,10 +1,9 @@
 #!/bin/sh
 
 setxkbmap -layout it
-#compton -b
+compton &
 #safeeyes &
 redshift &
 nm-applet &
 pulseaudio --start
-xbacklight -set 50
-thunderbird &
+xbacklight -set 40

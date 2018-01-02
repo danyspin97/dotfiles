@@ -16,26 +16,27 @@ set $sup Mod1
 # Internet
 set $workspace1 "Internet"
 # Terminal
-set $workspace2 "Tmux"
+set $workspace2 "Terminal"
 # Coding
-set $workspace3 "IM"
+set $workspace3 "Projects"
 # Files
-set $workspace4 "Files"
+set $workspace4 "Chat"
 # IM
 set $workspace5 "Office"
 # Music
 set $workspace6 "Media"
 # Office
-set $workspace7 "Null"
+set $workspace7 "Games"
 # Others
-set $workspace8 "Void"
+set $workspace8 "Settings"
 
 set $monitor1 "HDMI-1"
 set $monitor2 "DVI-I-1"
 
 # Font for window titles. Will also be used by the bar unless a different font
 # is used in the bar {} block below.
-font pango: Input Regular 13
+# font pango: Iosevka Term Regular 13
+font pango: Overpass Regular 16
 
 # Use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
@@ -140,9 +141,9 @@ bindsym $mod+Shift+8 move container to workspace $workspace8
 
 assign [class="Firefox"]                            $workspace1
 assign [class="qutebrowser"]                        $workspace1
-assign [class="st-256color" title="ranger"]         $workspace4
-assign [class="TelegramDesktop"]                    $workspace3
-assign [class="discord"]                            $workspace3
+assign [class="st-256color" title="ranger"]         $workspace2
+assign [class="TelegramDesktop"]                    $workspace4
+assign [class="discord"]                            $workspace4
 assign [class="st-256color" title="mpsyt"]          $workspace6
 assign [class="^Vlc$"]                              $workspace6
 assign [class="mpv"]                                $workspace6
@@ -234,17 +235,18 @@ workspace $workspace7 output $monitor1
 workspace $workspace8 output $monitor1
 
 # Program shortcut
-bindsym $mod+c exec --no-startup-id firefox
-bindsym $mod+t exec --no-startup-id Telegram
+bindsym $mod+c exec --no-startup-id termite -e ddgr
+bindsym $mod+b exec --no-startup-id firefox
+bindsym $mod+t exec --no-startup-id telegram-desktop
 bindsym $mod+z exec --no-startup-id zathura
 bindsym $mod+p exec --no-startup-id termite -e ncpamixer
 bindsym $mod+m exec --no-startup-id thunderbird
-bindsym $mod+comma exec --no-startup-id keepass
-bindsym $mod+o exec --no-startup-id Spotify
+bindsym $mod+o exec --no-startup-id spotify
 bindsym $mod+x exec --no-startup-id primusrun steam
+bindsym $mod+Shift+b exec --no-startup-id calibre
 
 client.focused          #665c54 #665c54 #eddbb2 #458588   #665c54
-client.focused_inactive #282828 #5f676a #ffffff #484e50   #5f676a
+client.focused_inactive #282828 #5f676a2 #ffffff #484e50   #5f676a
 client.unfocused        #3c3836 #3c3836 #a89984 #292d2e   #222222
 client.urgent           #cc241d #cc241d #ebdbb2 #cc241d   #cc241d
 client.placeholder      #000000 #0c0c0c #ffffff #000000   #0c0c0c
@@ -254,8 +256,8 @@ client.background       #ffffff
 for_window [class="^.*"] border pixel 3
 
 # Set inner/outer gaps
-gaps inner 25
-gaps outer 30
+gaps inner 15
+gaps outer 27
 
 # Additionally, you can issue commands with the following syntax. This is useful to bind keys to changi$
 # gaps inner|outer current|all set|plus|minus <px>
@@ -305,7 +307,7 @@ mode "$mode_gaps_outer" {
         bindsym Escape mode "default"
 }
 
-exec_always feh --bg-scale --randomize $HOME/Pictures/
+exec_always feh --bg-fill --randomize $HOME/Pictures/Wallpapers
 
 exec --no-startup-id $HOME/.xstart
 

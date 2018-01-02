@@ -13,6 +13,8 @@ set tabstop=4           " Render TABs using this many spaces.
 set shiftwidth=4        " Indentation amount for < and > commands.
 set noshowmode          " Hide the default mode text (e.g. -- INSERT -- below the statusline)
 
+set statusline=%F%m%r%h%w[%L][%{&ff}]%y[%p%%][%04l,%04v]
+
 set cursorline
 set cursorcolumn
 
@@ -27,12 +29,6 @@ set nojoinspaces        " Prevents inserting two spaces after punctuation on a j
 set splitbelow          " Horizontal split below current.
 set splitright          " Vertical split to right of current.
 
-if !&scrolloff
-    set scrolloff=7       " Show next 7 lines while scrolling.
-endif
-if !&sidescrolloff
-    set sidescrolloff=10   " Show next 10 columns while side-scrolling.
-endif
 set display+=lastline
 set nostartofline       " Do not jump to first character with page commands.
 
@@ -43,10 +39,10 @@ set mouse-=a " Disable mouse click to go to position
 set completeopt=menuone,preview,noinsert
 
 " Ignore compiled files
-set wildignore=*.o,*~,*.pyc,*/.git/*,*/.hg/*,*/.svn/*,*/.DS_Store
+set wildignore=*.o,*~,*.pyc,*/.git/*,*/.hg/*,*/.svn/*,*/.DS_Store/docs?/
 
 " Height of the command bar
-set cmdheight=2
+set cmdheight=1
 
 " A buffer becomes hidden when it is abandoned
 set hidden
@@ -70,8 +66,8 @@ endif
 
 set list                " Show problematic characters.
 
-set ignorecase          " Make searching case-insensitive
-set smartcase           " ... unless the query has capital letters.
+"set ignorecase          " Make searching case-insensitive
+"set smartcase           " ... unless the query has capital letters.
 set gdefault            " Use 'g' flag by default with :s/foo/bar/.
 set magic               " Use 'magic' patterns (extended regular expressions).
 
@@ -99,7 +95,8 @@ let php_htmlInStrings = 1
 " Remap comma to double dots
 map , :
 
-nnoremap <Leader>w :w<CR>
+nnoremap <Leader>w :w!<CR>
+nnoremap <Leader>W :SudoEdit<CR>
 
 " Reload config on savings
 autocmd! bufwritepost ~/.config/nvim/init.vim source ~/.config/nvim/init.vim
@@ -203,7 +200,6 @@ let g:terminal_color_15 = '#ebdbb2'
 augroup term
     au TermOpen * :IndentLinesDisable
 augroup END
-"set shell=/home/danyspin97/go/bin/elvish
 
 " Donwload vim-plug if missing
 if empty(glob('~/.config/nvim/autoload/plug.vim'))
@@ -242,7 +238,8 @@ if has('persistent_undo')
 endif
 
 " Strip whitespaces from files
-Plug 'ntpeters/vim-better-whitespace'
+" TODO fix
+" Plug 'ntpeters/vim-better-whitespace'
 " Whitespaces color
 highlight ExtraWhitespace ctermbg=darkred guibg=darkred
 
@@ -252,7 +249,7 @@ let g:gruvbox_contrast_dark = 'hard'
 let g:gruvbox_italic=1
 
 " Status line
-Plug 'vim-airline/vim-airline'
+"test Plug 'vim-airline/vim-airline'
 " Use powerline fonts
 let g:airline_powerline_fonts = 1
 " Use caching
@@ -273,7 +270,7 @@ let g:WebDevIconsOS = 'Linux'
 Plug 'lilydjwg/colorizer'
 
 " File explorer
-Plug 'scrooloose/nerdtree'
+"Plug 'scrooloose/nerdtree'
 " Close NerdTree if it is the onyl windows open
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 " Open NerdTree with ctrl+n
@@ -327,15 +324,20 @@ noremap <Leader>z :Files<CR>
 noremap <Leader>t :BTags<CR>
 noremap <Leader>l :Lines<CR>
 noremap <Leader>b :Buffers<CR>
-noremap <Leader>h :History<CR>
 noremap <Leader>d :exe ':Look ' . expand('<cword>')<CR>
 " Find command using fzf and ripgrep
 command! -bang -nargs=* Look
-  \ call fzf#vim#grep('rg --column --line-number --no-heading --fixed-strings --ignore-case --no-ignore --hidden --follow --glob "!.git/*" --glob "!docs/*" --glob "!build/*" --glob "!opt/*" --color "always" --threads 0 --no-messages '
+  \ call fzf#vim#grep('rg --column --line-number --no-heading --fixed-strings --ignore-case --no-ignore --hidden --follow --glob "!.git/*" --glob "!docs?/*" --glob "!build/*" --glob "!opt/*" --color "always" --threads 0 --no-messages '
   \   .shellescape(<q-args>), 1,
   \   fzf#vim#with_preview('up:60%'),
   \   <bang>0)
 map <Leader>a :Look<CR>
+
+augroup fzf_buffer
+    autocmd! FileType fzf
+    autocmd  FileType fzf set laststatus=0 noshowmode noruler
+            \| autocmd BufLeave <buffer> set laststatus=2 showmode ruler
+augroup END
 
 " Fuzzy search over the text
 Plug 'ggVGc/vim-fuzzysearch'
@@ -373,7 +375,7 @@ nnoremap <silent> <leader>yy :call WindowSwap#EasyWindowSwap()<CR>
 "Plug 'nelstrom/vim-visual-star-search'
 
 " Search the text between projects files
-"Plug 'dyng/ctrlsf.vim'
+Plug 'dyng/ctrlsf.vim'
 " Use ripgrep for searching
 let g:ctrlsf_ackprg = 'rg'
 
@@ -381,32 +383,28 @@ let g:ctrlsf_ackprg = 'rg'
 Plug 'tpope/vim-fugitive'
 
 " Integration with github
-"Plug 'roxma/ncm-github'
+Plug 'roxma/ncm-github'
 
 " Autocompletition
 Plug 'roxma/nvim-completion-manager'
+" let g:cm_matcher = {'module': 'cm_matchers.abbrev_matcher', 'case': 'smartcase'}
+let g:cm_multi_threading = 1
 set shortmess+=c
 inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
 inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 
-" Handle python dependencies
-Plug 'roxma/python-support.nvim'
-" for python completions
-let g:python_support_python3_requirements = add(get(g:,'python_support_python3_requirements',[]),'jedi')
-" language specific completions on markdown file
-let g:python_support_python3_requirements = add(get(g:,'python_support_python3_requirements',[]),'mistune')
-
-" utils, optional
-let g:python_support_python3_requirements = add(get(g:,'python_support_python3_requirements',[]),'psutil')
-let g:python_support_python3_requirements = add(get(g:,'python_support_python3_requirements',[]),'setproctitle')
+    let $NVIM_PYTHON_LOG_FILE="/tmp/nvim_log"
+        let $NVIM_NCM_LOG_LEVEL="DEBUG"
+        let $NVIM_NCM_MULTI_THREAD=0
 
 " Enhance repeat key
 Plug 'tpope/vim-repeat'
 
+" Enhance closing parenthesis
 Plug 'tpope/vim-surround'
 
-" Comment lines
-Plug 'scrooloose/nerdcommenter'
+" Comment lines easily
+Plug 'tpope/vim-commentary'
 
 " Better scrolling
 Plug 'terryma/vim-smooth-scroll'
@@ -435,7 +433,7 @@ sunmap ge
 Plug 'matze/vim-move'
 
 " Snippets
-"Plug 'SirVer/ultisnips'
+Plug 'SirVer/ultisnips'
 " Change keymaps
 let g:UltiSnipsExpandTrigger = '<C-j>'
 let g:UltiSnipsJumpForwardTrigger = '<C-j>'
@@ -444,17 +442,25 @@ let g:UltiSnipsJumpBackwardTrigger = '<C-k>'
 let g:UltiSnipsEditSplit="vertical"
 
 " Snippets for ultisnips
-"Plug 'honza/vim-snippets'
+Plug 'honza/vim-snippets'
 
 " Clipboard management
-Plug 'vim-scripts/YankRing.vim'
-" Show yankes
-nnoremap <silent> <F6> :YRShow<CR>
-" Increase window height
-let g:yankring_window_height = 12
-" Change keys for replacing
-let g:yankring_replace_n_pkey = '<C-P>'
-let g:yankring_replace_n_nkey = '<C-N>'
+" Plug 'vim-scripts/YankRing.vim'
+" " Show yankes
+" nnoremap <silent> <F6> :YRShow<CR>
+" " Increase window height
+" let g:yankring_window_height = 12
+" " Change keys for replacing
+" let g:yankring_replace_n_pkey = '<C-P>'
+" let g:yankring_replace_n_nkey = '<C-N>'
+
+" let g:yankring_max_history = 1000
+" let g:yankring_min_element_length = 3
+" let g:yankring_history_dir = '$HOME/.cache'
+
+Plug 'maxbrunsfeld/vim-yankstack'
+nmap <C-P> <Plug>yankstack_substitute_older_paste
+nmap <C-N> <Plug>yankstack_substitute_newer_paste
 
 " Intend guides
 Plug 'Yggdroot/indentLine'
@@ -468,7 +474,7 @@ let g:indentLine_concealcursor = ''
 let g:indentLine_faster=1
 let g:indentLine_showFirstIndentLevel = 1
 
-"let g:indentLine_setColors=0
+let g:indentLine_setColors=0
 
 " Use editor config settings per project
 Plug 'editorconfig/editorconfig-vim'
@@ -479,8 +485,14 @@ Plug 'sbdchd/neoformat'
 let g:neoformat_basic_format_align = 0
 " Enable tab to space conversion
 let g:neoformat_basic_format_retab = 1
-" Disable sql formatting
+" Disable formatting
 let g:neoformat_enabled_sql = []
+
+" Use formatprg
+let g:neoformat_try_formatprg = 1
+
+" Don't put message errors in code
+let g:neoformat_only_msg_on_error = 1
 
 " Automatically close Conditional statement in shell scripting
 Plug 'tpope/vim-endwise'
@@ -495,23 +507,11 @@ let g:gutentag_enabled = 1
 " Set cache dir
 let g:gutentags_cache_dir = '~/.cache/tags'
 
-" Show code tags
-Plug 'majutsushi/tagbar'
-nmap <F8> :TagbarOpen fj<CR>
-" Focus tag bar when showing
-let g:tagbar_autofocus = 0
-
 " HTML shortcuts
 Plug 'mattn/emmet-vim'
 
 " Language pack
 Plug 'sheerun/vim-polyglot'
-
-" Java autocompletion
-Plug 'artur-shaik/vim-javacomplete2'
-augroup omnifuncs
-    autocmd FileType java setlocal omnifunc=javacomplete#Complete
-augroup END
 
 " Asynchronous build and make
 Plug 'tpope/vim-dispatch'
@@ -523,11 +523,9 @@ let g:go_fmt_autosave = 0
 
 augroup go_commands
     autocmd!
-
     autocmd FileType go nnoremap <Leader>gd :exe ':GoDoc ' . expand('<cword>')<CR>
     autocmd FileType go nnoremap <Leader>gb :GoBuild<CR>
     autocmd FileType go nnoremap <Leader>gr :GoRename<CR>
-
 augroup END
 
 " Refactoring
@@ -546,6 +544,12 @@ let g:ale_set_loclist = 0
 let g:ale_set_quickfix = 1
 let g:ale_open_list = 1
 let g:ale_keep_list_window_open = 0
+" Enable completion where available.
+let g:ale_completion_enabled = 1
+
+nmap <silent> <Leader>fp <Plug>(ale_previous_wrap)
+nmap <silent> <Leader>fn <Plug>(ale_next_wrap)
+
 " Close vim if the last window open is quickfix
 aug QuickFixClose
     au!
@@ -553,11 +557,12 @@ aug QuickFixClose
 aug END
 let g:ale_linters = {
     \   'cpp': ['clang'],
+    \   'java': ['javac'],
     \}
 autocmd BufEnter *.cpp,*.h,*.hpp,*.hxx let g:ale_cpp_clang_options = join(ncm_clang#compilation_info()['args'], ' ')
 
 " Writer plugins
-"Plug 'reedes/vim-pencil'
+Plug 'reedes/vim-pencil'
 augroup Pencil
     autocmd!
     autocmd FileType markdown,mkd call pencil#init()
@@ -568,18 +573,19 @@ augroup END
 "Plug 'euclio/vim-markdown-composer', { 'do': function('BuildComposer') }
 
 " Distraction free writing
-"Plug 'junegunn/goyo.vim'
+Plug 'junegunn/goyo.vim'
 
 " Enhance current line, hide useless information in other lines
-"Plug 'junegunn/limelight.vim'
+Plug 'junegunn/limelight.vim'
 
 " Tab keymaps
 Plug 'DanySpin97/TabSwitch.vim'
 " Change key
-let g:tabswitch_prefix = '<C-A>'
-let g:tabswitch_terminal_open = 1
-let g:tabswitch_insert_mapping = 1
-let g:tabswitch_terminal_mapping = 1
+let g:tabswitch#prefix = '<C-A>'
+let g:tabswitch#terminal_open = 1
+let g:tabswitch#insert_mapping = 1
+let g:tabswitch#terminal_mapping = 1
+let g:tabswitch#default_shell = 'elvish'
 
 Plug 'IN3D/vim-raml'
 
@@ -594,6 +600,7 @@ Plug 'Shougo/neoinclude.vim'
 Plug 'calebeby/ncm-css'
 Plug 'roxma/nvim-cm-tern',  {'do': 'npm install'}
 Plug 'roxma/ncm-clang'
+Plug 'fgrsnau/ncm-otherbuf'
 
 
 " Browse documentation
@@ -612,10 +619,8 @@ map f <Plug>Sneak_f
 map F <Plug>Sneak_F
 map t <Plug>Sneak_t
 map T <Plug>Sneak_T
-
-Plug 'takac/vim-hardtime'
-" Enable hardtime by default
-let g:hardtime_default_on = 1
+map m <Plug>Sneak_s
+map <C-m> <Plug>Sneak_S
 
 Plug 'dmix/elvish.vim', { 'on_ft': ['elvish']}
 
@@ -623,10 +628,76 @@ Plug 'jaxbot/browserlink.vim'
 
 Plug 'metakirby5/codi.vim'
 let g:codi#rightsplit = 0
+let g:codi#rightalign = 0
 
 Plug 'arakashic/chromatica.nvim'
 let g:chromatica#libclang_path = '/usr/lib/llvm/5/lib64/libclang.so'
 let g:chromatica#enable_at_startup = 1
+
+" Needed by coquille
+Plug 'let-def/vimbufsync'
+
+Plug 'the-lambda-church/coquille'
+
+Plug 'nightsense/seagrey'
+
+Plug 'donRaphaco/neotex', { 'for': 'tex' }
+
+Plug 'joereynolds/SQHell.vim'
+
+Plug 'qpkorr/vim-bufkill'
+
+" TODO test
+"Plug 'LucHermitte/vim-refactor'
+"
+" TODO test over far.vim
+" Plug 'dkprice/vim-easygrep'
+"
+" TODO test
+Plug 'gregsexton/gitv', {'on': ['Gitv']}
+
+" TODO test
+Plug 'tpope/vim-rsi'
+
+Plug 'wellle/targets.vim'
+
+" ttags_vim dependency
+Plug 'tomtom/tlib_vim'
+Plug 'tomtom/ttags_vim'
+
+let g:ttags_display = 'tlib'
+
+" Show available tags
+noremap <Leader>g. :TTags<cr>
+
+" Show current buffer's tags
+noremap <Leader>g% :call ttags#List(0, "*", "", ".")<cr>
+
+" Show tags matching the word under cursor
+noremap <Leader>g# :call ttags#List(0, "*", tlib#rx#Escape(expand("<cword>")))<cr>
+
+" Show tags with a prefix matching the word under cursor
+noremap <Leader>g* :call ttags#List(0, "*", tlib#rx#Escape(expand("<cword>")) .".*")<cr>
+
+" Show tags matching the word under cursor (search also in |g:tlib_tags_extra|)
+noremap <Leader>g? :call ttags#List(1, "*", tlib#rx#Escape(expand("<cword>")))<cr>
+
+" Show tags of a certain category
+for c in split('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', '\zs')
+    exec 'noremap <Leader>g'. c .' :TTags '. c .'<cr>'
+endfor
+
+Plug 'rstacruz/sparkup'
+
+Plug 'kien/rainbow_parentheses.vim'
+augroup rainbow
+    autocmd!
+    autocmd VimEnter * RainbowParenthesesActivate
+    autocmd BufWritePost * RainbowParenthesesLoadRound
+    autocmd BufWritePost * RainbowParenthesesLoadSquare
+    autocmd BufWritePost * RainbowParenthesesLoadBraces
+    autocmd BufWritePost * RainbowParenthesesLoadChevrons
+augroup END
 
 call plug#end()
 
@@ -644,15 +715,33 @@ augroup OnSave
     " Autoformat code using neoformat
     autocmd BufWritePre * Neoformat
     " Stripe whitespaces
-    autocmd BufWritePre * :StripWhitespace
+    " TODO
+    " autocmd BufWritePre * StripWhitespace
 augroup END
 
 function! EnterWriterMode()
+    colorscheme seagrey-light
     Limelight
     " execute `Goyo` if it's not already active
     if !exists('#goyo')
         Goyo
     endif
+    setlocal wrap
+    "set noshowmode
+    "set noshowcmd
+    "set scrolloff=999
 endfunction
 
-autocmd! User GoyoLeave Limelight!
+function! s:LeaveWriterMode()
+  set showmode
+  set showcmd
+  set scrolloff=5
+  Limelight!
+  colorscheme gruvbox
+  set background=dark
+  " ...
+endfunction
+
+map <Leader>y :CoqNext<CR>
+
+autocmd! User GoyoLeave nested call <SID>LeaveWriterMode()

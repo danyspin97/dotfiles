@@ -47,6 +47,9 @@ set cmdheight=1
 " A buffer becomes hidden when it is abandoned
 set hidden
 
+" Render characters quickly
+set ttyfast
+
 " How many tenths of a second to blink when matching brackets
 set matchtime=2
 
@@ -70,6 +73,7 @@ set list                " Show problematic characters.
 "set smartcase           " ... unless the query has capital letters.
 set gdefault            " Use 'g' flag by default with :s/foo/bar/.
 set magic               " Use 'magic' patterns (extended regular expressions).
+set incsearch
 
 " Disable swap and backup
 set nobackup
@@ -86,6 +90,8 @@ set smartindent
 set wrap
 
 set grepprg=rg\ --vimgrep
+
+set colorcolumn=80
 
 " Enable sql query syntax hightlighting in php files
 let php_sql_query = 1
@@ -134,15 +140,13 @@ noremap <C-j> <C-w>j
 noremap <C-k> <C-w>k
 noremap <C-l> <C-w>l
 
-""" Terminal Mapping
-tnoremap <C-A><ESC> <C-\><C-n>
-
 " Remapping for switching windows when in terminal
 tnoremap <C-h> <C-\><C-n><C-w>h
 tnoremap <C-j> <C-\><C-n><C-w>j
 tnoremap <C-k> <C-\><C-n><C-w>k
 tnoremap <C-l> <C-\><C-n><C-w>l
 
+" and in insert mode
 inoremap <C-h> <Esc><C-w>h
 inoremap <C-j> <Esc><C-w>j
 inoremap <C-k> <Esc><C-w>k
@@ -237,19 +241,13 @@ if has('persistent_undo')
     set undofile
 endif
 
-" Strip whitespaces from files
-" TODO fix
-" Plug 'ntpeters/vim-better-whitespace'
-" Whitespaces color
-highlight ExtraWhitespace ctermbg=darkred guibg=darkred
-
 " Theme
 Plug 'morhetz/gruvbox'
 let g:gruvbox_contrast_dark = 'hard'
 let g:gruvbox_italic=1
 
 " Status line
-"test Plug 'vim-airline/vim-airline'
+" Plug 'vim-airline/vim-airline'
 " Use powerline fonts
 let g:airline_powerline_fonts = 1
 " Use caching
@@ -261,6 +259,14 @@ let g:airline#extensions#tabline#enabled = 1
 
 " Another theme
 "Plug 'freeo/vim-kalisi'
+
+" Nord theme
+Plug 'arcticicestudio/nord-vim', { 'branch': 'develop' }
+let g:nord_italic = 1
+let g:nord_italic_comments = 1
+let g:nord_uniform_status_lines = 1
+let g:nord_comment_brightness = 20
+let g:nord_uniform_diff_background = 1
 
 " Add icons
 "Plug 'ryanoasis/vim-devicons'
@@ -465,7 +471,7 @@ nmap <C-N> <Plug>yankstack_substitute_newer_paste
 " Intend guides
 Plug 'Yggdroot/indentLine'
 " Set color for indenting character
-let g:indentLine_color_gui = '#7c6f64'
+let g:indentLine_color_gui = '#D8DEE9'
 " Set new indenting char
 let g:indentLine_char = '┆'
 " Disable concealing
@@ -474,7 +480,7 @@ let g:indentLine_concealcursor = ''
 let g:indentLine_faster=1
 let g:indentLine_showFirstIndentLevel = 1
 
-let g:indentLine_setColors=0
+let g:indentLine_setColors=1
 
 " Use editor config settings per project
 Plug 'editorconfig/editorconfig-vim'
@@ -485,12 +491,12 @@ Plug 'sbdchd/neoformat'
 let g:neoformat_basic_format_align = 0
 " Enable tab to space conversion
 let g:neoformat_basic_format_retab = 1
+" Enable trimmming of trailing whitespace
+let g:neoformat_basic_format_trim = 1
 " Disable formatting
 let g:neoformat_enabled_sql = []
-
 " Use formatprg
 let g:neoformat_try_formatprg = 1
-
 " Don't put message errors in code
 let g:neoformat_only_msg_on_error = 1
 
@@ -565,12 +571,11 @@ autocmd BufEnter *.cpp,*.h,*.hpp,*.hxx let g:ale_cpp_clang_options = join(ncm_cl
 Plug 'reedes/vim-pencil'
 augroup Pencil
     autocmd!
-    autocmd FileType markdown,mkd call pencil#init()
-                \ | call EnterWriterMode()
+    autocmd FileType markdown,mkd call EnterWriterMode()
 augroup END
 
 " Markdown preview in firefox
-"Plug 'euclio/vim-markdown-composer', { 'do': function('BuildComposer') }
+Plug 'euclio/vim-markdown-composer', { 'do': function('BuildComposer') }
 
 " Distraction free writing
 Plug 'junegunn/goyo.vim'
@@ -579,13 +584,10 @@ Plug 'junegunn/goyo.vim'
 Plug 'junegunn/limelight.vim'
 
 " Tab keymaps
-Plug 'DanySpin97/TabSwitch.vim'
+Plug 'DanySpin97/ttab.vim'
 " Change key
-let g:tabswitch#prefix = '<C-A>'
-let g:tabswitch#terminal_open = 1
-let g:tabswitch#insert_mapping = 1
-let g:tabswitch#terminal_mapping = 1
-let g:tabswitch#default_shell = 'elvish'
+let g:ttab_prefix = '<C-A>'
+" let g:ttab_shell = 'elvish'
 
 Plug 'IN3D/vim-raml'
 
@@ -631,7 +633,7 @@ let g:codi#rightsplit = 0
 let g:codi#rightalign = 0
 
 Plug 'arakashic/chromatica.nvim'
-let g:chromatica#libclang_path = '/usr/lib/llvm/5/lib64/libclang.so'
+let g:chromatica#libclang_path = '/lib/libclang.so'
 let g:chromatica#enable_at_startup = 1
 
 " Needed by coquille
@@ -689,6 +691,7 @@ endfor
 
 Plug 'rstacruz/sparkup'
 
+" Enanche parenthesis hightlighting
 Plug 'kien/rainbow_parentheses.vim'
 augroup rainbow
     autocmd!
@@ -699,9 +702,30 @@ augroup rainbow
     autocmd BufWritePost * RainbowParenthesesLoadChevrons
 augroup END
 
+" Multiline searching
+Plug 'wincent/ferret'
+let g:FerretMap=0
+
+" Nedded by vim-notes
+Plug 'xolox/vim-misc'
+
+" Take notes in vim
+Plug 'xolox/vim-notes'
+let g:notes_directories = ['~/notes']
+
+" Check particular type of word
+Plug 'reedes/vim-wordy'
+noremap <silent> <F8> :<C-u>NextWordy<cr>
+xnoremap <silent> <F8> :<C-u>NextWordy<cr>
+inoremap <silent> <F8> <C-o>:NextWordy<cr>
+
+Plug 'reedes/vim-litecorrect'
+nnoremap <C-s> [s1z=<c-o>
+inoremap <C-s> <c-g>u<Esc>[s1z=`]A<c-g>u
+
 call plug#end()
 
-colorscheme gruvbox
+colorscheme nord
 set background=dark
 set termguicolors
 
@@ -712,24 +736,33 @@ let g:python3_host_skip_check = 1
 
 augroup OnSave
     autocmd!
-    " Autoformat code using neoformat
+    " Autoformat code using neoformat and trim whitespaces
     autocmd BufWritePre * Neoformat
-    " Stripe whitespaces
-    " TODO
-    " autocmd BufWritePre * StripWhitespace
 augroup END
 
 function! EnterWriterMode()
     colorscheme seagrey-light
+    call pencil#init({'wrap': 'hard', 'autoformat': 0})
     Limelight
     " execute `Goyo` if it's not already active
     if !exists('#goyo')
         Goyo
     endif
+    call litecorrect#init()
+    setlocal spell
     setlocal wrap
-    "set noshowmode
-    "set noshowcmd
-    "set scrolloff=999
+    set noshowmode
+    set noshowcmd
+    set scrolloff=999
+    set list lcs=tab:+.
+    " Underline spelling errors in red
+    hi clear SpellBad
+    hi SpellBad cterm=underline ctermfg=red
+    hi clear SpellCap
+    hi SpellCap cterm=underline ctermfg=blue
+    " Underline localization errors in green.
+    hi clear SpellLocal
+    hi SpellCap cterm=underline ctermfg=green
 endfunction
 
 function! s:LeaveWriterMode()
@@ -737,7 +770,7 @@ function! s:LeaveWriterMode()
   set showcmd
   set scrolloff=5
   Limelight!
-  colorscheme gruvbox
+  colorscheme nord
   set background=dark
   " ...
 endfunction

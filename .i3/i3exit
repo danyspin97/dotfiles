@@ -17,10 +17,10 @@ case "$1" in
         i3lock && sudo pm-hibernate
         ;;
     reboot)
-        sudo openrc-shutdown -r
+        sudo s6-reboot
         ;;
     shutdown)
-        sudo openrc-shutdown -p
+        sudo s6-poweroff
         ;;
     *)
         echo "Usage: $0 {lock|logout|suspend|hibernate|reboot|shutdown}"

@@ -1,7 +1,9 @@
 [user]
 	name = Danilo Spinella
-	email = danyspin.ds@gmail.com
+	email = danyspin97@protonmail.com
 [core]
 	excludesfile = ~/.gitignore
 [color]
 	ui = auto
+[gitreview]
+	username = DanySpin97

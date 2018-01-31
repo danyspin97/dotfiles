@@ -1,3 +1,5 @@
+use epm
+
 fn git-branch-name {
     try {
         name = ( git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/' )
@@ -41,9 +43,7 @@ paths = [
     $@paths
     ~/.bin
     ~/.config/composer/vendor/bin
-    /sbin
-    /usr/sbin
-    ~/go/bin
+    ~/.go/bin
     ~/.local/bin
     ~/.gem/ruby/2.2.0/bin
     ~/.cargo/bin
@@ -82,8 +82,10 @@ fn steam-wine [@a]{
 
 
 # Change default C and C++ compiler
-E:CC=/usr/lib/llvm/4/bin/clang
-E:CXX=/usr/lib/llvm/4/bin/clang++
+#E:CC=clang
+#E:CXX=clang++
+E:CC=gcc
+E:CXX=g++
 
 E:VISUAL=nvim
 E:EDITOR=nvim

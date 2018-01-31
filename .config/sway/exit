@@ -1,0 +1,27 @@
+#!/home/danyspin97/.go/bin/elvish
+
+E:WALLPAPERS=$E:HOME/Pictures/Wallpapers
+
+fn lockscreen {
+    swaylock --image (find $E:WALLPAPERS -type f | shuf -n 1) --scaling fill &
+    sleep 1
+}
+
+map = [
+    &lock={
+        lockscreen
+    }
+    &suspend={
+        lockscreen
+        sudo s2ram
+    }
+    &logout={}
+    &reboot={
+        sudo s6-reboot
+    }
+    &shutdown={
+        sudo s6-poweroff
+    }
+]
+
+$map[$args[0]]

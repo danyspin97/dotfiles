@@ -4,7 +4,7 @@ E:WALLPAPERS=$E:HOME/Pictures/Wallpapers
 
 fn lockscreen {
     swaylock --image (find $E:WALLPAPERS -type f | shuf -n 1) --scaling fill &
-    sleep 1
+    sleep 0.2
 }
 
 map = [

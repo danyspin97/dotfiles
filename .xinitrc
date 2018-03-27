@@ -34,4 +34,8 @@ fi
 
 #xrandr --setprovideroutputsource modesetting NVIDIA-0
 #xrandr --auto
-exec ck-launch-session dbus-launch --sh-syntax --exit-with-session ~/.xstart
+#exec ck-launch-session dbus-launch --sh-syntax --exit-with-session ~/.xstart
+xrandr --setprovideroutputsource modesetting NVIDIA-0
+xrandr --auto
+setxkbmap it
+startxfce4

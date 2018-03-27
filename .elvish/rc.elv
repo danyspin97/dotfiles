@@ -1,4 +1,4 @@
-use epm
+use env
 
 fn git-branch-name {
     try {
@@ -32,7 +32,7 @@ edit:prompt = {
 # output; "edit:styled" writes styled output.
 edit:rprompt = (constantly (edit:styled (whoami)@(hostname) gray))
 
-edit:-matcher[''] = [p]{ edit:match-prefix &smart-case $p }
+#edit:-matcher[''] = [p]{ edit:match-prefix &smart-case $p }
 
 use readline-binding
 
@@ -51,13 +51,15 @@ paths = [
 ]
 
 # neovim remote
-fn v [n @a]{ E:NVIM_LISTEN_ADDRESS="/tmp/nvimsocket"$n nvr --remote-silent $@a }
+#fn v [n @a]{ E:NVIM_LISTEN_ADDRESS="/tmp/nvimsocket"$n nvr --remote-silent $@a }
 fn v [@a]{ nvr --remote-silent $@a }
-fn vs [n @a]{ E:NVIM_LISTEN_ADDRESS=/tmp/nvimsocket$n nvr --remote-silent -o $@a }
-fn vv [n @a]{ E:NVIM_LISTEN_ADDRESS=/tmp/nvimsocket$n nvr --remote-silent -O $@a }
-fn vt [n @a]{ E:NVIM_LISTEN_ADDRESS=/tmp/nvimsocket$n nvr --remote-tab-silent $@a }
+fn vs [@a]{ E:NVIM_LISTEN_ADDRESS=/tmp/nvimsocket nvr --remote-silent -o $@a }
+fn vv [@a]{ E:NVIM_LISTEN_ADDRESS=/tmp/nvimsocket nvr --remote-silent -O $@a }
+fn vt [@a]{ E:NVIM_LISTEN_ADDRESS=/tmp/nvimsocket nvr --remote-tab-silent $@a }
 
-fn ls [@a]{ e:ls -F -h --color=always -v --author --time-style=long-iso -C $@a | e:less -R -X -Fs }
+fn ls [@a]{ e:exa -F --color=always --time-style=long-iso $@a | e:less -R -X -Fs }
+
+fn dmesg [@a]{ e:dmesg --color=always $@a | e:less -R -X -Fs }
 
 fn tb []{ nc termbin.com 9999 }
 
@@ -81,24 +83,3 @@ fn steam-wine [@a]{
 #edit:insert:binding[Ctrl-R] = { history }
 
 
-# Change default C and C++ compiler
-#E:CC=clang
-#E:CXX=clang++
-E:CC=gcc
-E:CXX=g++
-
-E:VISUAL=nvim
-E:EDITOR=nvim
-E:SUDO_EDITOR=nvim
-E:MANPAGER="nvr --remote-tab-silent -c 'set ft=man' -"
-
-# Socket for neovim --remote
-#E:NVIM_LISTEN_ADDRESS=/tmp/nvimsocket
-
-E:MINIKUBE_WANTUPDATENOTIFICATION=false
-E:MINIKUBE_WANTREPORTERRORPROMPT=false
-E:MINIKUBE_HOME=$E:HOME
-E:CHANGE_MINIKUBE_NONE_USER=true
-E:KUBECONFIG=$E:HOME/.kube/config
-
-E:AUTOSSH_PORT=0

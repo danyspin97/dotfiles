@@ -31,7 +31,7 @@ set $workspace7 "Games"
 set $workspace8 "Settings"
 
 set $monitor1 "eDP-1"
-set $monitor2 "DVI-I-1"
+set $monitor2 "HDMI-1"
 
 # Font for window titles. Will also be used by the bar unless a different font
 # is used in the bar {} block below.
@@ -49,7 +49,7 @@ new_window pixel 1
 # popup_during_fullscreen smart
 
 # start a terminal
-bindsym $mod+Return exec --no-startup-id env WAYLAND_DISPLAY= alacritty
+bindsym $mod+Return exec --no-startup-id kitty -1
 # -e /home/danyspin97/go/bin/elvish
 
 # Application launcher
@@ -150,14 +150,15 @@ assign [class="st-256color" title="mpsyt"]          $workspace6
 assign [class="^Vlc$"]                              $workspace6
 assign [class="mpv"]                                $workspace6
 
-# for_window [window_role="pop-up"] floating enable
-# for_window [window_role="bubble"] floating enable
-# for_window [window_role="task_dialog"] floating enable
-# for_window [window_type="dialog"] floating enable
-# for_window [window_type="menu"] floating enable
+for_window [window_role="pop-up"] floating enable
+for_window [window_role="bubble"] floating enable
+for_window [window_role="task_dialog"] floating enable
+for_window [window_type="dialog"] floating enable
+for_window [window_type="menu"] floating enable
 for_window [class="GParted"] floating enable border normal
 for_window [title="i3_help"] floating enable sticky enable border normal
 for_window [class="(?i)pavucontrol"] floating enable, move position mouse
+for_window [class="feh"] floating enable, move position center
 
 for_window [class="(?i)virtualbox"] floating enable border normal
 for_window [class="Xfburn"] floating enable
@@ -237,11 +238,11 @@ workspace $workspace7 output $monitor1
 workspace $workspace8 output $monitor1
 
 # Program shortcut
-bindsym $mod+c exec --no-startup-id env WAYLAND_DISPLAY= alacritty -e ddgr
+bindsym $mod+c exec --no-startup-id kitty -1 -e ddgr
 bindsym $mod+b exec --no-startup-id firefox
 bindsym $mod+t exec --no-startup-id telegram-desktop
 bindsym $mod+z exec --no-startup-id zathura
-bindsym $mod+p exec --no-startup-id env WAYLAND_DISPLAY= alacritty -e ncpamixer
+bindsym $mod+p exec --no-startup-id kitty -1 -e ncpamixer
 bindsym $mod+m exec --no-startup-id thunderbird
 bindsym $mod+o exec --no-startup-id spotify
 bindsym $mod+x exec --no-startup-id primusrun steam
@@ -258,8 +259,8 @@ client.background       #ffffff
 for_window [class="^.*"] border pixel 3
 
 # Set inner/outer gaps
-gaps inner 1
-gaps outer 1
+gaps inner 0
+gaps outer 0
 
 # Additionally, you can issue commands with the following syntax. This is useful to bind keys to changi$
 # gaps inner|outer current|all set|plus|minus <px>

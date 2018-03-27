@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# setxkbmap -layout it
+setxkbmap -layout it
 # compton &
 #safeeyes &
 # redshift &

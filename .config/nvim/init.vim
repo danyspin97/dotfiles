@@ -89,14 +89,16 @@ set smartindent
 "Wrap lines
 set wrap
 
+set shell=/usr/bin/bash
+
 set grepprg=rg\ --vimgrep
 
 set colorcolumn=80
 
 " Enable sql query syntax hightlighting in php files
-let php_sql_query = 1
+let g:php_sql_query = 1
 " Enable html syntax hightlighting in php files
-let php_htmlInStrings = 1
+let g:php_htmlInStrings = 1
 
 " Remap comma to double dots
 map , :
@@ -152,9 +154,6 @@ inoremap <C-j> <Esc><C-w>j
 inoremap <C-k> <Esc><C-w>k
 inoremap <C-l> <Esc><C-w>l
 
-" Get terminal get input focus when switching to terminal window
-au BufEnter * if &buftype == 'terminal' | :startinsert | endif
-
 map <leader>cd :cd %:p:h<cr>:pwd<cr>
 
 " Close all open windows
@@ -202,7 +201,15 @@ let g:terminal_color_14 = '#8ec07c'
 let g:terminal_color_15 = '#ebdbb2'
 
 augroup term
-    au TermOpen * :IndentLinesDisable
+    autocmd!
+    autocmd TermOpen * IndentLinesDisable
+    autocmd TermOpen * set noshowmode
+    autocmd TermOpen * set noruler
+    autocmd TermOpen * set noshowcmd
+    "
+    " Get terminal get input focus when switching to terminal window
+    autocmd BufEnter term://* startinsert
+    autocmd BufLeave term://* stopinsert
 augroup END
 
 " Donwload vim-plug if missing
@@ -333,7 +340,7 @@ noremap <Leader>b :Buffers<CR>
 noremap <Leader>d :exe ':Look ' . expand('<cword>')<CR>
 " Find command using fzf and ripgrep
 command! -bang -nargs=* Look
-  \ call fzf#vim#grep('rg --column --line-number --no-heading --fixed-strings --ignore-case --no-ignore --hidden --follow --glob "!.git/*" --glob "!docs?/*" --glob "!build/*" --glob "!opt/*" --color "always" --threads 0 --no-messages '
+  \ call fzf#vim#grep('rg --column --line-number --no-heading --fixed-strings --ignore-case --no-ignore --hidden --follow --glob "!.git/*" --glob "!docs?/*" --glob "!build/*" --glob "!opt/*" --glob "!vendor/*" --color "always" --threads 0 --no-messages '
   \   .shellescape(<q-args>), 1,
   \   fzf#vim#with_preview('up:60%'),
   \   <bang>0)
@@ -379,11 +386,6 @@ nnoremap <silent> <leader>yy :call WindowSwap#EasyWindowSwap()<CR>
 
 " Search the selected text using *
 "Plug 'nelstrom/vim-visual-star-search'
-
-" Search the text between projects files
-Plug 'dyng/ctrlsf.vim'
-" Use ripgrep for searching
-let g:ctrlsf_ackprg = 'rg'
 
 " Version control
 Plug 'tpope/vim-fugitive'
@@ -451,22 +453,18 @@ let g:UltiSnipsEditSplit="vertical"
 Plug 'honza/vim-snippets'
 
 " Clipboard management
-" Plug 'vim-scripts/YankRing.vim'
-" " Show yankes
-" nnoremap <silent> <F6> :YRShow<CR>
-" " Increase window height
-" let g:yankring_window_height = 12
-" " Change keys for replacing
-" let g:yankring_replace_n_pkey = '<C-P>'
-" let g:yankring_replace_n_nkey = '<C-N>'
+Plug 'vim-scripts/YankRing.vim'
+" Show yankes
+nnoremap <silent> <F6> :YRShow<CR>
+" Increase window height
+let g:yankring_window_height = 12
+" Change keys for replacing
+let g:yankring_replace_n_pkey = '<C-P>'
+let g:yankring_replace_n_nkey = '<C-N>'
 
-" let g:yankring_max_history = 1000
-" let g:yankring_min_element_length = 3
-" let g:yankring_history_dir = '$HOME/.cache'
-
-Plug 'maxbrunsfeld/vim-yankstack'
-nmap <C-P> <Plug>yankstack_substitute_older_paste
-nmap <C-N> <Plug>yankstack_substitute_newer_paste
+let g:yankring_max_history = 1000
+let g:yankring_min_element_length = 3
+let g:yankring_history_dir = '$HOME/.cache'
 
 " Intend guides
 Plug 'Yggdroot/indentLine'
@@ -571,7 +569,7 @@ autocmd BufEnter *.cpp,*.h,*.hpp,*.hxx let g:ale_cpp_clang_options = join(ncm_cl
 Plug 'reedes/vim-pencil'
 augroup Pencil
     autocmd!
-    autocmd FileType markdown,mkd call EnterWriterMode()
+    autocmd FileType markdown,mkd,asciidoc call EnterWriterMode()
 augroup END
 
 " Markdown preview in firefox
@@ -587,7 +585,7 @@ Plug 'junegunn/limelight.vim'
 Plug 'DanySpin97/ttab.vim'
 " Change key
 let g:ttab_prefix = '<C-A>'
-" let g:ttab_shell = 'elvish'
+let g:ttab_shell = 'elvish'
 
 Plug 'IN3D/vim-raml'
 
@@ -626,7 +624,7 @@ map <C-m> <Plug>Sneak_S
 
 Plug 'dmix/elvish.vim', { 'on_ft': ['elvish']}
 
-Plug 'jaxbot/browserlink.vim'
+" Plug 'jaxbot/browserlink.vim'
 
 Plug 'metakirby5/codi.vim'
 let g:codi#rightsplit = 0
@@ -641,7 +639,7 @@ Plug 'let-def/vimbufsync'
 
 Plug 'the-lambda-church/coquille'
 
-Plug 'nightsense/seagrey'
+" Plug 'nightsense/seagrey'
 
 Plug 'donRaphaco/neotex', { 'for': 'tex' }
 
@@ -656,7 +654,7 @@ Plug 'qpkorr/vim-bufkill'
 " Plug 'dkprice/vim-easygrep'
 "
 " TODO test
-Plug 'gregsexton/gitv', {'on': ['Gitv']}
+Plug 'gregsexton/gitv', { 'on': ['Gitv'] }
 
 " TODO test
 Plug 'tpope/vim-rsi'
@@ -695,11 +693,11 @@ Plug 'rstacruz/sparkup'
 Plug 'kien/rainbow_parentheses.vim'
 augroup rainbow
     autocmd!
-    autocmd VimEnter * RainbowParenthesesActivate
-    autocmd BufWritePost * RainbowParenthesesLoadRound
-    autocmd BufWritePost * RainbowParenthesesLoadSquare
-    autocmd BufWritePost * RainbowParenthesesLoadBraces
-    autocmd BufWritePost * RainbowParenthesesLoadChevrons
+    " autocmd VimEnter * RainbowParenthesesActivate
+    " autocmd BufWritePost * RainbowParenthesesLoadRound
+    " autocmd BufWritePost * RainbowParenthesesLoadSquare
+    " autocmd BufWritePost * RainbowParenthesesLoadBraces
+    " autocmd BufWritePost * RainbowParenthesesLoadChevrons
 augroup END
 
 " Multiline searching
@@ -711,7 +709,7 @@ Plug 'xolox/vim-misc'
 
 " Take notes in vim
 Plug 'xolox/vim-notes'
-let g:notes_directories = ['~/notes']
+let g:notes_directories = ['~/.notes']
 
 " Check particular type of word
 Plug 'reedes/vim-wordy'
@@ -723,9 +721,20 @@ Plug 'reedes/vim-litecorrect'
 nnoremap <C-s> [s1z=<c-o>
 inoremap <C-s> <c-g>u<Esc>[s1z=`]A<c-g>u
 
+" Use neovim to write in browser
+Plug 'raghur/vim-ghost', {'do': ':GhostInstall'}
+
+" Pick html color
+Plug 'DougBeney/pickachu'
+
+Plug 'jvirtanen/vim-octave'
+
+" Open filename:line
+Plug 'kopischke/vim-fetch'
+
 call plug#end()
 
-colorscheme nord
+colorscheme gruvbox
 set background=dark
 set termguicolors
 
@@ -741,7 +750,6 @@ augroup OnSave
 augroup END
 
 function! EnterWriterMode()
-    colorscheme seagrey-light
     call pencil#init({'wrap': 'hard', 'autoformat': 0})
     Limelight
     " execute `Goyo` if it's not already active
@@ -753,6 +761,7 @@ function! EnterWriterMode()
     setlocal wrap
     set noshowmode
     set noshowcmd
+    set nocursorcolumn
     set scrolloff=999
     set list lcs=tab:+.
     " Underline spelling errors in red
@@ -766,15 +775,11 @@ function! EnterWriterMode()
 endfunction
 
 function! s:LeaveWriterMode()
-  set showmode
-  set showcmd
-  set scrolloff=5
-  Limelight!
-  colorscheme nord
-  set background=dark
-  " ...
+    set showmode
+    set showcmd
+    set scrolloff=5
+    Limelight!
+    " set background=dark
 endfunction
-
-map <Leader>y :CoqNext<CR>
 
 autocmd! User GoyoLeave nested call <SID>LeaveWriterMode()

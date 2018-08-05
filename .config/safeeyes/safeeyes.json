@@ -1,7 +1,7 @@
 {
     "allow_postpone": true,
-    "break_interval": 20,
-    "long_break_duration": 120,
+    "break_interval": 15,
+    "long_break_duration": 600,
     "long_breaks": [
         {
             "name": "long_break_walk"
@@ -14,25 +14,29 @@
         "config_version": "6.0.0"
     },
     "no_of_short_breaks_per_long_break": 4,
-    "persist_state": true,
+    "persist_state": false,
     "plugins": [
         {
             "enabled": false,
             "id": "audiblealert",
-            "version": "0.0.1"
+            "settings": {
+                "pre_break_alert": true
+            },
+            "version": "0.0.2"
         },
         {
-            "enabled": false,
+            "enabled": true,
             "id": "donotdisturb",
             "settings": {
-                "skip_break_windows": "",
+                "skip_break_windows": "osu mpv",
                 "take_break_windows": "",
-                "unfullscreen": true
+                "unfullscreen": true,
+                "while_on_battery": false
             },
-            "version": "0.0.1"
+            "version": "0.0.2"
         },
         {
-            "enabled": false,
+            "enabled": true,
             "id": "healthstats",
             "version": "0.0.1"
         },

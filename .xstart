@@ -1,9 +1,10 @@
 #!/bin/sh
 
-setxkbmap -layout it
+# setxkbmap -layout it
 # compton &
-#safeeyes &
+# safeeyes &
 # redshift &
-nm-applet &
+# nm-applet &
 # pulseaudio --start
 # xbacklight -set 40
+startxfce4

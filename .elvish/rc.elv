@@ -42,6 +42,7 @@ paths = [
     ~/.go/bin
     ~/.local/bin
     ~/.gem/ruby/2.2.0/bin
+    ~/.gem/ruby/2.5.0/bin
     ~/.cargo/bin
     ~/.fzf/bin
 ]

@@ -35,7 +35,15 @@ fi
 #xrandr --setprovideroutputsource modesetting NVIDIA-0
 #xrandr --auto
 #exec ck-launch-session dbus-launch --sh-syntax --exit-with-session ~/.xstart
-xrandr --setprovideroutputsource modesetting NVIDIA-0
-xrandr --auto
 setxkbmap it
-startxfce4
+if [ -f /etc/exherbo-release ]; then
+  exec i3
+else
+  xrandr --setprovideroutputsource modesetting NVIDIA-0
+  xrandr --auto
+  safeeyes &
+  nm-applet &
+  redshift-gtk &
+  xset m 0 0
+  exec startxfce4
+fi

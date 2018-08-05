@@ -35,9 +35,6 @@ set nostartofline       " Do not jump to first character with page commands.
 set updatetime=500 " Let plugins show effects after 500ms, not 4s
 set mouse-=a " Disable mouse click to go to position
 
-" Don't let autocomplete affect usual typing habits
-set completeopt=menuone,preview,noinsert
-
 " Ignore compiled files
 set wildignore=*.o,*~,*.pyc,*/.git/*,*/.hg/*,*/.svn/*,*/.DS_Store/docs?/
 
@@ -69,11 +66,13 @@ endif
 
 set list                " Show problematic characters.
 
-"set ignorecase          " Make searching case-insensitive
-"set smartcase           " ... unless the query has capital letters.
+set smartcase           " ... unless the query has capital letters.
 set gdefault            " Use 'g' flag by default with :s/foo/bar/.
 set magic               " Use 'magic' patterns (extended regular expressions).
 set incsearch
+
+" Live substitution
+set inccommand=split
 
 " Disable swap and backup
 set nobackup
@@ -175,30 +174,27 @@ vmap <silent> <expr> p <sid>Repl()
 
 au BufEnter * set noro
 
-" Send lines in range to hastebin.com and copy url to clipboard
-command! -range -bar Haste <line1>,<line2>w !haste | xsel -b
-
 if has('nvim')
   let $VISUAL = 'nvr -cc split --remote-wait'
 endif
 
 " Neovim Terminal Colors
-let g:terminal_color_0  = '#1d2021'
-let g:terminal_color_1  = '#cc241d'
-let g:terminal_color_2  = '#98971a'
-let g:terminal_color_3  = '#d79921'
-let g:terminal_color_4  = '#458588'
-let g:terminal_color_5  = '#b16286'
-let g:terminal_color_6  = '#689d6a'
-let g:terminal_color_7  = '#a89984'
-let g:terminal_color_8  = '#928374'
-let g:terminal_color_9  = '#fb4934'
-let g:terminal_color_10 = '#b8bb26'
-let g:terminal_color_11 = '#fabd2f'
-let g:terminal_color_12 = '#83a598'
-let g:terminal_color_13 = '#d3869b'
-let g:terminal_color_14 = '#8ec07c'
-let g:terminal_color_15 = '#ebdbb2'
+let g:terminal_color_0  = '#565575'
+let g:terminal_color_1  = '#ff8080'
+let g:terminal_color_2  = '#95ffa4'
+let g:terminal_color_3  = '#ffe9aa'
+let g:terminal_color_4  = '#91ddff'
+let g:terminal_color_5  = '#c991e1'
+let g:terminal_color_6  = '#aaffe4'
+let g:terminal_color_7  = '#cbe3e7'
+let g:terminal_color_8  = '#100e23'
+let g:terminal_color_9  = '#ff5458'
+let g:terminal_color_10 = '#62d196'
+let g:terminal_color_11 = '#ffb378'
+let g:terminal_color_12 = '#65b2ff'
+let g:terminal_color_13 = '#906cff'
+let g:terminal_color_14 = '#63f2f1'
+let g:terminal_color_15 = '#a6b3cc'
 
 augroup term
     autocmd!
@@ -206,11 +202,14 @@ augroup term
     autocmd TermOpen * set noshowmode
     autocmd TermOpen * set noruler
     autocmd TermOpen * set noshowcmd
-    "
+
     " Get terminal get input focus when switching to terminal window
     autocmd BufEnter term://* startinsert
     autocmd BufLeave term://* stopinsert
 augroup END
+
+" Lots of scrollback in terminal
+let g:terminal_scrollback_buffer_size = 50000
 
 " Donwload vim-plug if missing
 if empty(glob('~/.config/nvim/autoload/plug.vim'))
@@ -248,76 +247,21 @@ if has('persistent_undo')
     set undofile
 endif
 
-" Theme
-Plug 'morhetz/gruvbox'
-let g:gruvbox_contrast_dark = 'hard'
-let g:gruvbox_italic=1
-
-" Status line
-" Plug 'vim-airline/vim-airline'
-" Use powerline fonts
-let g:airline_powerline_fonts = 1
-" Use caching
-let g:airline_highlighting_cache = 1
-" Use gruvbox theme
-let g:airline_theme='gruvbox'
-
-let g:airline#extensions#tabline#enabled = 1
-
-" Another theme
-"Plug 'freeo/vim-kalisi'
-
-" Nord theme
-Plug 'arcticicestudio/nord-vim', { 'branch': 'develop' }
-let g:nord_italic = 1
-let g:nord_italic_comments = 1
-let g:nord_uniform_status_lines = 1
-let g:nord_comment_brightness = 20
-let g:nord_uniform_diff_background = 1
-
-" Add icons
-"Plug 'ryanoasis/vim-devicons'
-let g:WebDevIconsOS = 'Linux'
-
 " Hightlight html color tags
 Plug 'lilydjwg/colorizer'
 
-" File explorer
-"Plug 'scrooloose/nerdtree'
-" Close NerdTree if it is the onyl windows open
-autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
-" Open NerdTree with ctrl+n
-map <Leader>n :NERDTreeToggle<CR>
-" and toggle with double n
-map <Leader>nn :NERDTreeToggle<CR>
-" Show hidden file
-let g:NERDTreeShowHidden=1
-" Ignore file
-let g:NERDTreeIgnore=['\.DS_Store', '\~$', '\.swp']
-" Arrows
-let g:NERDTreeDirArrowExpandable = ''
-let g:NERDTreeDirArrowCollapsible = ''
-" Symbols
-let g:NERDTreeIndicatorMapCustom = {
-            \ 'Modified'  : '✹',
-            \ 'Staged'    : '✚',
-            \ 'Untracked' : '✭',
-            \ 'Renamed'   : '➜',
-            \ 'Unmerged'  : '═',
-            \ 'Deleted'   : '✖',
-            \ 'Dirty'     : '✗',
-            \ 'Clean'     : '✔︎',
-            \ 'Unknown'   : '?'
-            \ }
+" Fuzzy picker
+Plug 'srstevenson/vim-picker'
+let g:picker_find_executable = 'rg'
+let g:picker_find_flags = '--column --line-number --no-heading --fixed-strings --ignore-case --no-ignore --hidden --follow --glob "!.git/*" --glob "!docs?/*" --glob "!build/*" --glob "!opt/*" --glob "!vendor/*" --color never --threads 0 --no-messages --files'
 
-" Fuzzy finder
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
-" In Neovim, you can set up fzf window using a Vim command
+
 let g:fzf_layout = { 'window': 'enew' }
 " Fzz colors
 let g:fzf_colors =
-            \ { 'fg':      ['fg', 'Normal'],
+            \ { 'fg':    ['fg', 'Normal'],
             \ 'bg':      ['bg', 'Normal'],
             \ 'hl':      ['fg', 'Comment'],
             \ 'fg+':     ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
@@ -352,14 +296,6 @@ augroup fzf_buffer
             \| autocmd BufLeave <buffer> set laststatus=2 showmode ruler
 augroup END
 
-" Fuzzy search over the text
-Plug 'ggVGc/vim-fuzzysearch'
-let g:fuzzysearch_hlsearch = 1
-let g:fuzzysearch_ignorecase = 1
-let g:fuzzysearch_max_history = 30
-let g:fuzzysearch_match_spaces = 1
-" Open fuzzy search
-nnoremap <Leader>/ :FuzzySearch<CR>
 " Fast replace text
 nnoremap <Leader>R :%s///g<left><left>
 
@@ -385,25 +321,82 @@ let g:windowswap_map_keys = 0 "prevent default bindings
 nnoremap <silent> <leader>yy :call WindowSwap#EasyWindowSwap()<CR>
 
 " Search the selected text using *
-"Plug 'nelstrom/vim-visual-star-search'
+Plug 'nelstrom/vim-visual-star-search'
 
 " Version control
 Plug 'tpope/vim-fugitive'
 
-" Integration with github
-Plug 'roxma/ncm-github'
+" Autocompletion framework
+Plug 'ncm2/ncm2'
+" ncm2
+Plug 'roxma/nvim-yarp'
 
-" Autocompletition
-Plug 'roxma/nvim-completion-manager'
-" let g:cm_matcher = {'module': 'cm_matchers.abbrev_matcher', 'case': 'smartcase'}
-let g:cm_multi_threading = 1
+" enable ncm2 for all buffers
+autocmd BufEnter * call ncm2#enable_for_buffer()
+
+autocmd TextChangedI * call ncm2#auto_trigger()
+
+set completeopt=noinsert,menuone,noselect
+
+" suppress the annoying 'match x of y', 'The only match' and 'Pattern not
+" found' messages
 set shortmess+=c
+
+" Use <TAB> to select the popup menu:
 inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
 inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 
-    let $NVIM_PYTHON_LOG_FILE="/tmp/nvim_log"
-        let $NVIM_NCM_LOG_LEVEL="DEBUG"
-        let $NVIM_NCM_MULTI_THREAD=0
+" some completion sources
+Plug 'ncm2/ncm2-bufword'
+Plug 'ncm2/ncm2-path'
+Plug 'ncm2/ncm2-tagprefix'
+Plug 'ncm2/ncm2-match-highlight'
+
+" Completion for vim files
+Plug 'ncm2/ncm2-vim'
+Plug 'Shougo/neco-vim'
+
+" Completion using include definitions
+Plug 'ncm2/ncm2-neoinclude'
+Plug 'Shougo/neoinclude.vim'
+
+" Completion using syntax files
+Plug 'ncm2/ncm2-syntax'
+Plug 'Shougo/neco-syntax'
+
+" Look.vim completion plugin
+Plug 'filipekiss/ncm2-look.vim'
+
+Plug 'ncm2/ncm2-highprio-pop'
+
+" Plug 'autozimu/LanguageClient-neovim', {
+"     \ 'branch': 'next',
+"     \ 'do': 'bash install.sh',
+"     \ }
+
+" let g:LanguageClient_serverCommands = {
+"     \ 'c': ['cquery', '--log-file=/tmp/cq.log'],
+"     \ 'cpp': ['cquery', '--log-file=/tmp/cq.log'],
+"     \ 'css': ['css-languageserver', '--stdio'],
+"     \ 'python': ['pyls'],
+"     \ }
+
+" let g:LanguageClient_loadSettings = 1
+" let g:LanguageClient_settingsPath = '/home/danyspin97/.config/nvim/settings.json'
+
+" Use language server
+Plug 'prabirshrestha/async.vim'
+Plug 'prabirshrestha/vim-lsp'
+Plug 'ncm2/ncm2-vim-lsp'
+
+if executable('pyls')
+    " pip install python-language-server
+    au User lsp_setup call lsp#register_server({
+        \ 'name': 'pyls',
+        \ 'cmd': {server_info->['pyls']},
+        \ 'whitelist': ['python'],
+        \ })
+endif
 
 " Enhance repeat key
 Plug 'tpope/vim-repeat'
@@ -421,7 +414,7 @@ noremap <silent> <c-d> :call smooth_scroll#down(&scroll, 5, 2)<CR>
 noremap <silent> <c-b> :call smooth_scroll#up(&scroll*2, 5, 4)<CR>
 noremap <silent> <c-f> :call smooth_scroll#down(&scroll*2, 5, 4)<CR>
 
-"Plug 'reedes/vim-wheel'
+Plug 'reedes/vim-wheel'
 " Remap keys
 let g:wheel#map#up   = '<m-y>'
 let g:wheel#map#down = '<m-e>'
@@ -438,16 +431,8 @@ sunmap b
 sunmap e
 sunmap ge
 
+" Provide useful new movement
 Plug 'matze/vim-move'
-
-" Snippets
-Plug 'SirVer/ultisnips'
-" Change keymaps
-let g:UltiSnipsExpandTrigger = '<C-j>'
-let g:UltiSnipsJumpForwardTrigger = '<C-j>'
-let g:UltiSnipsJumpBackwardTrigger = '<C-k>'
-" Split window as default action
-let g:UltiSnipsEditSplit="vertical"
 
 " Snippets for ultisnips
 Plug 'honza/vim-snippets'
@@ -469,7 +454,7 @@ let g:yankring_history_dir = '$HOME/.cache'
 " Intend guides
 Plug 'Yggdroot/indentLine'
 " Set color for indenting character
-let g:indentLine_color_gui = '#D8DEE9'
+let g:indentLine_color_gui = '#91ddff'
 " Set new indenting char
 let g:indentLine_char = '┆'
 " Disable concealing
@@ -484,19 +469,19 @@ let g:indentLine_setColors=1
 Plug 'editorconfig/editorconfig-vim'
 
 " Format using external tools
-Plug 'sbdchd/neoformat'
-" Disable alignment
-let g:neoformat_basic_format_align = 0
-" Enable tab to space conversion
-let g:neoformat_basic_format_retab = 1
-" Enable trimmming of trailing whitespace
-let g:neoformat_basic_format_trim = 1
-" Disable formatting
-let g:neoformat_enabled_sql = []
-" Use formatprg
-let g:neoformat_try_formatprg = 1
-" Don't put message errors in code
-let g:neoformat_only_msg_on_error = 1
+" Plug 'sbdchd/neoformat'
+" " Disable alignment
+" let g:neoformat_basic_format_align = 0
+" " Enable tab to space conversion
+" let g:neoformat_basic_format_retab = 1
+" " Enable trimmming of trailing whitespace
+" let g:neoformat_basic_format_trim = 1
+" " Disable formatting
+" let g:neoformat_enabled_sql = []
+" " Use formatprg
+" let g:neoformat_try_formatprg = 1
+" " Don't put message errors in code
+" let g:neoformat_only_msg_on_error = 1
 
 " Automatically close Conditional statement in shell scripting
 Plug 'tpope/vim-endwise'
@@ -520,50 +505,29 @@ Plug 'sheerun/vim-polyglot'
 " Asynchronous build and make
 Plug 'tpope/vim-dispatch'
 
-" Golang plugin
-Plug 'fatih/vim-go'
-" Disable formatting on save, let neoformat handle this
-let g:go_fmt_autosave = 0
-
-augroup go_commands
-    autocmd!
-    autocmd FileType go nnoremap <Leader>gd :exe ':GoDoc ' . expand('<cword>')<CR>
-    autocmd FileType go nnoremap <Leader>gb :GoBuild<CR>
-    autocmd FileType go nnoremap <Leader>gr :GoRename<CR>
-augroup END
-
-" Refactoring
-Plug 'brooth/far.vim'
-
-" Debugging for php
-"Plug 'joonty/vdebug'
-" Debugging using clang
-"Plug 'critiqjo/lldb.nvim'
-
 " Linting
-Plug 'w0rp/ale'
-" Disable automatic lining on writing
-let g:ale_lint_on_text_changed = 'never'
-let g:ale_set_loclist = 0
-let g:ale_set_quickfix = 1
-let g:ale_open_list = 1
-let g:ale_keep_list_window_open = 0
-" Enable completion where available.
-let g:ale_completion_enabled = 1
+" Plug 'w0rp/ale'
+" " Disable automatic lining on writing
+" let g:ale_lint_on_text_changed = 'never'
+" let g:ale_set_loclist = 0
+" " 1
+" let g:ale_set_quickfix = 1
+" " 1
+" let g:ale_open_list = 1
+" let g:ale_keep_list_window_open = 0
+" " Disable completion
+" let g:ale_completion_enabled = 0
 
-nmap <silent> <Leader>fp <Plug>(ale_previous_wrap)
-nmap <silent> <Leader>fn <Plug>(ale_next_wrap)
+" nmap <silent> <Leader>fp <Plug>(ale_previous_wrap)
+" nmap <silent> <Leader>fn <Plug>(ale_next_wrap)
+
+" let g:ale_cpp_cquery_options = '--log-file=/tmp/cq2.log'
 
 " Close vim if the last window open is quickfix
 aug QuickFixClose
     au!
     au WinEnter * if winnr('$') == 1 && getbufvar(winbufnr(winnr()), "&buftype") == "quickfix"|q|endif
 aug END
-let g:ale_linters = {
-    \   'cpp': ['clang'],
-    \   'java': ['javac'],
-    \}
-autocmd BufEnter *.cpp,*.h,*.hpp,*.hxx let g:ale_cpp_clang_options = join(ncm_clang#compilation_info()['args'], ' ')
 
 " Writer plugins
 Plug 'reedes/vim-pencil'
@@ -571,9 +535,6 @@ augroup Pencil
     autocmd!
     autocmd FileType markdown,mkd,asciidoc call EnterWriterMode()
 augroup END
-
-" Markdown preview in firefox
-Plug 'euclio/vim-markdown-composer', { 'do': function('BuildComposer') }
 
 " Distraction free writing
 Plug 'junegunn/goyo.vim'
@@ -586,22 +547,6 @@ Plug 'DanySpin97/ttab.vim'
 " Change key
 let g:ttab_prefix = '<C-A>'
 let g:ttab_shell = 'elvish'
-
-Plug 'IN3D/vim-raml'
-
-" requires phpactor
-Plug 'phpactor/phpactor' ,  {'do': 'composer install'}
-
-Plug 'roxma/ncm-phpactor'
-
-Plug 'Shougo/neco-vim'
-Plug 'Shougo/neco-syntax'
-Plug 'Shougo/neoinclude.vim'
-Plug 'calebeby/ncm-css'
-Plug 'roxma/nvim-cm-tern',  {'do': 'npm install'}
-Plug 'roxma/ncm-clang'
-Plug 'fgrsnau/ncm-otherbuf'
-
 
 " Browse documentation
 Plug 'KabbAmine/zeavim.vim', {'on': [
@@ -622,43 +567,34 @@ map T <Plug>Sneak_T
 map m <Plug>Sneak_s
 map <C-m> <Plug>Sneak_S
 
+" Elvish scripts syntax
 Plug 'dmix/elvish.vim', { 'on_ft': ['elvish']}
-
-" Plug 'jaxbot/browserlink.vim'
 
 Plug 'metakirby5/codi.vim'
 let g:codi#rightsplit = 0
 let g:codi#rightalign = 0
 
-Plug 'arakashic/chromatica.nvim'
-let g:chromatica#libclang_path = '/lib/libclang.so'
-let g:chromatica#enable_at_startup = 1
+" Plug 'arakashic/chromatica.nvim'
+" let g:chromatica#libclang_path = '/lib/libclang.so'
+" let g:chromatica#enable_at_startup = 1
 
 " Needed by coquille
 Plug 'let-def/vimbufsync'
-
+" Plugin for coq
 Plug 'the-lambda-church/coquille'
 
-" Plug 'nightsense/seagrey'
+Plug 'nightsense/seagrey'
 
+" Latex plugin
 Plug 'donRaphaco/neotex', { 'for': 'tex' }
 
-Plug 'joereynolds/SQHell.vim'
+" Database wrapper
+" Plug 'joereynolds/SQHell.vim'
 
+" Manipulate buffers
 Plug 'qpkorr/vim-bufkill'
 
-" TODO test
-"Plug 'LucHermitte/vim-refactor'
-"
-" TODO test over far.vim
-" Plug 'dkprice/vim-easygrep'
-"
-" TODO test
-Plug 'gregsexton/gitv', { 'on': ['Gitv'] }
-
-" TODO test
-Plug 'tpope/vim-rsi'
-
+" Add more text objects
 Plug 'wellle/targets.vim'
 
 " ttags_vim dependency
@@ -682,23 +618,31 @@ noremap <Leader>g* :call ttags#List(0, "*", tlib#rx#Escape(expand("<cword>")) ."
 " Show tags matching the word under cursor (search also in |g:tlib_tags_extra|)
 noremap <Leader>g? :call ttags#List(1, "*", tlib#rx#Escape(expand("<cword>")))<cr>
 
-" Show tags of a certain category
-for c in split('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', '\zs')
-    exec 'noremap <Leader>g'. c .' :TTags '. c .'<cr>'
-endfor
-
+" Html plugin
 Plug 'rstacruz/sparkup'
 
-" Enanche parenthesis hightlighting
-Plug 'kien/rainbow_parentheses.vim'
-augroup rainbow
-    autocmd!
-    " autocmd VimEnter * RainbowParenthesesActivate
-    " autocmd BufWritePost * RainbowParenthesesLoadRound
-    " autocmd BufWritePost * RainbowParenthesesLoadSquare
-    " autocmd BufWritePost * RainbowParenthesesLoadBraces
-    " autocmd BufWritePost * RainbowParenthesesLoadChevrons
-augroup END
+" Rainbow parenthesis
+Plug 'luochen1990/rainbow'
+let g:rainbow_active = 1
+
+let g:rainbow_conf = {
+    \    'guifgs': ['royalblue3', 'darkorange3', 'seagreen3', 'firebrick'],
+    \    'ctermfgs': ['lightblue', 'lightyellow', 'lightcyan', 'lightmagenta'],
+    \    'operators': '_,_',
+    \    'parentheses': ['start=/(/ end=/)/ fold', 'start=/\[/ end=/\]/ fold', 'start=/{/ end=/}/ fold'],
+    \    'separately': {
+    \        '*': {},
+    \        'tex': {
+    \            'parentheses': ['start=/(/ end=/)/', 'start=/\[/ end=/\]/'],
+    \        },
+    \        'lisp': {
+    \            'guifgs': ['royalblue3', 'darkorange3', 'seagreen3', 'firebrick', 'darkorchid3'],
+    \        },
+    \        'vim': {
+    \            'parentheses': ['start=/(/ end=/)/', 'start=/\[/ end=/\]/', 'start=/{/ end=/}/ fold', 'start=/(/ end=/)/ containedin=vimFuncBody', 'start=/\[/ end=/\]/ containedin=vimFuncBody', 'start=/{/ end=/}/ fold containedin=vimFuncBody'],
+    \        },
+    \    }
+    \}
 
 " Multiline searching
 Plug 'wincent/ferret'
@@ -706,7 +650,6 @@ let g:FerretMap=0
 
 " Nedded by vim-notes
 Plug 'xolox/vim-misc'
-
 " Take notes in vim
 Plug 'xolox/vim-notes'
 let g:notes_directories = ['~/.notes']
@@ -721,20 +664,54 @@ Plug 'reedes/vim-litecorrect'
 nnoremap <C-s> [s1z=<c-o>
 inoremap <C-s> <c-g>u<Esc>[s1z=`]A<c-g>u
 
-" Use neovim to write in browser
-Plug 'raghur/vim-ghost', {'do': ':GhostInstall'}
-
 " Pick html color
 Plug 'DougBeney/pickachu'
 
+" Octave syntax
 Plug 'jvirtanen/vim-octave'
 
 " Open filename:line
 Plug 'kopischke/vim-fetch'
 
+" Meson build support
+Plug 'igankevich/mesonic'
+
+" vim fugitive extension
+Plug 'gregsexton/gitv', {'on': ['Gitv']}
+
+" Exheres syntax
+Plug 'https://gitlab.exherbo.org/exherbo-misc/exheres-syntax'
+
+" srcery colorscheme
+" Plug 'roosta/srcery'
+" let g:srcery_italic = 1
+" let g:srcery_inverse_match_paren = 1
+
+" Accent
+Plug 'airblade/vim-accent'
+
+" Pulse while search
+Plug 'inside/vim-search-pulse'
+nmap n n<Plug>Pulse
+nmap N N<Plug>Pulse
+nmap * *<Plug>Pulse
+nmap # #<Plug>Pulse
+
+" Improve registers
+Plug 'junegunn/vim-peekaboo'
+
+" Colorscheme
+Plug 'challenger-deep-theme/vim', { 'as': 'challenger-deep' }
+
+" Add git for version control
+Plug 'mhinz/vim-signify'
+
+" Highlight mathcing words
+Plug 'RRethy/vim-illuminate'
+
 call plug#end()
 
-colorscheme gruvbox
+colorscheme challenger_deep
 set background=dark
 set termguicolors
 
@@ -743,11 +720,11 @@ let g:python3_host_prog  = '/usr/bin/python3'
 " Skip the check of neovim module
 let g:python3_host_skip_check = 1
 
-augroup OnSave
-    autocmd!
-    " Autoformat code using neoformat and trim whitespaces
-    autocmd BufWritePre * Neoformat
-augroup END
+" augroup OnSave
+"     autocmd!
+"     " Autoformat code using neoformat and trim whitespaces
+"     " autocmd BufWritePre * Neoformat
+" augroup END
 
 function! EnterWriterMode()
     call pencil#init({'wrap': 'hard', 'autoformat': 0})
@@ -772,6 +749,7 @@ function! EnterWriterMode()
     " Underline localization errors in green.
     hi clear SpellLocal
     hi SpellCap cterm=underline ctermfg=green
+    let g:ncm2_look_enabled = 1
 endfunction
 
 function! s:LeaveWriterMode()
@@ -779,7 +757,9 @@ function! s:LeaveWriterMode()
     set showcmd
     set scrolloff=5
     Limelight!
+    let g:ncm2_look_enabled = 0
     " set background=dark
 endfunction
 
 autocmd! User GoyoLeave nested call <SID>LeaveWriterMode()
+

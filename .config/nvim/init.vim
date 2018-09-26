@@ -398,6 +398,15 @@ if executable('pyls')
         \ })
 endif
 
+if executable('jdtls')
+    " pip install python-language-server
+    au User lsp_setup call lsp#register_server({
+        \ 'name': 'jdlts',
+        \ 'cmd': {server_info->['jdtls']},
+        \ 'whitelist': ['java'],
+        \ })
+endif
+
 " Enhance repeat key
 Plug 'tpope/vim-repeat'
 
@@ -469,19 +478,19 @@ let g:indentLine_setColors=1
 Plug 'editorconfig/editorconfig-vim'
 
 " Format using external tools
-" Plug 'sbdchd/neoformat'
-" " Disable alignment
-" let g:neoformat_basic_format_align = 0
-" " Enable tab to space conversion
-" let g:neoformat_basic_format_retab = 1
-" " Enable trimmming of trailing whitespace
-" let g:neoformat_basic_format_trim = 1
-" " Disable formatting
-" let g:neoformat_enabled_sql = []
-" " Use formatprg
-" let g:neoformat_try_formatprg = 1
-" " Don't put message errors in code
-" let g:neoformat_only_msg_on_error = 1
+Plug 'sbdchd/neoformat'
+" Disable alignment
+let g:neoformat_basic_format_align = 0
+" Enable tab to space conversion
+let g:neoformat_basic_format_retab = 1
+" Enable trimmming of trailing whitespace
+let g:neoformat_basic_format_trim = 1
+" Disable formatting
+let g:neoformat_enabled_sql = []
+" Use formatprg
+let g:neoformat_try_formatprg = 1
+" Don't put message errors in code
+let g:neoformat_only_msg_on_error = 1
 
 " Automatically close Conditional statement in shell scripting
 Plug 'tpope/vim-endwise'
@@ -583,8 +592,6 @@ Plug 'let-def/vimbufsync'
 " Plugin for coq
 Plug 'the-lambda-church/coquille'
 
-Plug 'nightsense/seagrey'
-
 " Latex plugin
 Plug 'donRaphaco/neotex', { 'for': 'tex' }
 
@@ -682,10 +689,9 @@ Plug 'gregsexton/gitv', {'on': ['Gitv']}
 " Exheres syntax
 Plug 'https://gitlab.exherbo.org/exherbo-misc/exheres-syntax'
 
-" srcery colorscheme
-" Plug 'roosta/srcery'
-" let g:srcery_italic = 1
-" let g:srcery_inverse_match_paren = 1
+" Colorscheme
+Plug 'ayu-theme/ayu-vim'
+let g:ayucolor="dark"
 
 " Accent
 Plug 'airblade/vim-accent'
@@ -700,18 +706,23 @@ nmap # #<Plug>Pulse
 " Improve registers
 Plug 'junegunn/vim-peekaboo'
 
-" Colorscheme
-Plug 'challenger-deep-theme/vim', { 'as': 'challenger-deep' }
-
 " Add git for version control
 Plug 'mhinz/vim-signify'
 
 " Highlight mathcing words
 Plug 'RRethy/vim-illuminate'
 
+" Graphviz plugin
+Plug 'wannesm/wmgraphviz.vim'
+
+" Idris plugin
+Plug 'idris-hackers/idris-vim'
+
+" Plug 'https://sanctum.geek.nz/code/vim-cursorline-current.git'
+
 call plug#end()
 
-colorscheme challenger_deep
+colorscheme ayu
 set background=dark
 set termguicolors
 
@@ -720,11 +731,11 @@ let g:python3_host_prog  = '/usr/bin/python3'
 " Skip the check of neovim module
 let g:python3_host_skip_check = 1
 
-" augroup OnSave
-"     autocmd!
-"     " Autoformat code using neoformat and trim whitespaces
-"     " autocmd BufWritePre * Neoformat
-" augroup END
+augroup OnSave
+    autocmd!
+    " Autoformat code using neoformat and trim whitespaces
+    " autocmd BufWritePre * Neoformat
+augroup END
 
 function! EnterWriterMode()
     call pencil#init({'wrap': 'hard', 'autoformat': 0})

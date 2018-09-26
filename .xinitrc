@@ -43,7 +43,7 @@ else
   xrandr --auto
   safeeyes &
   nm-applet &
-  redshift-gtk &
+  # redshift-gtk &
   xset m 0 0
   exec startxfce4
 fi

@@ -27,6 +27,9 @@ config.set('content.javascript.enabled', True, 'chrome://*/*')
 # Type: Bool
 config.set('content.javascript.enabled', True, 'qute://*/*')
 
+# Enable http cache of 500M
+config.set('content.cache.size', 500000000)
+
 # Open new windows in private browsing mode which does not record
 # visited pages.
 # Type: Bool
@@ -124,3 +127,5 @@ c.fonts.web.family.serif = None
 
 # Bindings for normal mode
 config.bind('m', 'spawn mpv {url}')
+
+config.bind('cr', 'spawn streamlink --player mpv {url} best')

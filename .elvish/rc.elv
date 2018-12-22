@@ -54,7 +54,7 @@ fn vs [@a]{ E:NVIM_LISTEN_ADDRESS=/tmp/nvimsocket nvr --remote-silent -o $@a }
 fn vv [@a]{ E:NVIM_LISTEN_ADDRESS=/tmp/nvimsocket nvr --remote-silent -O $@a }
 fn vt [@a]{ E:NVIM_LISTEN_ADDRESS=/tmp/nvimsocket nvr --remote-tab-silent $@a }
 
-fn ls [@a]{ e:exa -F --color=always --time-style=long-iso $@a | e:less -R -X -Fs }
+fn ls [@a]{ e:exa --color=always --all --long --time-style=long-iso --git --git-ignore --extended --group-directories-first $@a | e:less -R -X -Fs }
 
 fn dmesg [@a]{ e:dmesg --color=always $@a | e:less -R -X -Fs }
 

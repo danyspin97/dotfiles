@@ -28,4 +28,4 @@ edit:prompt = {
 
 # "constantly" returns a function that always writes the same value(s) to
 # output; "edit:styled" writes styled output.
-edit:rprompt = (constantly (edit:styled (whoami)@(hostname) gray))
+#edit:rprompt = (constantly (edit:styled (whoami)@(hostname) gray))

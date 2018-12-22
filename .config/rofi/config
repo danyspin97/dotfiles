@@ -1,10 +1,11 @@
 rofi.font: Iosevka Term Regular 22
 #rofi.lines: 7
-rofi.matching: fuzzy
-rofi.terminal: termite
+rofi.terminal: alacritty
 rofi.fullscreen: false
 rofi.opacity: 85
-rofi.matching: fuzzy
+rofi.sort: true
+rofi.matching: glob
+rofi.levenshtein-sort: true
 rofi.hide-scrollbar: true
 rofi.separator-style: solid
 rofi.fake-transparency: true
@@ -13,4 +14,4 @@ rofi.case-sensitive: false
 rofi.show-icons: true
 
 rofi.threads: 0
-rofi.theme: /usr/share/rofi/themes//gruvbox-dark-soft.rasi
+# rofi.theme: /usr/share/rofi/themes//gruvbox-dark-soft.rasi

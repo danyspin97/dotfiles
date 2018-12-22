@@ -69,6 +69,7 @@ set list                " Show problematic characters.
 set smartcase           " ... unless the query has capital letters.
 set gdefault            " Use 'g' flag by default with :s/foo/bar/.
 set magic               " Use 'magic' patterns (extended regular expressions).
+set hlsearch
 set incsearch
 
 " Live substitution
@@ -99,9 +100,6 @@ let g:php_sql_query = 1
 " Enable html syntax hightlighting in php files
 let g:php_htmlInStrings = 1
 
-" Remap comma to double dots
-map , :
-
 nnoremap <Leader>w :w!<CR>
 nnoremap <Leader>W :SudoEdit<CR>
 
@@ -113,9 +111,6 @@ map <Leader>c :tabedit ~/.config/nvim/init.vim<CR>
 " Ex command control
 cnoremap <C-P> <Up>
 cnoremap <C-N> <Down>
-
-" Cancel a search with esc
-nnoremap <silent> <Esc> :nohlsearch<Bar>:echo<CR>
 
 " Linux / windows ctrl+backspace ctrl+delete
 " Note that ctrl+backspace doesn't work in Linux, so ctrl+\ is also available
@@ -172,7 +167,9 @@ function! s:Repl()
 endfunction
 vmap <silent> <expr> p <sid>Repl()
 
-au BufEnter * set noro
+augroup BufferSetup
+    autocmd BufEnter * set noro
+augroup END
 
 if has('nvim')
   let $VISUAL = 'nvr -cc split --remote-wait'
@@ -234,6 +231,8 @@ map <Leader>pu :PlugUpdate<CR>
 map <Leader>pp :PlugUpgrade<CR>
 map <Leader>pc :PlugClean<CR>
 
+" Load system plugins
+set runtimepath+=,/usr/share/vim/vimfiles/
 call plug#begin()
 
 " Undo changes
@@ -320,11 +319,8 @@ Plug 'wesQ3/vim-windowswap'
 let g:windowswap_map_keys = 0 "prevent default bindings
 nnoremap <silent> <leader>yy :call WindowSwap#EasyWindowSwap()<CR>
 
-" Search the selected text using *
-Plug 'nelstrom/vim-visual-star-search'
-
-" Version control
-Plug 'tpope/vim-fugitive'
+" Version contrl
+" Plug 'tpope/vim-fugitive'
 
 " Autocompletion framework
 Plug 'ncm2/ncm2'
@@ -347,10 +343,22 @@ inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
 inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 
 " some completion sources
+" buf
 Plug 'ncm2/ncm2-bufword'
+" Plug 'fgrsnau/ncm2-otherbuf', { 'branch': 'ncm2' }
+" path
 Plug 'ncm2/ncm2-path'
+" tags
 Plug 'ncm2/ncm2-tagprefix'
+Plug 'ncm2/ncm2-gtags'
+
+" github
+Plug 'ncm2/ncm2-github'
+
+" Highlight completions
 Plug 'ncm2/ncm2-match-highlight'
+let g:ncm2#match_highlight = 'double-struck'
+
 
 " Completion for vim files
 Plug 'ncm2/ncm2-vim'
@@ -364,10 +372,14 @@ Plug 'Shougo/neoinclude.vim'
 Plug 'ncm2/ncm2-syntax'
 Plug 'Shougo/neco-syntax'
 
-" Look.vim completion plugin
-Plug 'filipekiss/ncm2-look.vim'
+" Completion from dictionary
+Plug 'yuki-ycino/ncm2-dictionary'
+Plug 'fgrsnau/ncm2-aspell'
 
 Plug 'ncm2/ncm2-highprio-pop'
+
+" Markdown subscope completion
+Plug 'ncm2/ncm2-markdown-subscope'
 
 " Plug 'autozimu/LanguageClient-neovim', {
 "     \ 'branch': 'next',
@@ -385,27 +397,27 @@ Plug 'ncm2/ncm2-highprio-pop'
 " let g:LanguageClient_settingsPath = '/home/danyspin97/.config/nvim/settings.json'
 
 " Use language server
-Plug 'prabirshrestha/async.vim'
-Plug 'prabirshrestha/vim-lsp'
-Plug 'ncm2/ncm2-vim-lsp'
+" Plug 'prabirshrestha/async.vim'
+" Plug 'prabirshrestha/vim-lsp'
+" Plug 'ncm2/ncm2-vim-lsp'
 
-if executable('pyls')
-    " pip install python-language-server
-    au User lsp_setup call lsp#register_server({
-        \ 'name': 'pyls',
-        \ 'cmd': {server_info->['pyls']},
-        \ 'whitelist': ['python'],
-        \ })
-endif
+" if executable('pyls')
+"     " pip install python-language-server
+"     au User lsp_setup call lsp#register_server({
+"         \ 'name': 'pyls',
+"         \ 'cmd': {server_info->['pyls']},
+"         \ 'whitelist': ['python'],
+"         \ })
+" endif
 
-if executable('jdtls')
-    " pip install python-language-server
-    au User lsp_setup call lsp#register_server({
-        \ 'name': 'jdlts',
-        \ 'cmd': {server_info->['jdtls']},
-        \ 'whitelist': ['java'],
-        \ })
-endif
+" if executable('jdtls')
+"     " pip install python-language-server
+"     au User lsp_setup call lsp#register_server({
+"         \ 'name': 'jdlts',
+"         \ 'cmd': {server_info->['jdtls']},
+"         \ 'whitelist': ['java'],
+"         \ })
+" endif
 
 " Enhance repeat key
 Plug 'tpope/vim-repeat'
@@ -447,7 +459,7 @@ Plug 'matze/vim-move'
 Plug 'honza/vim-snippets'
 
 " Clipboard management
-Plug 'vim-scripts/YankRing.vim'
+" Plug 'vim-scripts/YankRing.vim'
 " Show yankes
 nnoremap <silent> <F6> :YRShow<CR>
 " Increase window height
@@ -465,24 +477,24 @@ Plug 'Yggdroot/indentLine'
 " Set color for indenting character
 let g:indentLine_color_gui = '#91ddff'
 " Set new indenting char
-let g:indentLine_char = '┆'
+let g:indentLine_char = '¦'
+let g:indentLine_first_char = '┆'
 " Disable concealing
 let g:indentLine_concealcursor = ''
 " Set faster mode
 let g:indentLine_faster=1
 let g:indentLine_showFirstIndentLevel = 1
-
-let g:indentLine_setColors=1
+let g:indentLine_setColors=0
 
 " Use editor config settings per project
 Plug 'editorconfig/editorconfig-vim'
 
 " Format using external tools
-Plug 'sbdchd/neoformat'
+" Plug 'sbdchd/neoformat'
 " Disable alignment
 let g:neoformat_basic_format_align = 0
 " Enable tab to space conversion
-let g:neoformat_basic_format_retab = 1
+let g:neoformat_basic_format_retab = 0
 " Enable trimmming of trailing whitespace
 let g:neoformat_basic_format_trim = 1
 " Disable formatting
@@ -515,17 +527,26 @@ Plug 'sheerun/vim-polyglot'
 Plug 'tpope/vim-dispatch'
 
 " Linting
-" Plug 'w0rp/ale'
-" " Disable automatic lining on writing
-" let g:ale_lint_on_text_changed = 'never'
-" let g:ale_set_loclist = 0
-" " 1
-" let g:ale_set_quickfix = 1
-" " 1
-" let g:ale_open_list = 1
-" let g:ale_keep_list_window_open = 0
+Plug 'w0rp/ale'
+" Disable automatic lining on writing
+let g:ale_lint_on_text_changed = 'never'
+let g:ale_set_loclist = 0
+" 1
+let g:ale_set_quickfix = 1
+" 1
+let g:ale_open_list = 1
+let g:ale_keep_list_window_open = 0
 " " Disable completion
-" let g:ale_completion_enabled = 0
+let g:ale_completion_enabled = 1
+" Enable airline extension for ale
+let g:airline#extensions#ale#enabled = 1
+
+let g:ale_linters = {
+\   'c': ['ccls'],
+\   'cpp': ['ccls'],
+\   'python': ['pyls'],
+\   'java': ['jdtls'],
+\}
 
 " nmap <silent> <Leader>fp <Plug>(ale_previous_wrap)
 " nmap <silent> <Leader>fn <Plug>(ale_next_wrap)
@@ -540,9 +561,12 @@ aug END
 
 " Writer plugins
 Plug 'reedes/vim-pencil'
-augroup Pencil
-    autocmd!
-    autocmd FileType markdown,mkd,asciidoc call EnterWriterMode()
+let g:pencil#wrapModeDefault = 'soft'
+
+augroup pencil
+  autocmd!
+  autocmd FileType markdown,mkd call pencil#init()
+  autocmd FileType text         call pencil#init()
 augroup END
 
 " Distraction free writing
@@ -550,6 +574,18 @@ Plug 'junegunn/goyo.vim'
 
 " Enhance current line, hide useless information in other lines
 Plug 'junegunn/limelight.vim'
+
+" Substition
+Plug 'tpope/vim-abolish'
+
+" Word exchange
+Plug 'tommcdo/vim-exchange'
+
+" Highlight repetead words
+Plug 'dbmrq/vim-ditto'
+
+" Curly quotes
+Plug 'reedes/vim-textobj-quote'
 
 " Tab keymaps
 Plug 'DanySpin97/ttab.vim'
@@ -580,12 +616,13 @@ map <C-m> <Plug>Sneak_S
 Plug 'dmix/elvish.vim', { 'on_ft': ['elvish']}
 
 Plug 'metakirby5/codi.vim'
-let g:codi#rightsplit = 0
+let g:codi#rightsplit = 1
 let g:codi#rightalign = 0
 
-" Plug 'arakashic/chromatica.nvim'
-" let g:chromatica#libclang_path = '/lib/libclang.so'
-" let g:chromatica#enable_at_startup = 1
+" Semantic highlighter for C/C++
+Plug 'arakashic/chromatica.nvim', {'do': ':UpdateRemotePlugins'}
+let g:chromatica#libclang_path = '/lib/libclang.so.7'
+let g:chromatica#enable_at_startup = 1
 
 " Needed by coquille
 Plug 'let-def/vimbufsync'
@@ -604,52 +641,12 @@ Plug 'qpkorr/vim-bufkill'
 " Add more text objects
 Plug 'wellle/targets.vim'
 
-" ttags_vim dependency
-Plug 'tomtom/tlib_vim'
-Plug 'tomtom/ttags_vim'
-
-let g:ttags_display = 'tlib'
-
-" Show available tags
-noremap <Leader>g. :TTags<cr>
-
-" Show current buffer's tags
-noremap <Leader>g% :call ttags#List(0, "*", "", ".")<cr>
-
-" Show tags matching the word under cursor
-noremap <Leader>g# :call ttags#List(0, "*", tlib#rx#Escape(expand("<cword>")))<cr>
-
-" Show tags with a prefix matching the word under cursor
-noremap <Leader>g* :call ttags#List(0, "*", tlib#rx#Escape(expand("<cword>")) .".*")<cr>
-
-" Show tags matching the word under cursor (search also in |g:tlib_tags_extra|)
-noremap <Leader>g? :call ttags#List(1, "*", tlib#rx#Escape(expand("<cword>")))<cr>
-
 " Html plugin
 Plug 'rstacruz/sparkup'
 
 " Rainbow parenthesis
 Plug 'luochen1990/rainbow'
 let g:rainbow_active = 1
-
-let g:rainbow_conf = {
-    \    'guifgs': ['royalblue3', 'darkorange3', 'seagreen3', 'firebrick'],
-    \    'ctermfgs': ['lightblue', 'lightyellow', 'lightcyan', 'lightmagenta'],
-    \    'operators': '_,_',
-    \    'parentheses': ['start=/(/ end=/)/ fold', 'start=/\[/ end=/\]/ fold', 'start=/{/ end=/}/ fold'],
-    \    'separately': {
-    \        '*': {},
-    \        'tex': {
-    \            'parentheses': ['start=/(/ end=/)/', 'start=/\[/ end=/\]/'],
-    \        },
-    \        'lisp': {
-    \            'guifgs': ['royalblue3', 'darkorange3', 'seagreen3', 'firebrick', 'darkorchid3'],
-    \        },
-    \        'vim': {
-    \            'parentheses': ['start=/(/ end=/)/', 'start=/\[/ end=/\]/', 'start=/{/ end=/}/ fold', 'start=/(/ end=/)/ containedin=vimFuncBody', 'start=/\[/ end=/\]/ containedin=vimFuncBody', 'start=/{/ end=/}/ fold containedin=vimFuncBody'],
-    \        },
-    \    }
-    \}
 
 " Multiline searching
 Plug 'wincent/ferret'
@@ -667,9 +664,10 @@ noremap <silent> <F8> :<C-u>NextWordy<cr>
 xnoremap <silent> <F8> :<C-u>NextWordy<cr>
 inoremap <silent> <F8> <C-o>:NextWordy<cr>
 
-Plug 'reedes/vim-litecorrect'
-nnoremap <C-s> [s1z=<c-o>
-inoremap <C-s> <c-g>u<Esc>[s1z=`]A<c-g>u
+" Plug 'reedes/vim-litecorrect'
+" nnoremap <C-s> [s1z=<c-o>
+" inoremap <C-s> <c-g>u<Esc>[s1z=`]A<c-g>u
+Plug 'panozzaj/vim-autocorrect'
 
 " Pick html color
 Plug 'DougBeney/pickachu'
@@ -691,17 +689,11 @@ Plug 'https://gitlab.exherbo.org/exherbo-misc/exheres-syntax'
 
 " Colorscheme
 Plug 'ayu-theme/ayu-vim'
-let g:ayucolor="dark"
+" let g:ayucolor='mirage'
+let g:ayucolor='dark'
 
 " Accent
 Plug 'airblade/vim-accent'
-
-" Pulse while search
-Plug 'inside/vim-search-pulse'
-nmap n n<Plug>Pulse
-nmap N N<Plug>Pulse
-nmap * *<Plug>Pulse
-nmap # #<Plug>Pulse
 
 " Improve registers
 Plug 'junegunn/vim-peekaboo'
@@ -711,6 +703,7 @@ Plug 'mhinz/vim-signify'
 
 " Highlight mathcing words
 Plug 'RRethy/vim-illuminate'
+hi link illuminatedWord Visual
 
 " Graphviz plugin
 Plug 'wannesm/wmgraphviz.vim'
@@ -719,6 +712,55 @@ Plug 'wannesm/wmgraphviz.vim'
 Plug 'idris-hackers/idris-vim'
 
 " Plug 'https://sanctum.geek.nz/code/vim-cursorline-current.git'
+
+" Vim HardTime
+Plug 'takac/vim-hardtime'
+let g:hardtime_default_on = 1
+let g:hardtime_maxcount = 2
+let g:hardtime_allow_different_key = 1
+
+" Handle basic git functions
+Plug 'jreybert/vimagit'
+
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+" let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#formatter = 'unique_tail_improved'
+let g:airline_section_x = '%{PencilMode()}'
+let g:airline_theme = 'ayu'
+
+" Python syntax highlighter
+Plug 'numirias/semshi', {'do': ':UpdateRemotePlugins'}
+
+" Test commands and helpers
+Plug 'janko-m/vim-test'
+
+" Pulse while search
+Plug 'inside/vim-search-pulse'
+let g:vim_search_pulse_disable_auto_mappings = 1
+"
+" incsearch improved
+Plug 'haya14busa/is.vim'
+
+" * search improved
+Plug 'haya14busa/vim-asterisk'
+
+" search status
+Plug 'osyo-manga/vim-anzu'
+
+" clear status
+nmap <Esc><Esc> <Plug>(anzu-clear-search-status)
+
+map n <Plug>(is-nohl)<Plug>(anzu-n-with-echo)<Plug>Pulse
+map N <Plug>(is-nohl)<Plug>(anzu-N-with-echo)<Plug>Pulse
+map * <Plug>(asterisk-*)<Plug>(anzu-star-with-echo)<Plug>Pulse
+map # <Plug>(asterisk-#)<Plug>(anzu-sharp-with-echo)<Plug>Pulse
+map g* <Plug>(asterisk-g*)<Plug>(is-nohl-1)<Plug>Pulse
+map g# <Plug>(asterisk-g#)<Plug>(is-nohl-1)<Plug>Pulse
+map z*  <Plug>(asterisk-z*)<Plug>(is-nohl-1)<Plug>Pulse
+map gz* <Plug>(asterisk-gz*)<Plug>(is-nohl-1)<Plug>Pulse
+map z#  <Plug>(asterisk-z#)<Plug>(is-nohl-1)<Plug>Pulse
+map gz# <Plug>(asterisk-gz#)<Plug>(is-nohl-1)<Plug>Pulse
 
 call plug#end()
 
@@ -731,20 +773,18 @@ let g:python3_host_prog  = '/usr/bin/python3'
 " Skip the check of neovim module
 let g:python3_host_skip_check = 1
 
-augroup OnSave
-    autocmd!
-    " Autoformat code using neoformat and trim whitespaces
-    " autocmd BufWritePre * Neoformat
-augroup END
+" augroup OnSave
+"     autocmd!
+"     " Autoformat code using neoformat and trim whitespaces
+"     autocmd BufWritePre * Neoformat
+" augroup END
 
-function! EnterWriterMode()
-    call pencil#init({'wrap': 'hard', 'autoformat': 0})
+function! s:goyo_enter()
+    call pencil#init()
+    call textobj#quote#init()
     Limelight
-    " execute `Goyo` if it's not already active
-    if !exists('#goyo')
-        Goyo
-    endif
-    call litecorrect#init()
+    HardTimeOff
+    DittoOn
     setlocal spell
     setlocal wrap
     set noshowmode
@@ -752,6 +792,10 @@ function! EnterWriterMode()
     set nocursorcolumn
     set scrolloff=999
     set list lcs=tab:+.
+    set background=light
+    let g:ayucolor='light'
+    colorscheme ayu
+    " colorscheme fruchtig
     " Underline spelling errors in red
     hi clear SpellBad
     hi SpellBad cterm=underline ctermfg=red
@@ -761,16 +805,35 @@ function! EnterWriterMode()
     hi clear SpellLocal
     hi SpellCap cterm=underline ctermfg=green
     let g:ncm2_look_enabled = 1
+    let b:quitting = 0
+    let b:quitting_bang = 0
+    autocmd QuitPre <buffer> let b:quitting = 1
+    cabbrev <buffer> q! let b:quitting_bang = 1 <bar> q!
 endfunction
 
-function! s:LeaveWriterMode()
+function! s:goyo_leave()
     set showmode
     set showcmd
     set scrolloff=5
     Limelight!
+    DittoOff
+    HardTimeOn
     let g:ncm2_look_enabled = 0
-    " set background=dark
+    set background=dark
+    let g:ayucolor='mirage'
+    colorscheme ayu
+    " Quit Vim if this is the only remaining buffer
+    if b:quitting && len(filter(range(1, bufnr('$')), 'buflisted(v:val)')) == 1
+        if b:quitting_bang
+            qa!
+        else
+            qa
+        endif
+    endif
 endfunction
 
-autocmd! User GoyoLeave nested call <SID>LeaveWriterMode()
+augroup GoyoSetup
+    autocmd! User GoyoEnter call <SID>goyo_enter()
+    autocmd! User GoyoLeave call <SID>goyo_leave()
+augroup END
 

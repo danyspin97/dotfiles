@@ -529,14 +529,14 @@ Plug 'tpope/vim-dispatch'
 " Linting
 Plug 'w0rp/ale'
 " Disable automatic lining on writing
-let g:ale_lint_on_text_changed = 'never'
+let g:ale_lint_on_text_changed = 'normal'
 let g:ale_set_loclist = 0
 " 1
 let g:ale_set_quickfix = 1
 " 1
 let g:ale_open_list = 1
 let g:ale_keep_list_window_open = 0
-" " Disable completion
+" Enable completions
 let g:ale_completion_enabled = 1
 " Enable airline extension for ale
 let g:airline#extensions#ale#enabled = 1
@@ -562,12 +562,6 @@ aug END
 " Writer plugins
 Plug 'reedes/vim-pencil'
 let g:pencil#wrapModeDefault = 'soft'
-
-augroup pencil
-  autocmd!
-  autocmd FileType markdown,mkd call pencil#init()
-  autocmd FileType text         call pencil#init()
-augroup END
 
 " Distraction free writing
 Plug 'junegunn/goyo.vim'
@@ -782,6 +776,7 @@ let g:python3_host_skip_check = 1
 function! s:goyo_enter()
     call pencil#init()
     call textobj#quote#init()
+    call pencil#init()
     Limelight
     HardTimeOff
     DittoOn

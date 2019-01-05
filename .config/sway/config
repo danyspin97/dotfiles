@@ -114,12 +114,12 @@ bindsym $mod+a focus parent
 # focus the child container
 #bindsym $mod+d focus child
 
-bar {
-    swaybar_command waybar
-    #status_command waybar
-    #position top
-    # tray_output all
-}
+# bar {
+#     swaybar_command waybar
+#     # status_command swaybar
+#     position top
+#     # tray_output all
+# }
 
 # switch to workspace
 bindsym $mod+1 workspace $workspace1
@@ -321,6 +321,8 @@ input UGEE_DECO_01 {
 # exec_always feh --bg-fill --randomize $HOME/Pictures/Wallpapers
 
 # exec --no-startup-id $HOME/.xstart
+
+exec waybar
 
 #exec --no-startup-id "i3-msg 'workspace im.send(); append_layout /home/danyspin97/.i3/workspace-im.json'"
 #exec --no-startup-id "i3-msg 'workspace \"Neovim\"; layout tabbed'"

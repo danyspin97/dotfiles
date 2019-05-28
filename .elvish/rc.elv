@@ -8,25 +8,25 @@ use asciinema
 
 # Manage elvish module
 use epm
-epm:install &silent-if-installed=$true   \
-  github.com/zzamboni/elvish-modules     \
-  github.com/zzamboni/elvish-completions \
-  github.com/zzamboni/elvish-themes      \
-  github.com/xiaq/edit.elv               \
-  github.com/muesli/elvish-libs
+#epm:install &silent-if-installed=$true   \
+#  github.com/zzamboni/elvish-modules     \
+#  github.com/zzamboni/elvish-completions \
+#  github.com/zzamboni/elvish-themes      \
+#  github.com/xiaq/edit.elv               \
+#  github.com/muesli/elvish-libs
 
 # Git utilities
 #use github.com/muesli/elvish-libs/git
 # Git completion
-use github.com/zzamboni/elvish-completions/git
-# Long running notifications
-use github.com/zzamboni/elvish-modules/long-running-notifications
-# Recall last command
-use github.com/zzamboni/elvish-modules/bang-bang
-# Set the terminal title automatically
-use github.com/zzamboni/elvish-modules/terminal-title
-# Utility
-use github.com/zzamboni/elvish-modules/util
+#use github.com/zzamboni/elvish-completions/git
+## Long running notifications
+#use github.com/zzamboni/elvish-modules/long-running-notifications
+## Recall last command
+#use github.com/zzamboni/elvish-modules/bang-bang
+## Set the terminal title automatically
+#use github.com/zzamboni/elvish-modules/terminal-title
+## Utility
+#use github.com/zzamboni/elvish-modules/util
 
 
 
@@ -54,7 +54,7 @@ fn vs [@a]{ E:NVIM_LISTEN_ADDRESS=/tmp/nvimsocket nvr --remote-silent -o $@a }
 fn vv [@a]{ E:NVIM_LISTEN_ADDRESS=/tmp/nvimsocket nvr --remote-silent -O $@a }
 fn vt [@a]{ E:NVIM_LISTEN_ADDRESS=/tmp/nvimsocket nvr --remote-tab-silent $@a }
 
-fn ls [@a]{ e:exa --color=always --all --long --time-style=long-iso --git --git-ignore --extended --group-directories-first $@a | e:less -R -X -Fs }
+fn ls [@a]{ e:exa -F --color=always --all --long --time-style=long-iso --git --git-ignore --extended --group-directories-first $@a | e:less -R -X -Fs }
 
 fn dmesg [@a]{ e:dmesg --color=always $@a | e:less -R -X -Fs }
 

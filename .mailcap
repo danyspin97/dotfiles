@@ -67,3 +67,4 @@ video/*; mpv -vo drm -quiet '%s'; needsterminal
 # Ascii videos
 # video/x-youtube; youtube-dl -q -o - '%s' | mplayer -cache 8192 -vo caca -quiet -; needsterminal
 # video/*; wget '%s' -O - | mplayer -cache 8192 -vo caca -quiet -; needsterminal
+text/html; w3m -dump -o -document_charset=%{charset} %s; nametemplate=%s.html; copiousoutput

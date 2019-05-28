@@ -9,6 +9,8 @@
 #
 # Please see http://i3wm.org/docs/userguide.html for a complete reference!
 
+include /etc/sway/config.d/*
+
 set $mod Mod4
 set $sup Mod1
 
@@ -48,18 +50,20 @@ new_window pixel 1
 # popup_during_fullscreen smart
 
 # start a terminal
-bindsym $mod+Return exec --no-startup-id alacritty
+bindsym $mod+Return exec tym
+bindsym $mod+Shift+Return exec tym -e 'bash -i -c "cd $(get_terminal_folder_sway); bash"'
 
 # Application launcher
-bindsym $mod+d exec --no-startup-id rofi -show drun
-bindsym $mod+Shift+d exec --no-startup-id rofi -show run
-bindsym $mod+y exec --no-startup-id rofi -show ssh
+bindsym $mod+d exec j4-dmenu-desktop --dmenu='bemenu -b -i --nb "#3f3f3f" --nf "#dcdccc" --fn "Iosevka 16"'
+bindsym $mod+Shift+d exec bemenu-run -b -i --nb "#3f3f3f" --nf "#dcdccc" --fn "Iosevka 16"
+bindsym $mod+Shift+p exec pass $(ls .password-store/ | sed 's/\.gpg//' | sed '/\.tmp\./d' | bemenu -b) | head -n1 | wl-copy
+#bindsym $mod+y exec --no-startup-id rofi -show ssh
 
 # move in workspaces
-bindsym $mod+Tab exec --no-startup-id rofi -show window
+#bindsym $mod+Tab exec --no-startup-id rofi -show window
 
 # Show clipboard
-bindsym $mod+i exec --no-startup-id rofi -modi "clipboard:greenclip print" -show clipboard
+#bindsym $mod+i exec --no-startup-id rofi -modi "clipboard:greenclip print" -show clipboard
 
 # kill focused window
 bindsym $mod+Shift+q kill
@@ -147,7 +151,9 @@ bindsym $mod+Shift+8 move container to workspace $workspace8
 # assign [class="discord"]                            $workspace4
 # assign [title="mpsyt"]                              $workspace5
 # assign [class="^Vlc$"]                              $workspace5
-# assign [class="mpv"]                                $workspace5
+assign [app_id="wyeb\."]                      $workspace1
+assign [app_id="mpv"]                         $workspace5
+#for_window [class="mpv"] move to workspace $workspace5
 
 # for_window [window_role="pop-up"] floating enable
 # for_window [window_role="bubble"] floating enable
@@ -170,13 +176,13 @@ bindsym $mod+Shift+r restart
 # Set shut down, restart and locking features
 bindsym $mod+Shift+s mode "$mode_system"
 mode "$mode_system" {
-    bindsym l exec --no-startup-id $HOME/.config/sway/exit lock, mode "default"
-    bindsym s exec --no-startup-id $HOME/.config/sway/exit suspend, mode "default"
+    bindsym l exec --no-startup-id swaylock, mode "default"
+    bindsym s exec --no-startup-id sudo pm-suspend, mode "default"
     bindsym u exec --no-startup-id $HOME/.config/sway/exit switch_user, mode "default"
     bindsym e exec --no-startup-id $HOME/.config/sway/exit logout, mode "default"
     bindsym h exec --no-startup-id $HOME/.config/sway/exit hibernate, mode "default"
-    bindsym r exec --no-startup-id $HOME/.config/sway/exit reboot, mode "default"
-    bindsym Shift+s exec --no-startup-id $HOME/.config/sway/exit shutdown, mode "default"
+    bindsym r exec --no-startup-id sudo reboot, mode "default"
+    bindsym p exec --no-startup-id sudo poweroff, mode "default"
 
     # exit system mode: "Enter" or "Escape"
     bindsym Return mode "default"
@@ -209,18 +215,18 @@ mode "resize" {
 bindsym $mod+r mode "resize"
 
 # Audio settings
-bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-mute 0 +5%
-bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-mute 0 -5%
+bindsym XF86AudioRaiseVolume exec ~/.local/bin/sndio_volume raise
+bindsym XF86AudioLowerVolume exec ~/.local/bin/sndio_volume lower
 bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute 0 toggle
 
 # Screen brightness controls
-bindsym XF86MonBrightnessUp exec "brightnessctl set +10%; notify-send 'Brightness up (+10)'"
-bindsym XF86MonBrightnessDown exec "brightnessctl set 10%-; notify-send 'Brightness down (-10)'"
+bindsym XF86MonBrightnessUp exec "brightnessctl set +15%; notify-send 'Brightness up (+10)'"
+bindsym XF86MonBrightnessDown exec "brightnessctl set 15%-; notify-send 'Brightness down (-10)'"
 
 # scrot & gimp - root
-bindsym Print exec scrot -e 'mv $f /tmp/ && gimp /tmp/$f'
+#bindsym Print exec scrot -e 'mv $f /tmp/ && gimp /tmp/$f'
 # scrot & gimp - select window or rectangle
-bindsym $mod+Print exec scrot -s -e 'mv $f /tmp/ && gimp /tmp/$f'
+#bindsym $mod+Print exec scrot -s -e 'mv $f /tmp/ && gimp /tmp/$f'
 
 # Move the current workspace to the next output
 # (effectively toggles when you only have two outputs)
@@ -237,15 +243,15 @@ workspace $workspace7 output $monitor1
 workspace $workspace8 output $monitor1
 
 # Program shortcut
-bindsym $mod+c exec --no-startup-id qutebrowser
-# bindsym $mod+b exec --no-startup-id qutebrowser
-bindsym $mod+t exec --no-startup-id Telegram
-bindsym $mod+z exec --no-startup-id zathura
-bindsym $mod+p exec --no-startup-id alacritty ncpamixer
-bindsym $mod+m exec --no-startup-id urxvt
-bindsym $mod+o exec --no-startup-id spotify
-bindsym $mod+x exec --no-startup-id kitty
-bindsym $mod+Shift+b exec --no-startup-id calibre
+bindsym $mod+c exec wyeb
+bindsym $mod+b exec gtk-launch clightc.desktop
+bindsym $mod+t exec Telegram
+bindsym $mod+z exec zathura
+bindsym $mod+p exec alacritty ncpamixer
+bindsym $mod+m exec urxvt
+bindsym $mod+o exec spotify
+bindsym $mod+x exec kitty
+bindsym $mod+Shift+b exec calibre
 
 # client.focused          #665c54 #665c54 #eddbb2 #458588   #665c54
 # client.focused_inactive #282828 #5f676a2 #ffffff #484e50   #5f676a
@@ -287,11 +293,11 @@ mode "$mode_gaps_inner" {
     bindsym plus  gaps inner current plus 5
     bindsym minus gaps inner current minus 5
     bindsym 0     gaps inner current set 0
-    
+
     bindsym Shift+plus  gaps inner all plus 5
     bindsym Shift+minus gaps inner all minus 5
     bindsym Shift+0     gaps inner all set 0
-    
+
     bindsym Return mode "default"
     bindsym Escape mode "default"
 }
@@ -308,23 +314,23 @@ mode "$mode_gaps_outer" {
         bindsym Return mode "default"
         bindsym Escape mode "default"
 }
-input UGEE_DECO_01_M {
-    events enabled
-}
 
-input UGEE_DECO_01 {
-    events enabled
-}
+# Set keyboard layout
+input * xkb_layout it
 
-# output $monitor1 bg /tmp/Wallpaper fill
+# Set wallpaper
+output * bg ~/Pictures/Wallpapers/DanMachi01.png fill
 
-# exec_always feh --bg-fill --randomize $HOME/Pictures/Wallpapers
-
-# exec --no-startup-id $HOME/.xstart
-
+# Run statusbar
 exec waybar
 
-#exec --no-startup-id "i3-msg 'workspace im.send(); append_layout /home/danyspin97/.i3/workspace-im.json'"
-#exec --no-startup-id "i3-msg 'workspace \"Neovim\"; layout tabbed'"
+exec dbus-daemon --session --nosyslog --address=unix:path=/run/user/1000/bus
+exec mako --default-timeout 7000
+exec wayidle -w \
+     timeout 300 'swaylock -f -c 000000' \
+     timeout 600 'swaymsg "output * dpms off"' \
+     resume 'swaymsg "output * dpms on"' \
+     before-sleep 'swaylock -f -c 000000'
+
 
 # vim:filetype=i3

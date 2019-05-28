@@ -6,4 +6,10 @@
 [color]
 	ui = auto
 [gitreview]
-	username = DanySpin97
+	username = danyspin97
+[sendemail]
+  smtpserver = smtp.gmail.com
+  smtpserverport = 587
+  smtpencryption = tls
+  smtpuser = danyspin.ds@gmail.com
+  from = danyspin.ds@gmail.com

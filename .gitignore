@@ -12,3 +12,6 @@ fishd.*
 .tmuxp.yaml
 _build/
 .php_cs.cache
+.ccls-cache
+.gdb_history
+compile_commands.json

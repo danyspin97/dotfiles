@@ -58,8 +58,8 @@
         "format-icons": ["", "", "", "", ""]
     },
     "network": {
-        // "interface": "wlp2s0", // (Optional) To force the use of this interface
-        "format-wifi": "{essid} ({signalStrength}%) ",
+        // "interface": "wlo1", // (Optional) To force the use of this interface
+        "format-wifi": "{essid} ({signalStrength}%) {bandwidthUpBits}{bandwidthDownBits}",
         "format-ethernet": "{ifname} ",
         "format-disconnected": "Disconnected ⚠"
     },

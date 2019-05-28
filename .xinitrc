@@ -5,6 +5,8 @@ usermodmap=$HOME/.Xmodmap
 sysresources=/etc/X11/xinit/Xresources
 sysmodmap=/etc/X11/xinit/Xmodmap
 
+touch /tmp/SONOARRIVATOQUI
+
 # merge in defaults and keymaps
 
 if [ -f $sysresources ]; then
@@ -45,5 +47,8 @@ else
   nm-applet &
   # redshift-gtk &
   xset m 0 0
+  compton -b
+  #ulauncher &
+  #tint2 &
   exec startxfce4
 fi

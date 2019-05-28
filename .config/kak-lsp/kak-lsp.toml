@@ -1,0 +1,11 @@
+[language.c_cpp]
+filetypes = ["c", "cpp"]
+roots = ["compile_commands.json"]
+offset_encoding = "utf-8"
+command = "clangd"
+
+[language.py]
+filetypes = ["python"]
+roots = ["requirements.txt", "setup.py", ".git", ".hg"]
+offset_encoding = "utf-8"
+command = "pyls"

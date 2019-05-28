@@ -12,7 +12,7 @@ env:
   # Note that some xterm terminfo databases don't declare support for italics.
   # You can verify this by checking for the presence of `smso` and `sitm` in
   # `infocmp xterm-256color`.
-  TERM: xterm-256color
+  TERM: alacritty-direct
 
 window:
   # Window dimensions in character columns and lines
@@ -61,24 +61,24 @@ draw_bold_text_with_bright_colors: false
 font:
   # The normal (roman) font face to use.
   normal:
-    family: Iosevka Term # should be "Menlo" or something on macOS.
+    family: IBM Plex Mono # should be "Menlo" or something on macOS.
     # Style can be specified to pick a specific face.
     style: Regular
 
   # The bold font face
   bold:
-    family: Iosevka Term # should be "Menlo" or something on macOS.
+    family: IBM Plex Mono # should be "Menlo" or something on macOS.
     # Style can be specified to pick a specific face.
     style: Bold
 
   # The italic font face
   italic:
-    family: Iosevka Term # should be "Menlo" or something on macOS.
+    family: IBM Plex Mono # should be "Menlo" or something on macOS.
     # Style can be specified to pick a specific face.
     style: Italic
 
   # Point size of the font
-  size: 15.0
+  size: 14.0
 
   # Offset is the extra space around each character. offset.y can be thought of
   # as modifying the linespacing, and offset.x as modifying the letter spacing.
@@ -104,30 +104,30 @@ render_timer: false
 colors:
   # Default colors
   primary:
-    background: '0x0d1013'
-    foreground: '0xdfdac4'
+    background: '0x0f1419'
+    foreground: '0xe6e1cf'
 
   # Normal colors
   normal:
-    black:   '0x0d1013'
-    red:     '0xfc6027'
-    green:   '0xaac441'
-    yellow:  '0xfda543'
-    blue:    '0x2d90cf'
-    magenta: '0xbb00bb'
-    cyan:    '0x85e2bf'
-    white:   '0xbbbbbb'
+    black:   '0x0f1419'
+    red:     '0xf07178'
+    green:   '0xb8cc52'
+    yellow:  '0xf29718'
+    blue:    '0x36a3d9'
+    magenta: '0xffee99'
+    cyan:    '0x95e6cb'
+    white:   '0xffffff'
 
   # Bright colors
   bright:
-    black:   '0x555555'
-    red:     '0xe95865'
-    green:   '0xc0e436'
-    yellow:  '0xfeec87'
-    blue:    '0x5555ff'
-    magenta: '0xff55ff'
-    cyan:    '0x98ffd9'
-    white:   '0xffffff'
+    black:   '0x3e4b59'
+    red:     '0xff3333'
+    green:   '0xb8cc52'
+    yellow:  '0xf29718'
+    blue:    '0x36a3d9'
+    magenta: '0xffee99'
+    cyan:    '0x95e6cb'
+    white:   '0x5c6773'
 
 # Visual Bell
 #
@@ -233,8 +233,8 @@ live_config_reload: false
 # You can set shell.program to the path of your favorite shell, e.g. /bin/fish.
 # Entries in shell.args are passed unmodified as arguments to the shell.
 #
-shell:
-  program: /home/danyspin97/.go/bin/elvish
+# shell:
+  # program: /home/danyspin97/.go/bin/elvish
 #   args:
 #     - --login
 

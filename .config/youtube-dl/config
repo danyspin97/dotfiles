@@ -1,14 +1,5 @@
-# Extract audio
--x
-
 # Quality
 --audio-quality 0
-
-# Format
---audio-format mp3
-
-# Get attributes
---xattrs
 
 # Do not copy the mtime
 --no-mtime
@@ -20,13 +11,7 @@
 --hls-prefer-ffmpeg
 
 # Use aria2
---external-downloader aria2c
-
-# Use aria2
---external-downloader aria2c
-
-# Keep an archive of downloaded music
---download-archive ~/Music/music
+--external-downloader wget
 
 # Do not overwrite files
 --no-post-overwrite
@@ -36,9 +21,6 @@
 
 # Quiet
 -q
-
-# Save files to musci directory
--o ~/Music/%(title)s.%(ext)s
 
 # Choose best quality
 -f bestvideo+bestaudio

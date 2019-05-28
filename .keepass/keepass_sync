@@ -1,9 +1,0 @@
-#!/usr/bin/bash
-
-. ~/.keepass/config
-
-scp $USER@$ADDRESS:/home/$USER/$FILENAME ~/.keepass/Sync.kdbx
-
-keepass ~/.keepass/$FILENAME
-
-scp ~/.keepass/Sync.kdbx $USER@$ADDRESS:/home/$USER/$FILENAME

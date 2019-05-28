@@ -1,0 +1,16 @@
+[calendars]
+
+[[personal_calendar_local]]
+path = ~/.calendars/*
+type = discover
+
+[[personal_contacts_local]]
+path = ~/.contacts/*
+type = discover
+
+[locale]
+timeformat = %H:%M
+dateformat = %d/%m/%Y
+longdateformat = %d/%m/%Y
+datetimeformat = %d/%m/%Y %H:%M
+longdatetimeformat = %d/%m/%Y %H:%M

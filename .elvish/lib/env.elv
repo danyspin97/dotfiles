@@ -2,10 +2,10 @@
 E:CC=gcc
 E:CXX=g++
 
-E:VISUAL=nvim
-E:EDITOR=nvim
-E:SUDO_EDITOR=nvim
-E:MANPAGER="nvr --remote-tab-silent -c 'set ft=man' -"
+E:VISUAL=kak
+E:EDITOR=kak
+E:SUDO_EDITOR=kak
+#E:MANPAGER="nvr --remote-tab-silent -c 'set ft=man' -"
 
 E:GOPATH=$E:HOME/.go
 

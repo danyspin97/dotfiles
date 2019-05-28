@@ -1,5 +1,6 @@
-let g:mapleader="\<SPACE>"
 set encoding=utf8
+scriptencoding utf-8
+let g:mapleader=' '
 set showcmd             " Show (partial) command in status line.
 set showmatch           " Show matching brackets.
 set showmode           " Show current mode.
@@ -104,7 +105,9 @@ nnoremap <Leader>w :w!<CR>
 nnoremap <Leader>W :SudoEdit<CR>
 
 " Reload config on savings
-autocmd! bufwritepost ~/.config/nvim/init.vim source ~/.config/nvim/init.vim
+augroup CONFIG
+    autocmd! bufwritepost ~/.config/nvim/init.vim source ~/.config/nvim/init.vim
+augroup END
 
 map <Leader>c :tabedit ~/.config/nvim/init.vim<CR>
 
@@ -172,26 +175,26 @@ augroup BufferSetup
 augroup END
 
 if has('nvim')
-  let $VISUAL = 'nvr -cc split --remote-wait'
+    let $VISUAL = 'nvr -cc split --remote-wait'
 endif
 
 " Neovim Terminal Colors
-let g:terminal_color_0  = '#565575'
-let g:terminal_color_1  = '#ff8080'
-let g:terminal_color_2  = '#95ffa4'
-let g:terminal_color_3  = '#ffe9aa'
-let g:terminal_color_4  = '#91ddff'
-let g:terminal_color_5  = '#c991e1'
-let g:terminal_color_6  = '#aaffe4'
-let g:terminal_color_7  = '#cbe3e7'
-let g:terminal_color_8  = '#100e23'
-let g:terminal_color_9  = '#ff5458'
-let g:terminal_color_10 = '#62d196'
-let g:terminal_color_11 = '#ffb378'
-let g:terminal_color_12 = '#65b2ff'
-let g:terminal_color_13 = '#906cff'
-let g:terminal_color_14 = '#63f2f1'
-let g:terminal_color_15 = '#a6b3cc'
+" let g:terminal_color_0  = '#565575'
+" let g:terminal_color_1  = '#ff8080'
+" let g:terminal_color_2  = '#95ffa4'
+" let g:terminal_color_3  = '#ffe9aa'
+" let g:terminal_color_4  = '#91ddff'
+" let g:terminal_color_5  = '#c991e1'
+" let g:terminal_color_6  = '#aaffe4'
+" let g:terminal_color_7  = '#cbe3e7'
+" let g:terminal_color_8  = '#100e23'
+" let g:terminal_color_9  = '#ff5458'
+" let g:terminal_color_10 = '#62d196'
+" let g:terminal_color_11 = '#ffb378'
+" let g:terminal_color_12 = '#65b2ff'
+" let g:terminal_color_13 = '#906cff'
+" let g:terminal_color_14 = '#63f2f1'
+" let g:terminal_color_15 = '#a6b3cc'
 
 augroup term
     autocmd!
@@ -210,13 +213,15 @@ let g:terminal_scrollback_buffer_size = 50000
 
 " Donwload vim-plug if missing
 if empty(glob('~/.config/nvim/autoload/plug.vim'))
-  silent !curl -fLo ~/.config/nvim/autoload/plug.vim --create-dirs
-    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+    silent !curl -fLo ~/.config/nvim/autoload/plug.vim --create-dirs
+                \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    augroup INSTALL
+        autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+    augroup END
 endif
 
 function! BuildComposer(info)
-    if a:info.status != 'unchanged' || a:info.force
+    if a:info.status !=# 'unchanged' || a:info.force
         if has('nvim')
             !cargo build --release
         else
@@ -250,55 +255,28 @@ endif
 Plug 'lilydjwg/colorizer'
 
 " Fuzzy picker
-Plug 'srstevenson/vim-picker'
-let g:picker_find_executable = 'rg'
-let g:picker_find_flags = '--column --line-number --no-heading --fixed-strings --ignore-case --no-ignore --hidden --follow --glob "!.git/*" --glob "!docs?/*" --glob "!build/*" --glob "!opt/*" --glob "!vendor/*" --color never --threads 0 --no-messages --files'
+Plug '~/Projects/coding/vim-picker'
 
-Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
-Plug 'junegunn/fzf.vim'
 
-let g:fzf_layout = { 'window': 'enew' }
-" Fzz colors
-let g:fzf_colors =
-            \ { 'fg':    ['fg', 'Normal'],
-            \ 'bg':      ['bg', 'Normal'],
-            \ 'hl':      ['fg', 'Comment'],
-            \ 'fg+':     ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
-            \ 'bg+':     ['bg', 'CursorLine', 'CursorColumn'],
-            \ 'hl+':     ['fg', 'Statement'],
-            \ 'info':    ['fg', 'PreProc'],
-            \ 'prompt':  ['fg', 'Conditional'],
-            \ 'pointer': ['fg', 'Exception'],
-            \ 'marker':  ['fg', 'Keyword'],
-            \ 'spinner': ['fg', 'Label'],
-            \ 'header':  ['fg', 'Comment'] }
-" Jump to the existing window if possible
-let g:fzf_buffers_jump = 1
-let $FZF_DEFAULT_COMMAND = 'rg --files --no-messages'
-" Call fzf
-noremap <Leader>z :Files<CR>
-noremap <Leader>t :BTags<CR>
-noremap <Leader>l :Lines<CR>
-noremap <Leader>b :Buffers<CR>
+""'--column --line-number --no-heading --fixed-strings --ignore-case --no-ignore --hidden --follow --glob "!.git/*" --glob "!docs?/*" --glob "!build/*" --glob "!opt/*" --glob "!vendor/*" --color never --threads 0 --no-messages --files'
+
+" Call vim-picker
+noremap <Leader>z :PickerEdit<CR>
+noremap <Leader>t :PickerTag<CR>
+noremap <Leader>b :PickerBuffer<CR>
 noremap <Leader>d :exe ':Look ' . expand('<cword>')<CR>
+nmap <Leader>a call picker#Execute('Look')
 " Find command using fzf and ripgrep
-command! -bang -nargs=* Look
-  \ call fzf#vim#grep('rg --column --line-number --no-heading --fixed-strings --ignore-case --no-ignore --hidden --follow --glob "!.git/*" --glob "!docs?/*" --glob "!build/*" --glob "!opt/*" --glob "!vendor/*" --color "always" --threads 0 --no-messages '
-  \   .shellescape(<q-args>), 1,
-  \   fzf#vim#with_preview('up:60%'),
-  \   <bang>0)
-map <Leader>a :Look<CR>
-
-augroup fzf_buffer
-    autocmd! FileType fzf
-    autocmd  FileType fzf set laststatus=0 noshowmode noruler
-            \| autocmd BufLeave <buffer> set laststatus=2 showmode ruler
-augroup END
+" command! -bang -nargs=* Look
+"             \ call fzf#vim#grep('rg --column --line-number --no-heading --fixed-strings --ignore-case --no-ignore --hidden --follow --glob "!.git/*" --glob "!docs?/*" --glob "!build/*" --glob "!opt/*" --glob "!vendor/*" --color "always" --threads 0 --no-messages '
+"             \   .shellescape(<q-args>), 1,
+"             \   fzf#vim#with_preview('up:60%'),
+"             \   <bang>0)
 
 " Fast replace text
 nnoremap <Leader>R :%s///g<left><left>
 
-" Automaticcaly create dir when saving files
+" Automatically create dir when saving files
 Plug 'pbrisbin/vim-mkdir'
 
 " HTML syntax
@@ -327,10 +305,11 @@ Plug 'ncm2/ncm2'
 " ncm2
 Plug 'roxma/nvim-yarp'
 
-" enable ncm2 for all buffers
-autocmd BufEnter * call ncm2#enable_for_buffer()
-
-autocmd TextChangedI * call ncm2#auto_trigger()
+augroup NCM2
+    " enable ncm2 for all buffers
+    autocmd BufEnter * call ncm2#enable_for_buffer()
+    autocmd TextChangedI * call ncm2#auto_trigger()
+augroup END
 
 set completeopt=noinsert,menuone,noselect
 
@@ -475,30 +454,31 @@ let g:yankring_history_dir = '$HOME/.cache'
 " Intend guides
 Plug 'Yggdroot/indentLine'
 " Set color for indenting character
-let g:indentLine_color_gui = '#91ddff'
+let g:indentLine_color_gui = '#3e4b59'
+let g:indentLine_bgcolor_gui = '#0f1419'
 " Set new indenting char
-let g:indentLine_char = '¦'
-let g:indentLine_first_char = '┆'
-" Disable concealing
-let g:indentLine_concealcursor = ''
+let g:indentLine_char = '▏'
+let g:indentLine_first_char = '│'
 " Set faster mode
-let g:indentLine_faster=1
+let g:indentLine_faster = 1
 let g:indentLine_showFirstIndentLevel = 1
-let g:indentLine_setColors=0
 
 " Use editor config settings per project
 Plug 'editorconfig/editorconfig-vim'
 
 " Format using external tools
-" Plug 'sbdchd/neoformat'
+Plug 'sbdchd/neoformat'
 " Disable alignment
 let g:neoformat_basic_format_align = 0
 " Enable tab to space conversion
 let g:neoformat_basic_format_retab = 0
 " Enable trimmming of trailing whitespace
-let g:neoformat_basic_format_trim = 1
-" Disable formatting
+let g:neoformat_basic_format_trim = 0
+
+let g:neoformat_enabled_python = ['black']
+" Disable formatting for sql
 let g:neoformat_enabled_sql = []
+let g:neoformat_enabled_c = []
 " Use formatprg
 let g:neoformat_try_formatprg = 1
 " Don't put message errors in code
@@ -520,16 +500,13 @@ let g:gutentags_cache_dir = '~/.cache/tags'
 " HTML shortcuts
 Plug 'mattn/emmet-vim'
 
-" Language pack
-Plug 'sheerun/vim-polyglot'
-
 " Asynchronous build and make
 Plug 'tpope/vim-dispatch'
 
 " Linting
 Plug 'w0rp/ale'
 " Disable automatic lining on writing
-let g:ale_lint_on_text_changed = 'normal'
+let g:ale_lint_on_text_changed = 'never'
 let g:ale_set_loclist = 0
 " 1
 let g:ale_set_quickfix = 1
@@ -541,16 +518,25 @@ let g:ale_completion_enabled = 1
 " Enable airline extension for ale
 let g:airline#extensions#ale#enabled = 1
 
+let g:ale_virtualtext_cursor = 1
+
 let g:ale_linters = {
-\   'c': ['ccls'],
-\   'cpp': ['ccls'],
-\   'python': ['pyls'],
-\   'java': ['jdtls'],
-\}
+            \   'c': ['clangd'],
+            \   'cpp': ['clangd'],
+            \   'python': ['pyls'],
+            \   'java': ['jdtls'],
+            \}
 
-" nmap <silent> <Leader>fp <Plug>(ale_previous_wrap)
-" nmap <silent> <Leader>fn <Plug>(ale_next_wrap)
+nmap <silent> <Leader>p <Plug>(ale_previous_wrap)
+nmap <silent> <Leader>n <Plug>(ale_next_wrap)
+nmap <silent> <Leader>gd :ALEGoToDefinition<CR>
+nmap <silent> <Leader>gx :ALEGoToDefinitionInSplit<CR>
+nmap <silent> <Leader>gv :ALEGoToDefinitionInVSplit<CR>
+nmap <silent> <Leader>gr :ALEFindReferences<CR>
+nmap <silent> <Leader>h :ALEHover<CR>
+nmap <Leader>s :ALESymbolSearch
 
+" let g:ale_c_cquery_options = '--log-file=/tmp/cq2.log'
 " let g:ale_cpp_cquery_options = '--log-file=/tmp/cq2.log'
 
 " Close vim if the last window open is quickfix
@@ -614,8 +600,9 @@ let g:codi#rightsplit = 1
 let g:codi#rightalign = 0
 
 " Semantic highlighter for C/C++
-Plug 'arakashic/chromatica.nvim', {'do': ':UpdateRemotePlugins'}
-let g:chromatica#libclang_path = '/lib/libclang.so.7'
+" Plug 'arakashic/chromatica.nvim', {'do': ':UpdateRemotePlugins'}
+Plug '~/Projects/coding/chromatica.nvim', {'do': ':UpdateRemotePlugins'}
+let g:chromatica#libclang_path = '/usr/lib/libclang.so.6'
 let g:chromatica#enable_at_startup = 1
 
 " Needed by coquille
@@ -756,6 +743,8 @@ map gz* <Plug>(asterisk-gz*)<Plug>(is-nohl-1)<Plug>Pulse
 map z#  <Plug>(asterisk-z#)<Plug>(is-nohl-1)<Plug>Pulse
 map gz# <Plug>(asterisk-gz#)<Plug>(is-nohl-1)<Plug>Pulse
 
+Plug 'ntpeters/vim-better-whitespace'
+
 call plug#end()
 
 colorscheme ayu
@@ -769,8 +758,8 @@ let g:python3_host_skip_check = 1
 
 " augroup OnSave
 "     autocmd!
-"     " Autoformat code using neoformat and trim whitespaces
-"     autocmd BufWritePre * Neoformat
+    " Autoformat code using neoformat and trim whitespaces
+    " autocmd BufWritePre * Neoformat
 " augroup END
 
 function! s:goyo_enter()
@@ -802,7 +791,9 @@ function! s:goyo_enter()
     let g:ncm2_look_enabled = 1
     let b:quitting = 0
     let b:quitting_bang = 0
-    autocmd QuitPre <buffer> let b:quitting = 1
+    augroup BUFFER
+        autocmd QuitPre <buffer> let b:quitting = 1
+    augroup END
     cabbrev <buffer> q! let b:quitting_bang = 1 <bar> q!
 endfunction
 
@@ -830,5 +821,11 @@ endfunction
 augroup GoyoSetup
     autocmd! User GoyoEnter call <SID>goyo_enter()
     autocmd! User GoyoLeave call <SID>goyo_leave()
+augroup END
+
+augroup Picker
+    autocmd!
+    " call picker#Register('Look', 'file', 'edit', 'rg')
+    call picker#Register('notes', 'file', 'edit', 'find ~/notes -name "*.md"')
 augroup END
 

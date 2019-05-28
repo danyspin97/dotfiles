@@ -1,0 +1,22 @@
+; wyeb. GtkAccelMap rc-file         -*- scheme -*-
+; this file is an automated accelerator map dump
+;
+; (gtk_accel_path "<window>/bookmark" "")
+; (gtk_accel_path "<window>/openClipboard" "")
+; (gtk_accel_path "<window>/viewSource" "")
+; (gtk_accel_path "<window>/openNewSrcURI" "")
+; (gtk_accel_path "<window>/editLabelOrTitle" "")
+; (gtk_accel_path "<window>/history" "")
+; (gtk_accel_path "<window>/quitAll" "")
+; (gtk_accel_path "<window>/duplicate" "")
+; (gtk_accel_path "<window>/openClipboardNew" "")
+; (gtk_accel_path "<window>/editMenu" "")
+; (gtk_accel_path "<window>/openSelection" "")
+; (gtk_accel_path "<window>/noSuffixProcess" "")
+; (gtk_accel_path "<window>/chromium" "")
+; (gtk_accel_path "<window>/openBackRange" "")
+; (gtk_accel_path "<window>/windowList" "")
+; (gtk_accel_path "<window>/main" "")
+; (gtk_accel_path "<window>/openWithRef" "")
+; (gtk_accel_path "<window>/openSelectionNew" "")
+; (gtk_accel_path "<window>/searchDictionary" "")

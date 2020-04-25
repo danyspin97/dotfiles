@@ -1,0 +1,19 @@
+# This is mpdnotifyrc.sample
+# Please copy this file at one those locations:
+#       ~/.config/mpdnotifyrc
+#       ~/.config/mpdnotify/mpdnotifyrc 
+# It also can be read from within the current working directory
+# You can also use `mpdnotify -c /path/to/your/mpdnotifyrc`
+
+[mpdnotify]
+# Points to your mpd server address and port
+host = localhost
+port = 6600
+
+# What name will be parsed by libnotify (see notify-send --help)
+appname = mpd
+
+# Path to MPD's music directory
+musicdir = ~/gaming/Music
+
+# vim:ft=conf

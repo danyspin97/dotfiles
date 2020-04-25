@@ -1,34 +1,36 @@
 # Tabstop is printed as 4 spaces
 set-option global tabstop 4
 # Use tab to align
-set-option global aligntab true
+#set-option global aligntab true
 
-# Use cat instead of clippy as assistant
-# Disable mouse
+hook global KakBegin .* %{
+    require-module x11
+}
+
+# Disable assistant and mouse
 set-option global ui_options \
-        ncurses_assistant=cat \
+        ncurses_assistant=none \
         ncurses_enable_mouse=false
 
 # Add line number, relative to the cursor and highlight current one
 add-highlighter global/ number-lines -relative -hlcursor
 add-highlighter global/ show-matching
 add-highlighter global/ show-whitespaces
-add-highlighter global/ wrap -width 80 -indent -word
-add-highlighter global/ column 80 default,rgb:7c6f64
+add-highlighter global/ wrap -width 81 -indent -word
+add-highlighter global/ column 81 default,rgb:005f87
 
-map global user w ':write<ret>' -docstring 'Save the buffer'
-map global user q ':quit<ret>' -docstring 'Quit the buffer'
-map global user Q ':write-all-quit<ret>' -docstring 'Save all and quit'
+# Use q instead of b to go backward in words
+map global normal ^ q
+map global normal <a-^> Q
 
-map global normal <a-,> ':enter-user-mode<space>lsp<ret>'
+map global normal q b
+map global normal Q B
+map global normal <a-q> <a-b>
+map global normal <a-Q> <a-B>
 
-colorscheme gruvbox
+map global normal <a-c> :comment-line<ret>
 
-# Use jj as <esc>
-hook global InsertChar j %{ try %{
-      exec -draft hH <a-k>jj<ret> d
-        exec <esc>
-}}
+#colorscheme monokai-pro
 
 # use <tab> and <s-tab> for completions
 hook global InsertCompletionShow .* %{
@@ -49,76 +51,129 @@ hook global InsertCompletionHide .* %{
     }
 }
 
-def suspend-and-resume \
-    -params 1..2 \
-    -docstring 'suspend-and-resume <cli command> [<kak command after resume>]: backgrounds current kakoune client and runs specified cli command.  Upon exit of command the optional kak command is executed.' \
-    %{ evaluate-commands %sh{
-
-    # Note we are adding '&& fg' which resumes the kakoune client process after the cli command exits
-    cli_cmd="$1 && fg"
-    post_resume_cmd="$2"
-
-    automate_cmd="ydotool type --key-delay 0 '$cli_cmd'; ydotool key enter"
-    kill_cmd="/usr/bin/kill"
-
-    # Uses platforms automation to schedule the typing of our cli command
-    nohup sh -c "$automate_cmd"  > /dev/null 2>&1 &
-    # Send kakoune client to the background
-    $kill_cmd -SIGTSTP $kak_client_pid
-
-    # ...At this point the kakoune client is paused until the " && fg " gets run in the $automate_cmd
-
-    # Upon resume, run the kak command is specified
-    if [ ! -z "$post_resume_cmd" ]; then
-        echo "$post_resume_cmd"
-    fi
-}}
-
-define-command -docstring 'Invoke fzy to open a file' -params 0 fzy-filename %{
-    evaluate-commands %sh{
-        output=$(mktemp -d "${TMPDIR:-/tmp}"/kak-fzy.XXXXXXXX)/fifo
-        mkfifo ${output}
-        ( lr > ${output} 2>&1 ) > /dev/null 2>&1 < /dev/null &
-
-        printf %s\\n "evaluate-commands -try-client '$kak_opt_toolsclient' %{
-            suspend-and-resume \"fzy < ${output}\"
-        }"
-    }
-}
-
-eval %sh{kak-lsp --kakoune -s $kak_session}
-nop %sh{ (kak-lsp -s $kak_session -vvv ) > /tmp/kak-lsp.log 2>&1 < /dev/null & }
-lsp-enable
-#hook global WinSetOption filetype=(python|c|cpp) %{
-#        lsp-enable-window
-#}
-
 # Plugins support
 source "%val{config}/plugins/plug.kak/rc/plug.kak"
+plug 'andreyorst/plug.kak' noload
 
-# Highlight colors for kakoune palette
-#plug 'delapouite/kakoune-palette'
-
-#plug 'alexherbo2/yank-ring.kak'
-#map global normal Y ':<space>yank-ring<ret>'
-#map global normal <c-p> ':<space>yank-ring<ret><c-p>'
-#map global normal <c-n> ':<space>yank-ring<ret><c-n>'
+# Syntax for zig
+plug 'Vurich/zig-kak'
 
 plug 'alexherbo2/auto-pairs.kak'
 
+# Better handle of buffers
 plug 'Delapouite/kakoune-buffers'
-
 hook global WinDisplay .* info-buffers
-
-# ciao macros
-map global normal ^ q
-map global normal <a-^> Q
-
-map global normal q b
-map global normal Q B
-map global normal <a-q> <a-b>
-map global normal <a-Q> <a-B>
-
 map global normal b ':enter-buffers-mode<ret>' -docstring 'buffers…'
 map global normal B ':enter-user-mode -lock buffers<ret>'   -docstring 'buffers (lock)…'
+
+# Highlight colors
+plug 'alexherbo2/palette.kak'
+
+plug 'alexherbo2/search-highlighter.kak'
+
+plug 'alexherbo2/volatile-highlighter.kak'
+
+# Create dirs when saving files
+plug 'alexherbo2/mkdir.kak'
+hook global BufWritePre .* %{
+    mkdir -p %sh(dirname "$kak_hook_param")
+}
+
+# Add move-line feature
+plug 'alexherbo2/move-line.kak'
+map global normal "'" ': move-line-below %val{count}<ret>'
+map global normal "<a-'>" ': move-line-above %val{count}<ret>'
+
+plug 'chambln/kakoune-smart-quotes'
+map global insert <a-'> '<a-;>: smart-quotes-insert-single<ret>'
+map global insert <a-"> '<a-;>: smart-quotes-insert-double<ret>'
+
+hook global BufSetOption filetype=(markdown|restructuredtext) %{
+    smart-quotes-enable
+}
+
+# Powerful plugin for movement
+plug 'danr/kakoune-easymotion'
+map global user w :easy-motion-w<ret>
+map global user W :easy-motion-W<ret>
+map global user f :easy-motion-f<ret>
+map global user <A-f> :easy-motion-alt-f<ret>
+map global user q :easy-motion-b<ret>
+map global user Q :easy-motion-B<ret>
+map global user j :easy-motion-j<ret>
+map global user k :easy-motion-k<ret>
+map global user r :easy-motion-on-regex
+
+# Highlight colorscheme files
+plug 'delapouite/kakoune-palette'
+
+plug "ul/kak-lsp" config %{
+    set-option global lsp_diagnostic_line_error_sign '║'
+    set-option global lsp_diagnostic_line_warning_sign '┊'
+
+    eval %sh{echo ${kak_opt_lsp_cmd} >> /tmp/kak-lsp.log}
+    set global lsp_cmd "kak-lsp -s %val{session} -vvv --log /tmp/kak-lsp.log"
+
+    define-command ne -docstring 'go to next error/warning from lsp' %{ lsp-find-error --include-warnings }
+    define-command pe -docstring 'go to previous error/warning from lsp' %{ lsp-find-error --previous --include-warnings }
+    define-command ee -docstring 'go to current error/warning from lsp' %{ lsp-find-error --include-warnings; lsp-find-error --previous --include-warnings }
+
+    define-command lsp-restart -docstring 'restart lsp server' %{ lsp-stop; lsp-start }
+
+    hook global WinSetOption filetype=(c|cpp|python|d) %{
+        #set-option window lsp_auto_highlight_references true
+        set-option window lsp_hover_anchor true
+        #lsp-auto-hover-enable
+        echo -debug "Enabling LSP for filtetype %opt{filetype}"
+        lsp-enable-window
+    }
+
+    hook global KakEnd .* lsp-exit
+}
+
+# Highlight current window cursor
+plug 'greenfork/active-window.kak'
+
+plug "andreyorst/tagbar.kak" defer "tagbar" %{
+    set-option global tagbar_sort false
+    set-option global tagbar_size 40
+    set-option global tagbar_display_anon false
+} config %{
+    # if you have wrap highlighter enamled in you configuration
+    # files it's better to turn it off for tagbar, using this hook:
+    hook global WinSetOption filetype=tagbar %{
+        remove-highlighter window/show-whitespaces
+        # you can also disable rendering whitespaces here, line numbers, and
+        # matching characters
+    }
+}
+
+# Highlight current line and column
+plug 'insipx/kak-crosshairs'
+
+# Search in files
+plug "andreyorst/fzf.kak" defer "fzf" %{
+    set-option global fzf_file_command 'fd'
+    set-option global fzf_implementation 'sk'
+    set-option global fzf_highlight_command 'highlight'
+}
+map global normal <c-p> ': fzf-mode<ret>'
+
+plug 'jjk96/kakoune-rainbow'
+
+colorscheme monokai-pro
+
+hook global WinCreate ^[^*]+$ %{
+    git show-diff
+
+    # Load editorconfig settings
+    editorconfig-load
+
+    # Highlight current column
+    cursorcolumn
+
+    # Highlight parenthesis
+    # On large files, it slow kakoune
+    #rainbow-enable
+}
 

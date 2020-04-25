@@ -4,23 +4,27 @@
     // "height": 30, // Waybar height
     "width": 1920, // Waybar width
     // Choose the order of the modules
-    "modules-left": ["sway/workspaces", "sway/mode", "custom/spotify"],
-    "modules-center": ["sway/window"],
-    "modules-right": ["pulseaudio", "network", "cpu", "memory", "battery", "clock", "tray"],
+    "modules-left": ["sway/workspaces", "sway/window", "sway/mode"],
+    "modules-center": ["mpd"],
+    //"modules-right": ["pulseaudio", "network", "cpu", "memory", "battery", "clock", "tray"],
+    "modules-right": ["idle_inhibitor", "network", "temperature", "cpu", "memory", "battery", "clock", "tray"],
     // Modules configuration
     "sway/workspaces": {
         "disable-scroll": false,
         "all-outputs": true,
-        "format": "{name}: {icon}",
+        //"format": "{name}: {icon}",
+        "format": "{icon}",
         "format-icons": {
-            "1": "",
-            "2": "",
-            "3": "",
-            "4": "",
-            "5": "",
-            "6": "",
-            "7": "",
-            "8": "",
+            "1": "一",
+            "2": "二",
+            "3": "三",
+            "4": "四",
+            "5": "五",
+            "6": "六",
+            "7": "七",
+            "8": "八",
+            "9": "九",
+            "0": "〇",
             "urgent": "",
             "focused": "",
             "default": ""
@@ -30,21 +34,22 @@
         "format": "{}"
     },
     "sway/window": {
-        "format": ": {}",
-        "max-length": 50
+        "format": " {}",
+        "max-length": 70
     },
     "tray": {
         "icon-size": 21,
         "spacing": 10
     },
     "clock": {
+        "format": "<span color=\"#a1efe4\"></span> {:%H:%M <span color=\"#a1efe4\"></span> %d-%m-%Y}",
         "format-alt": "{:%Y-%m-%d}"
     },
     "cpu": {
-        "format": "{}% "
+        "format": "<span color=\"#66d9fe\"></span> {}%"
     },
     "memory": {
-        "format": "{}% "
+        "format": "<span color=\"#ffd866\"></span> {}%"
     },
     "battery": {
         "states": {
@@ -52,15 +57,16 @@
             "warning": 30,
             "critical": 15
         },
-        "format": "{capacity}% {icon}",
+        "format": "<span color=\"#f4bf75\">{icon}</span> {capacity}%",
         // "format-good": "", // An empty format will hide the module
-        "format-full": "Full {icon}",
+        "format-full": "<span color=\"#a6e22e\">{icon}</span> 100%",
         "format-icons": ["", "", "", "", ""]
     },
     "network": {
         // "interface": "wlo1", // (Optional) To force the use of this interface
-        "format-wifi": "{essid} ({signalStrength}%) {bandwidthUpBits}{bandwidthDownBits}",
-        "format-ethernet": "{ifname} ",
+        //"format-wifi": "<span color=\"#ab9df2\"></span> {essid} ({signalStrength}%)",
+        "format-wifi": "<span color=\"#ab9df2\"></span> {signalStrength}%",
+        "format-ethernet": "<span color=\"#ab9df2\"></span> {ifname}",
         "format-disconnected": "Disconnected ⚠"
     },
     "pulseaudio": {
@@ -84,5 +90,51 @@
         "interval": 30, // Remove this if your script is endless and write in loop
         "exec": "$HOME/.config/waybar/mediaplayer.sh", // Script in resources folder
         "exec-if": "pgrep spotify"
+    },
+    "mpd": {
+        "server": "/tmp/mpd.socket",
+        "format": "<span color=\"#fc0967\">{stateIcon}</span> {consumeIcon}{randomIcon}{repeatIcon}{singleIcon}{artist} - {title} &lt;{elapsedTime:%M:%S}/{totalTime:%M:%S}&gt;",
+        "format-disconnected": " Disconnected",
+        "format-stopped": "<span color=\"#ffd866\">{consumeIcon}</span>{randomIcon}{repeatIcon}{singleIcon}Stopped",
+        //  
+        "interval": 2,
+        "consume-icons": {
+            "on": " " // Icon shows only when "consume" is on
+        },
+        "random-icons": {
+            //"off": "<span color=\"#f53c3c\"></span> ", // Icon grayed out when "random" is off
+            "on": " "
+        },
+        "repeat-icons": {
+            "on": " "
+        },
+        "single-icons": {
+            "on": "1 "
+        },
+        "state-icons": {
+            "paused": "",
+            "playing": ""
+        },
+        "tooltip-format": "{album} ({date})",
+        "tooltip-format-disconnected": "MPD (disconnected)"
+    },
+    "idle_inhibitor": {
+        "format": "{icon}",
+        "format-icons": {
+            "activated": "",
+            "deactivated": ""
+        }
+    },
+    "backlight": {
+        "device": "intel_backlight",
+        "format": "{icon} {percent}%",
+        "format-icons": ["", ""]
+    },
+    "temperature": {
+        // "thermal-zone": 2,
+        // "hwmon-path": "/sys/class/hwmon/hwmon2/temp1_input",
+        // "critical-threshold": 80,
+        // "format-critical": "{temperatureC}°C ",
+        "format": "<span color=\"#fc0967\"></span> {temperatureC}°C"
     }
 }

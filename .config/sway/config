@@ -11,6 +11,8 @@
 
 include /etc/sway/config.d/*
 
+xwayland enable
+
 set $mod Mod4
 set $sup Mod1
 
@@ -44,19 +46,20 @@ floating_modifier $mod
 
 workspace_auto_back_and_forth yes
 hide_edge_borders none
-new_window pixel 1
-# focus_on_window_activation urgent
+default_border pixel 4
+focus_on_window_activation urgent
 # Handle popup
-# popup_during_fullscreen smart
+popup_during_fullscreen smart
 
-# start a terminal
-bindsym $mod+Return exec tym
-bindsym $mod+Shift+Return exec tym -e 'bash -i -c "cd $(get_terminal_folder_sway); bash"'
+# Start a terminal in the home directory
+bindsym $mod+Return exec alacritty
+# Start a terminal in the same directory of the current window
+bindsym $mod+Shift+Return exec alacritty --working-directory $(~/.local/bin/get_terminal_folder_sway)
 
 # Application launcher
 bindsym $mod+d exec j4-dmenu-desktop --dmenu='bemenu -b -i --nb "#3f3f3f" --nf "#dcdccc" --fn "Iosevka 16"'
 bindsym $mod+Shift+d exec bemenu-run -b -i --nb "#3f3f3f" --nf "#dcdccc" --fn "Iosevka 16"
-bindsym $mod+Shift+p exec pass $(ls .password-store/ | sed 's/\.gpg//' | sed '/\.tmp\./d' | bemenu -b) | head -n1 | wl-copy
+bindsym $mod+Shift+p exec pass $(ls .local/share/password-store/ | sed 's/\.gpg//' | sed '/\.tmp\./d' | bemenu -b) | head -n1 | wl-copy --paste-once
 #bindsym $mod+y exec --no-startup-id rofi -show ssh
 
 # move in workspaces
@@ -93,7 +96,7 @@ bindsym $mod+Shift+Up move up
 bindsym $mod+Shift+Right move right
 
 # split in horizontal orientation
-bindsym $mod+ograve split h
+bindsym $mod+x split h
 
 # split in vertical orientation
 bindsym $mod+v split v
@@ -151,7 +154,7 @@ bindsym $mod+Shift+8 move container to workspace $workspace8
 # assign [class="discord"]                            $workspace4
 # assign [title="mpsyt"]                              $workspace5
 # assign [class="^Vlc$"]                              $workspace5
-assign [app_id="wyeb\."]                      $workspace1
+#assign [app_id="wyeb\."]                      $workspace1
 assign [app_id="mpv"]                         $workspace5
 #for_window [class="mpv"] move to workspace $workspace5
 
@@ -174,39 +177,34 @@ bindsym $mod+Shift+c reload
 bindsym $mod+Shift+r restart
 
 # Set shut down, restart and locking features
-bindsym $mod+Shift+s mode "$mode_system"
-mode "$mode_system" {
-    bindsym l exec --no-startup-id swaylock, mode "default"
-    bindsym s exec --no-startup-id sudo pm-suspend, mode "default"
-    bindsym u exec --no-startup-id $HOME/.config/sway/exit switch_user, mode "default"
-    bindsym e exec --no-startup-id $HOME/.config/sway/exit logout, mode "default"
-    bindsym h exec --no-startup-id $HOME/.config/sway/exit hibernate, mode "default"
-    bindsym r exec --no-startup-id sudo reboot, mode "default"
-    bindsym p exec --no-startup-id sudo poweroff, mode "default"
-
-    # exit system mode: "Enter" or "Escape"
-    bindsym Return mode "default"
-    bindsym Escape mode "default"
-}
+bindsym $mod+Shift+s exec wlogout
 
 # resize window (you can also use the mouse for that)
 mode "resize" {
 # These bindings trigger as soon as you enter the resize mode
 
 # Vim movement bindings
-    bindsym h resize shrink width 10 px or 10 ppt
-        bindsym j resize grow height 10 px or 10 ppt
-        bindsym k resize shrink height 10 px or 10 ppt
-        bindsym l resize grow width 10 px or 10 ppt
+    bindsym h resize shrink width 3 px or 3 ppt
+    bindsym j resize grow height 3 px or 3 ppt
+    bindsym k resize shrink height 3 px or 3 ppt
+    bindsym l resize grow width 3 px or 3 ppt
+    bindsym Left resize shrink width 3 px or 3 ppt
+    bindsym Down resize grow height 3 px or 3 ppt
+    bindsym Up resize shrink height 3 px or 3 ppt
+    bindsym Right resize grow width 3 px or 3 ppt
 
 # Pressing left will shrink the window’s width.
 # Pressing right will grow the window’s width.
 # Pressing up will shrink the window’s height.
 # Pressing down will grow the window’s height.
-        bindsym Left resize shrink width 10 px or 10 ppt
-        bindsym Down resize grow height 10 px or 10 ppt
-        bindsym Up resize shrink height 10 px or 10 ppt
-        bindsym Right resize grow width 10 px or 10 ppt
+    bindsym Shift+h resize shrink width 10 px or 10 ppt
+    bindsym Shift+j resize grow height 10 px or 10 ppt
+    bindsym Shift+k resize shrink height 10 px or 10 ppt
+    bindsym Shift+l resize grow width 10 px or 10 ppt
+    bindsym Shift+Left resize shrink width 10 px or 10 ppt
+    bindsym Shift+Down resize grow height 10 px or 10 ppt
+    bindsym Shift+Up resize shrink height 10 px or 10 ppt
+    bindsym Shift+Right resize grow width 10 px or 10 ppt
 
 # back to normal: Enter or Escape
         bindsym Return mode "default"
@@ -217,16 +215,17 @@ bindsym $mod+r mode "resize"
 # Audio settings
 bindsym XF86AudioRaiseVolume exec ~/.local/bin/sndio_volume raise
 bindsym XF86AudioLowerVolume exec ~/.local/bin/sndio_volume lower
-bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute 0 toggle
+#bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute 0 toggle
+
+bindsym XF86AudioPlay exec playerctl play-pause
+bindsym XF86AudioNext exec playerctl next
+bindsym XF86AudioPrev exec playerctl previous
+#bindsym XF86Start exec playerctl play
+#
 
 # Screen brightness controls
 bindsym XF86MonBrightnessUp exec "brightnessctl set +15%; notify-send 'Brightness up (+10)'"
 bindsym XF86MonBrightnessDown exec "brightnessctl set 15%-; notify-send 'Brightness down (-10)'"
-
-# scrot & gimp - root
-#bindsym Print exec scrot -e 'mv $f /tmp/ && gimp /tmp/$f'
-# scrot & gimp - select window or rectangle
-#bindsym $mod+Print exec scrot -s -e 'mv $f /tmp/ && gimp /tmp/$f'
 
 # Move the current workspace to the next output
 # (effectively toggles when you only have two outputs)
@@ -244,28 +243,18 @@ workspace $workspace8 output $monitor1
 
 # Program shortcut
 bindsym $mod+c exec wyeb
-bindsym $mod+b exec gtk-launch clightc.desktop
-bindsym $mod+t exec Telegram
 bindsym $mod+z exec zathura
-bindsym $mod+p exec alacritty ncpamixer
-bindsym $mod+m exec urxvt
-bindsym $mod+o exec spotify
-bindsym $mod+x exec kitty
-bindsym $mod+Shift+b exec calibre
 
-# client.focused          #665c54 #665c54 #eddbb2 #458588   #665c54
-# client.focused_inactive #282828 #5f676a2 #ffffff #484e50   #5f676a
-# client.unfocused        #3c3836 #3c3836 #a89984 #292d2e   #222222
-# client.urgent           #cc241d #cc241d #ebdbb2 #cc241d   #cc241d
-# client.placeholder      #000000 #0c0c0c #ffffff #000000   #0c0c0c
+# class                 border  bground text    indicator child_border
+client.focused          #fc9867 #fc9867 #1c1c1c #ffd866   #fc9867
+client.focused_inactive #727072 #727072 #fcfcfa #ffd866   #727072
+client.unfocused        #1c1c1c #1c1c1c #fcfcfa #1c1c1c   #1c1c1c
+client.urgent           #fc0967 #fc0967 #eeeeee #fc0967   #fc0967
+client.placeholder      #66d9fe #66d9fe #eeeeee #66d9fe   #66d9fe
 
-client.background       #ffffff
+client.background       #1c1c1c
 
 # for_window [class="^.*"] border pixel 3
-
-# Set inner/outer gaps
-gaps inner 0
-gaps outer 0
 
 # Additionally, you can issue commands with the following syntax. This is useful to bind keys to changi$
 # gaps inner|outer current|all set|plus|minus <px>
@@ -274,6 +263,10 @@ gaps outer 0
 
 # Smart gaps (gaps used if only more than one container on the workspace)
 smart_gaps on
+
+# Set inner/outer gaps
+gaps inner 7
+gaps outer 2
 
 # Smart borders (draw borders around container only if it is not the only container on this workspace)
 # on|no_gaps (on=always activate and no_gaps=only activate if the gap size to the edge of the screen is$
@@ -304,33 +297,48 @@ mode "$mode_gaps_inner" {
 
 mode "$mode_gaps_outer" {
     bindsym plus  gaps outer current plus 5
-        bindsym minus gaps outer current minus 5
-        bindsym 0     gaps outer current set 0
+    bindsym minus gaps outer current minus 5
+    bindsym 0     gaps outer current set 0
 
-        bindsym Shift+plus  gaps outer all plus 5
-        bindsym Shift+minus gaps outer all minus 5
-        bindsym Shift+0     gaps outer all set 0
+    bindsym Shift+plus  gaps outer all plus 5
+    bindsym Shift+minus gaps outer all minus 5
+    bindsym Shift+0     gaps outer all set 0
 
-        bindsym Return mode "default"
-        bindsym Escape mode "default"
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
 }
 
 # Set keyboard layout
 input * xkb_layout it
 
+input 65261:24672:OLKB_Planck xkb_layout us
+input 65261:24672:OLKB_Planck_Consumer_Control xkb_layout us
+input 65261:24672:OLKB_Planck_Keyboard xkb_layout us
+input 65261:24672:OLKB_Planck_System_Control xkb_layout us
+input 65261:24673:OLKB_Preonic xkb_layout us
+input 65261:24673:OLKB_Preonic_Keyboard xkb_layout us
+input 65261:24673:OLKB_Preonic_Consumer_Control xkb_layout us
+input 65261:24673:OLKB_Preonic_System_Control xkb_layout us
+
+input 1133:16492:Logitech_G603 accel_profile flat
+
 # Set wallpaper
-output * bg ~/Pictures/Wallpapers/DanMachi01.png fill
+output * bg ~/Pictures/Wallpapers/SteinsGate01.jpg fill
+
+seat seat0 xcursor_theme Paper 12
 
 # Run statusbar
 exec waybar
 
 exec dbus-daemon --session --nosyslog --address=unix:path=/run/user/1000/bus
-exec mako --default-timeout 7000
-exec wayidle -w \
+exec mako
+exec swayidle -w \
      timeout 300 'swaylock -f -c 000000' \
      timeout 600 'swaymsg "output * dpms off"' \
      resume 'swaymsg "output * dpms on"' \
      before-sleep 'swaylock -f -c 000000'
-
+exec /home/danyspin97/Projects/coding/redshift/src/redshift
+exec kanshi
+exec mkfifo $SWAYSOCK.wob && tail -f $SWAYSOCK.wob | wob
 
 # vim:filetype=i3

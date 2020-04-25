@@ -1,6 +1,3 @@
-# Quality
---audio-quality 0
-
 # Do not copy the mtime
 --no-mtime
 
@@ -11,7 +8,7 @@
 --hls-prefer-ffmpeg
 
 # Use aria2
---external-downloader wget
+--external-downloader aria2c
 
 # Do not overwrite files
 --no-post-overwrite
@@ -24,6 +21,9 @@
 
 # Choose best quality
 -f bestvideo+bestaudio
+# Prefer other video formats than vp9
+# Prefer audio format in quality order
+#-f bestvideo[vcodec!=vp9]+(bestaudio[acodec=opus]/bestaudio[acodec=vorbis]/bestaudio[acodec=aac]/bestaudio))/best
 
 # Prefer free video formats
 --prefer-free-formats

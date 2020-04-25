@@ -1,0 +1,36 @@
+{
+    "label" : "lock",
+    "action" : "swaylock",
+    "text" : "Lock",
+    "keybind" : "l"
+}
+{
+    "label" : "hibernate",
+    "action" : "systemctl hibernate",
+    "text" : "Hibernate",
+    "keybind" : "h"
+}
+{
+    "label" : "logout",
+    "action" : "loginctl terminate-user $USER",
+    "text" : "Logout",
+    "keybind" : "e"
+}
+{
+    "label" : "poweroff",
+    "action" : "sudo poweroff",
+    "text" : "Poweroff",
+    "keybind" : "p"
+}
+{
+    "label" : "suspend",
+    "action" : "sudo pm-suspend suspend",
+    "text" : "Suspend",
+    "keybind" : "s"
+}
+{
+    "label" : "reboot",
+    "action" : "sudo reboot",
+    "text" : "Reboot",
+    "keybind" : "r"
+}

@@ -1,0 +1,28 @@
+#!/usr/bin/osh
+
+alias search_f='rg --files .'
+alias e='file=$(search_f | fzy); if [[ ! -z $file  ]] ; then kak $file ; fi'
+# Open the file in the current kakoune session
+alias ke='file=$(search_f | fzy); if [[ ! -z $file  ]] ; then k $file ; fi'
+
+# Colorized output using grc
+alias df='grc df'
+alias docker='grc docker'
+alias du='grc du'
+alias env='grc env'
+alias free='grc free'
+alias id='grc id'
+alias ip='grc ip'
+alias lsblk='grc lsblk'
+alias lsmod='grc lsmod'
+alias lsof='grc lsof'
+alias lspci='grc lspci'
+alias mount='grc mount'
+alias nmap='grc nmap'
+alias ping='grc ping'
+alias ps='grc ps'
+alias pv='grc pv'
+alias ss='grc ss'
+alias sysctl='grc sysctl'
+alias traceroute='grc traceroute'
+

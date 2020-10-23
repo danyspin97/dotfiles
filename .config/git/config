@@ -1,19 +1,15 @@
 [user]
 	name = Danilo Spinella
-	email = danyspin97@protonmail.com
+	email = oss@danyspin97.org
+	signingKey = F8D0194CC049819F
 [core]
-	excludesfile = ~/.gitignore
-	pager = diff-so-fancy | less --tabs=4 -RFX
+    pager = delta
+[interactive]
+    diffFilter = delta --color-only
 [color]
 	ui = true
 [gitreview]
 	username = danyspin97
-[sendemail]
-  smtpserver = smtp.gmail.com
-  smtpserverport = 587
-  smtpencryption = tls
-  smtpuser = danyspin.ds@gmail.com
-  from = danyspin.ds@gmail.com
 [color "diff-highlight"]
 	oldNormal = red bold
 	oldHighlight = red bold 52

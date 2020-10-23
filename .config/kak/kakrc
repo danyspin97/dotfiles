@@ -75,6 +75,9 @@ plug 'alexherbo2/mkdir.kak'
 hook global BufWritePre .* %{
     mkdir -p %sh(dirname "$kak_hook_param")
 }
+hook global WinSetOption filetype=(c|cpp) %{
+    hook window BufWritePre .* lsp-formatting-sync
+}
 
 # Add move-line feature
 plug 'alexherbo2/move-line.kak'
@@ -107,6 +110,7 @@ plug 'delapouite/kakoune-palette'
 plug "ul/kak-lsp" config %{
     set-option global lsp_diagnostic_line_error_sign '║'
     set-option global lsp_diagnostic_line_warning_sign '┊'
+    set-option global lsp_hover_max_lines 0
 
     eval %sh{echo ${kak_opt_lsp_cmd} >> /tmp/kak-lsp.log}
     set global lsp_cmd "kak-lsp -s %val{session} -vvv --log /tmp/kak-lsp.log"
@@ -117,9 +121,9 @@ plug "ul/kak-lsp" config %{
 
     define-command lsp-restart -docstring 'restart lsp server' %{ lsp-stop; lsp-start }
 
-    hook global WinSetOption filetype=(c|cpp|python|d) %{
-        #set-option window lsp_auto_highlight_references true
-        set-option window lsp_hover_anchor true
+    hook global WinSetOption filetype=(c|cpp|elixir|javascript|python|vala) %{
+        set-option window lsp_hover_anchor false
+        set-option window lsp_auto_highlight_references true
         #lsp-auto-hover-enable
         echo -debug "Enabling LSP for filtetype %opt{filetype}"
         lsp-enable-window
@@ -127,6 +131,9 @@ plug "ul/kak-lsp" config %{
 
     hook global KakEnd .* lsp-exit
 }
+
+map global normal l ":enter-user-mode lsp<ret>"
+
 
 # Highlight current window cursor
 plug 'greenfork/active-window.kak'

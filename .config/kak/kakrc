@@ -55,9 +55,6 @@ hook global InsertCompletionHide .* %{
 source "%val{config}/plugins/plug.kak/rc/plug.kak"
 plug 'andreyorst/plug.kak' noload
 
-# Syntax for zig
-plug 'Vurich/zig-kak'
-
 plug 'alexherbo2/auto-pairs.kak'
 
 # Better handle of buffers

@@ -1,10 +1,13 @@
-#!/usr/bin/osh
+#!/usr/bin/bash
 
 # Set vi mode
 #set -o vi
 #set interactive
 
-. ${HOME}/.config/oil/env
+# shopt -q login_shell && \
+    . ${HOME}/.config/profile
+
+. ${XDG_CONFIG_HOME}/oil/env
 
 . ${XDG_CONFIG_HOME}/oil/aliases
 . ${XDG_CONFIG_HOME}/oil/functions

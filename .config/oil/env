@@ -1,12 +1,5 @@
 #!/usr/bin/osh
 
-export XDG_CONFIG_HOME=${HOME}/.config
-export XDG_DATA_HOME=${HOME}/.local/share
-
-export WEECHAT_HOME="$XDG_CONFIG_HOME"/weechat
-export PASSWORD_STORE_DIR="$XDG_DATA_HOME"/password-store
-export HTTPIE_CONFIG_DIR="$XDG_CONFIG_HOME"/httpie
-
 export LESSOPEN="| $(which highlight) %s --out-format xterm256 -l --force -s solarized-light"
 export LESS=' -R '
 

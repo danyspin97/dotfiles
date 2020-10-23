@@ -1,0 +1,9 @@
+#!/usr/bin/bash
+
+LIBEGL="/usr/lib/libEGL.so.1"
+LIBPULSE="/usr/lib/pipewire-0.3/pulse/libpulse.so.0"
+
+export LD_PRELOAD="${LIBEGL}:${LIBPULSE}"
+
+export PIPEWIRE_NODE=41
+

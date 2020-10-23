@@ -1,0 +1,3 @@
+xinput --set-prop 16 'libinput Accel Profile Enabled' 0, 1
+
+setxkbmap us

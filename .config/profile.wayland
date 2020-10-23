@@ -1,0 +1,13 @@
+#!/usr/bin/sh
+
+export GDK_BACKEND=wayland
+export SDL_VIDEODRIVER=wayland
+export CLUTTER_BACKEND=wayland
+
+# bemenu called from system should use wayland
+export BEMENU_BACKEND=wayland
+
+export WLR_DRM_DEVICES=/dev/dri/card0:/dev/dri/card1
+
+export SDL_VIDEODRIVER=wayland
+

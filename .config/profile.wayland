@@ -1,4 +1,6 @@
-#!/usr/bin/sh
+#!/bin/sh
+
+export TERMINAL=alacritty
 
 export GDK_BACKEND=wayland
 export SDL_VIDEODRIVER=wayland

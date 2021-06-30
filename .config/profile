@@ -10,15 +10,11 @@ export GPG_TTY=$(tty)
 # Load settings for XDG home directories
 . ~/.config/xdg_dirs
 
-# Use new intel driver
-export MESA_LOADER_DRIVER_OVERRIDE=iris
-
 . /etc/os-release
 
-if [[ "${NAME}" == "Exherbo" ]]; then
-    . ${XDG_CONFIG_HOME}/profile.exherbo
-    . ${XDG_CONFIG_HOME}/profile.wayland
-else
-    . ${XDG_CONFIG_HOME}/profile.x11
-fi
+. ${XDG_CONFIG_HOME}/profile.wayland
 
+export GRADLE_USER_HOME=${XDG_CONFIG_HOME}/gradle
+
+# add rustup
+source "$HOME/.cargo/env"

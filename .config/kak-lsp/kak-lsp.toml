@@ -1,3 +1,5 @@
+snippet_support = true
+
 [semantic_scopes]
 # Map textmate scopes to kakoune faces for semantic highlighting
 # the underscores are translated to dots, and indicate nesting.
@@ -11,18 +13,64 @@ entity_name_type = "type"
 variable_other_enummember = "variable"
 entity_name_namespace = "module"
 
+[semantic_tokens]
+comment = "comment"
+keyword = "keyword"
+number = "number"
+regexp = "regexp"
+operator = "operator"
+namespace = "namespace"
+type = "type"
+struct = "struct"
+class = "class"
+interface = "interface"
+enum = "enum"
+typeParameter = "typeParameter"
+function = "function"
+member = "member"
+macro = "macro"
+variable = "variable"
+parameter = "parameter"
+property = "property"
+label = "label"
+
+[semantic_modifiers]
+documentation = "documentation"
+readonly = "default+d"
+
 [language.c_cpp]
 filetypes = ["c", "cpp"]
-roots = [".clangd", "build"]
+roots = ["compile_commands.json", ".clangd", ]
 command = "clangd"
-#offset_encoding = "utf-8"
-args = ["--clang-tidy", "--pretty", "--offset-encoding=utf-8", "--background-index", "--all-scopes-completion", "--suggest-missing-includes", "--header-insertion=iwyu", "-j=9", "--completion-style=detailed", "--pch-storage=memory"]
+args = [
+    "--clang-tidy",
+    "--completion-style=detailed",
+    "--background-index",
+    "--header-insertion=iwyu",
+    "--suggest-missing-includes",
+    "-j=9",
+    "--pch-storage=memory"
+]
+
+[language.cmake]
+filetypes = ["cmake"]
+roots = ["build"]
+command = "cmake-language-server"
 
 [language.py]
 filetypes = ["python"]
 roots = ["requirements.txt", "setup.py", ".git", ".hg"]
 offset_encoding = "utf-8"
 command = "pyls"
+
+[language.java]
+filetypes = ["java"]
+roots = ["pom.xml", "build.gradle", "build.gradle.kts", ".git"]
+command = "jdtls"
+args = [
+    "-data",
+    "/home/danyspin97/.cache/"
+]
 
 [language.javascript]
 filetypes = ["javascript"]
@@ -40,7 +88,17 @@ filetypes = ["elixir"]
 roots = ["mix.exs"]
 command = "elixir-ls"
 
+[language.rust]
+filetypes = ["rust"]
+roots = ["Cargo.toml"]
+command = "rust-analyzer"
+
 [language.vala]
 filetypes = ["vala"]
 roots = ["meson.build"]
-command = "org.gnome.gvls.stdio.Server"
+command = "vala-language-server"
+
+[language.latex]
+filetypes = ["latex"]
+roots = [".git"]
+command = "texlab"

@@ -1,18 +1,18 @@
+set fish_home $XDG_CONFIG_HOME/fish
 
-# Add benice to PATH
-set -U fish_user_paths /usr/local/benice $fish_user_paths
+set PATH $HOME/.local/bin:$HOME/.cargo/bin:/usr/local/benice:/usr/bin
 
 # Remove greeting
 set fish_greeting
 
 # Use starship as prompt
-starship init fish | source
+source $fish_home/starship.fish
 
 # Add z command
-zoxide init fish | source
+source $fish_home/zoxide.fish
 
 # Add thefuck
-thefuck --alias | source 
+source $fish_home/thefuck.fish
 
 # Load grc
 source /etc/grc.fish

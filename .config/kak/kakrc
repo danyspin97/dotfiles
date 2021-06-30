@@ -1,8 +1,3 @@
-# Tabstop is printed as 4 spaces
-set-option global tabstop 4
-# Use tab to align
-#set-option global aligntab true
-
 hook global KakBegin .* %{
     require-module x11
 }
@@ -16,8 +11,11 @@ set-option global ui_options \
 add-highlighter global/ number-lines -relative -hlcursor
 add-highlighter global/ show-matching
 add-highlighter global/ show-whitespaces
-add-highlighter global/ wrap -width 81 -indent -word
-add-highlighter global/ column 81 default,rgb:005f87
+add-highlighter global/ wrap -width 101 -indent -word
+add-highlighter global/ column 101 default,rgb:005f87
+
+set-option global autowrap_format_paragraph yes
+set-option global autowrap_column 100
 
 # Use q instead of b to go backward in words
 map global normal ^ q
@@ -30,7 +28,12 @@ map global normal <a-Q> <a-B>
 
 map global normal <a-c> :comment-line<ret>
 
-#colorscheme monokai-pro
+map global insert <tab> '<a-;><gt>'
+
+map global user w :write<ret>
+map global user q :quit<ret>
+map global user Q :quit!<ret>
+map global user W :write-quit<ret>
 
 # use <tab> and <s-tab> for completions
 hook global InsertCompletionShow .* %{
@@ -55,6 +58,9 @@ hook global InsertCompletionHide .* %{
 source "%val{config}/plugins/plug.kak/rc/plug.kak"
 plug 'andreyorst/plug.kak' noload
 
+plug 'alexherbo2/prelude.kak'
+    require-module prelude
+
 plug 'alexherbo2/auto-pairs.kak'
 
 # Better handle of buffers
@@ -68,15 +74,10 @@ plug 'alexherbo2/palette.kak'
 
 plug 'alexherbo2/search-highlighter.kak'
 
-plug 'alexherbo2/volatile-highlighter.kak'
-
 # Create dirs when saving files
-plug 'alexherbo2/mkdir.kak'
+plug "alexherbo2/mkdir.kak"
 hook global BufWritePre .* %{
     mkdir -p %sh(dirname "$kak_hook_param")
-}
-hook global WinSetOption filetype=(c|cpp) %{
-    hook window BufWritePre .* lsp-formatting-sync
 }
 
 # Add move-line feature
@@ -94,26 +95,21 @@ hook global BufSetOption filetype=(markdown|restructuredtext) %{
 
 # Powerful plugin for movement
 plug 'danr/kakoune-easymotion'
-map global user w :easy-motion-w<ret>
-map global user W :easy-motion-W<ret>
-map global user f :easy-motion-f<ret>
-map global user <A-f> :easy-motion-alt-f<ret>
-map global user q :easy-motion-b<ret>
-map global user Q :easy-motion-B<ret>
-map global user j :easy-motion-j<ret>
-map global user k :easy-motion-k<ret>
-map global user r :easy-motion-on-regex
-
-# Highlight colorscheme files
-plug 'delapouite/kakoune-palette'
+map global user e ':enter-user-mode easymotion<ret>'
 
 plug "ul/kak-lsp" config %{
     set-option global lsp_diagnostic_line_error_sign '║'
     set-option global lsp_diagnostic_line_warning_sign '┊'
     set-option global lsp_hover_max_lines 0
+    #set-option global lsp_server_configuration rust.clippy_preference="on"
+    #set-option -add global lsp_server_configuration latex.build.executable="tectonic"
+    #set-option -add global lsp_server_configuration latex.build.args=["%f","--synctex","--keep-logs","--keep-intermediates"]
+    set-option -add global lsp_server_configuration latex.build.onSave=true
+    set-option -add global lsp_server_configuration latex.lint.onChange=true
+    set-option -add global lsp_server_configuration latex.lint.onSave=true
 
-    eval %sh{echo ${kak_opt_lsp_cmd} >> /tmp/kak-lsp.log}
-    set global lsp_cmd "kak-lsp -s %val{session} -vvv --log /tmp/kak-lsp.log"
+    #eval %sh{echo ${kak_opt_lsp_cmd} >> /tmp/kak-lsp.log}
+    #set global lsp_cmd "kak-lsp -s %val{session} -vvv --log /tmp/kak-lsp.log"
 
     define-command ne -docstring 'go to next error/warning from lsp' %{ lsp-find-error --include-warnings }
     define-command pe -docstring 'go to previous error/warning from lsp' %{ lsp-find-error --previous --include-warnings }
@@ -121,19 +117,53 @@ plug "ul/kak-lsp" config %{
 
     define-command lsp-restart -docstring 'restart lsp server' %{ lsp-stop; lsp-start }
 
-    hook global WinSetOption filetype=(c|cpp|elixir|javascript|python|vala) %{
+    hook global WinSetOption filetype=(c|cpp|elixir|javascript|python|rust|vala|zig|java|latex) %{
         set-option window lsp_hover_anchor false
         set-option window lsp_auto_highlight_references true
-        #lsp-auto-hover-enable
         echo -debug "Enabling LSP for filtetype %opt{filetype}"
         lsp-enable-window
+        lsp-inlay-diagnostics-enable global
+    }
+
+    hook global WinSetOption filetype=(c|cpp|rust|zig) %{
+        hook window BufWritePre .* lsp-formatting-sync
+    }
+    hook global WinSetOption filetype=(c|cpp|rust) %{
+        hook window -group semantic-tokens BufReload .* lsp-semantic-tokens
+        hook window -group semantic-tokens NormalIdle .* lsp-semantic-tokens
+        hook window -group semantic-tokens InsertIdle .* lsp-semantic-tokens
+        hook -once -always window WinSetOption filetype=.* %{
+            remove-hooks window semantic-tokens
+        }
+    }
+
+    hook global WinSetOption filetype=rust %{
+        hook window -group rust-inlay-hints BufReload .* rust-analyzer-inlay-hints
+        hook window -group rust-inlay-hints NormalIdle .* rust-analyzer-inlay-hints
+        hook window -group rust-inlay-hints InsertIdle .* rust-analyzer-inlay-hints
+        hook -once -always window WinSetOption filetype=.* %{
+            remove-hooks window rust-inlay-hints
+        }
+    }
+
+
+    hook global WinSetOption filetype=(c|cpp) %{
+        map global lsp H ':clangd-switch-source-header<ret>'
     }
 
     hook global KakEnd .* lsp-exit
+
+    def -hidden insert-c-n %{
+         try %{
+                lsp-snippets-select-next-placeholders
+                   exec '<a-;>d'
+         } catch %{
+                exec -with-hooks '<c-n>'
+         }
+    }
+    map global insert <c-n> "<a-;>: insert-c-n<ret>"
+    map global normal l ":enter-user-mode lsp<ret>"
 }
-
-map global normal l ":enter-user-mode lsp<ret>"
-
 
 # Highlight current window cursor
 plug 'greenfork/active-window.kak'
@@ -163,12 +193,108 @@ plug "andreyorst/fzf.kak" defer "fzf" %{
 }
 map global normal <c-p> ': fzf-mode<ret>'
 
-plug 'jjk96/kakoune-rainbow'
+plug "lePerdu/kakboard" %{
+    #hook global WinCreate .* %{ kakboard-enable }
+}
+
+plug "occivink/kakoune-gdb" %{
+    gdb-enable-autojump
+}
+
+declare-user-mode gdb
+map global normal \; ":enter-user-mode gdb<ret>"
+map global gdb \; ":gdb-cmd " -docstring "Send a command to gdb"
+map global gdb S ":gdb-start<ret>" -docstring "Start the program"
+map global gdb r ":gdb-run<ret>" -docstring "Run the program"
+map global gdb R ":gdb-run " -docstring "Run the program with arguments"
+map global gdb c ":gdb-continue<ret>" -docstring "Continue running"
+map global gdb n ":gdb-next<ret>" -docstring "Go to the next line"
+map global gdb s ":gdb-step<ret>" -docstring "Step into the next instruction"
+map global gdb b ":gdb-set-breakpoint<ret>" -docstring "Toggle a breakpoint"
+map global gdb B ":gdb-backtrace<ret>" -docstring "Show the backtrace"
+map global gdb p ":gdb-print<ret>" -docstring "Print the value under the cursor"
+map global gdb C ":gdb-session-connect<ret>" -docstring "Connect to session"
+map global gdb N ":gdb-session-new<ret>" -docstring "Create new session"
+map global gdb f ":gdb-finish<ret>" -docstring "Step oup the current function"
+
+plug "useredsa/dynamic-matching.kak" %{
+    dynamic-matching-dmatch-conf
+    map global normal m ': enter-user-mode dmatch<ret>'
+    map global normal M ': enter-user-mode Dmatch<ret>'
+    map global user   m ': enter-user-mode -lock dmatch<ret>' -docstring "dmatch"
+}
+
+plug "vala.kak"
+
+plug "jdugan6240/powerline.kak" defer powerline %{
+    set-option global powerline_format 'git bufname filetype lsp mode_info line_column position'
+} config %{
+    powerline-start
+}
+
+plug "KJ_Duncan/kakoune-kotlin.kak" domain "bitbucket.org"
+
+plug "dmerejkowsky/kak-spell" config %{
+    declare-user-mode kak-spell
+    map global user i ': enter-user-mode -lock kak-spell<ret>' -docstring 'spell'
+    map global kak-spell a ': kak-spell-add<ret>' -docstring 'add the selection to the user dict'
+    map global kak-spell d ': kak-spell-disable<ret>' -docstring 'clear spelling highlighters'
+    map global kak-spell e ': kak-spell-enable en_US<ret> :kak-spell <ret>' -docstring 'enable spell check in English'
+    map global kak-spell l ': kak-spell-list <ret>' -docstring 'list spelling errors in a buffer'
+    map global kak-spell n ': kak-spell-next<ret>' -docstring 'go to next spell error'
+    map global kak-spell p ': kak-spell-previous<ret>' -docstring 'go to next spell error'
+    map global kak-spell r ': kak-spell-replace<ret>' -docstring 'suggest a list of replacements'
+    map global kak-spell x ': kak-spell-remove<ret>' -docstring 'remove the selection from the user dict'
+}
+
+plug "h-youhei/kakoune-surround" config %{
+    declare-user-mode surround
+    map global surround s ':surround<ret>' -docstring 'surround'
+    map global surround c ':change-surround<ret>' -docstring 'change'
+    map global surround d ':delete-surround<ret>' -docstring 'delete'
+    map global surround t ':select-surrounding-tag<ret>' -docstring 'select tag'
+    map global user s ':enter-user-mode surround<ret>'
+}
+
+plug "eraserhd/kak-ansi"
+
+plug "caksoylar/kakoune-smooth-scroll" config %{
+    hook global WinCreate [^*].* %{
+        hook -once window WinDisplay .* smooth-scroll-enable
+    }
+}
+
+plug "mreppen/kakoune-sway" config %{
+    map global user n ':sway-new<ret>'
+}
+
+plug "casonadams/insert-indicator"
+
+plug "jordan-yee/kakoune-git-mode" config %{
+    map global user g ': enter-user-mode git<ret>' -docstring "git mode"
+}
+
+plug "evanrelf/expand-line.kak"
+
+plug "ftonneau/synonyms.kak" config %{
+    synonyms-enable-on <a-n>
+}
+
+map global user r ':synonyms-replace-selection<ret>'
 
 colorscheme monokai-pro
 
 hook global WinCreate ^[^*]+$ %{
+    require-module prelude
+    require-module auto-pairs
+    require-module mkdir
+    require-module palette
+    require-module search-highlighter
+
     git show-diff
+    hook global BufWritePost %val{buffile} %{git update-diff}
+    hook global BufReload %val{buffile} %{git update-diff}
+    hook global WinDisplay %val{buffile} %{git update-diff}
 
     # Load editorconfig settings
     editorconfig-load
@@ -176,8 +302,9 @@ hook global WinCreate ^[^*]+$ %{
     # Highlight current column
     cursorcolumn
 
-    # Highlight parenthesis
-    # On large files, it slow kakoune
-    #rainbow-enable
+    palette-enable
+
+    auto-pairs-enable
+    search-highlighter-enable
 }
 

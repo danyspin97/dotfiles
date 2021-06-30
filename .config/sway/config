@@ -242,7 +242,7 @@ workspace $workspace7 output $monitor1
 workspace $workspace8 output $monitor1
 
 # Program shortcut
-bindsym $mod+c exec wyeb
+bindsym $mod+c exec firefox
 bindsym $mod+z exec zathura
 
 # class                 border  bground text    indicator child_border
@@ -309,18 +309,18 @@ mode "$mode_gaps_outer" {
 }
 
 # Set keyboard layout
-input * xkb_layout it
+# input * xkb_layout it
 
-input 65261:24672:OLKB_Planck xkb_layout us
-input 65261:24672:OLKB_Planck_Consumer_Control xkb_layout us
-input 65261:24672:OLKB_Planck_Keyboard xkb_layout us
-input 65261:24672:OLKB_Planck_System_Control xkb_layout us
-input 65261:24673:OLKB_Preonic xkb_layout us
-input 65261:24673:OLKB_Preonic_Keyboard xkb_layout us
-input 65261:24673:OLKB_Preonic_Consumer_Control xkb_layout us
-input 65261:24673:OLKB_Preonic_System_Control xkb_layout us
+# input 65261:24672:OLKB_Planck xkb_layout us
+# input 65261:24672:OLKB_Planck_Consumer_Control xkb_layout us
+# input 65261:24672:OLKB_Planck_Keyboard xkb_layout us
+# input 65261:24672:OLKB_Planck_System_Control xkb_layout us
+# input 65261:24673:OLKB_Preonic xkb_layout us
+# input 65261:24673:OLKB_Preonic_Keyboard xkb_layout us
+# input 65261:24673:OLKB_Preonic_Consumer_Control xkb_layout us
+# input 65261:24673:OLKB_Preonic_System_Control xkb_layout us
 
-input 1133:16492:Logitech_G603 accel_profile flat
+# input 1133:16492:Logitech_G603 accel_profile flat
 
 # Set wallpaper
 output * bg ~/Pictures/Wallpapers/SteinsGate01.jpg fill
@@ -330,15 +330,15 @@ seat seat0 xcursor_theme Paper 12
 # Run statusbar
 exec waybar
 
-exec dbus-daemon --session --nosyslog --address=unix:path=/run/user/1000/bus
-exec mako
-exec swayidle -w \
-     timeout 300 'swaylock -f -c 000000' \
-     timeout 600 'swaymsg "output * dpms off"' \
-     resume 'swaymsg "output * dpms on"' \
-     before-sleep 'swaylock -f -c 000000'
-exec /home/danyspin97/Projects/coding/redshift/src/redshift
-exec kanshi
-exec mkfifo $SWAYSOCK.wob && tail -f $SWAYSOCK.wob | wob
+#exec dbus-daemon --session --nosyslog --address=unix:path=/run/user/1000/bus
+#exec mako
+#exec swayidle -w \
+#     timeout 1200 'swaylock -f -c 000000' \
+#     timeout 1800 'swaymsg "output * dpms off"' \
+#     resume 'swaymsg "output * dpms on"' \
+#     before-sleep 'swaylock -f -c 000000'
+#exec /home/danyspin97/Projects/coding/redshift/src/redshift
+##exec kanshi
+#exec mkfifo $SWAYSOCK.wob && tail -f $SWAYSOCK.wob | wob
 
 # vim:filetype=i3

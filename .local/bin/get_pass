@@ -1,0 +1,6 @@
+#!/bin/sh
+
+. ~/.config/xdg_dirs
+pass $(ls ~/.local/share/password-store/ | sed 's/\.gpg//' | sed '/\.tmp\./d' | bemenu -b) \
+        | head -n1 \
+        | wl-copy --paste-once

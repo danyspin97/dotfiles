@@ -1,1 +1,0 @@
-wyeb // shsrc 'd="$DLDIR/wyeb-source" && tee > "$d" && mimeopen -n "$d"'

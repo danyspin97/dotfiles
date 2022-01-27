@@ -9,8 +9,6 @@
 #
 # Please see http://i3wm.org/docs/userguide.html for a complete reference!
 
-include /etc/sway/config.d/*
-
 xwayland enable
 
 set $mod Mod4
@@ -33,8 +31,8 @@ set $workspace7 7
 # Others
 set $workspace8 8
 
-set $monitor1 "eDP-1"
-set $monitor2 "HDMI-1"
+set $monitor1 "DP-5"
+set $monitor2 "DP-4"
 
 # Font for window titles. Will also be used by the bar unless a different font
 # is used in the bar {} block below.
@@ -52,21 +50,14 @@ focus_on_window_activation urgent
 popup_during_fullscreen smart
 
 # Start a terminal in the home directory
-bindsym $mod+Return exec alacritty
+bindsym $mod+Return exec kitty
 # Start a terminal in the same directory of the current window
-bindsym $mod+Shift+Return exec alacritty --working-directory $(~/.local/bin/get_terminal_folder_sway)
+bindsym $mod+Shift+Return exec kitty --working-directory $(~/.local/bin/get_terminal_folder_sway)
 
 # Application launcher
-bindsym $mod+d exec j4-dmenu-desktop --dmenu='bemenu -b -i --nb "#3f3f3f" --nf "#dcdccc" --fn "Iosevka 16"'
-bindsym $mod+Shift+d exec bemenu-run -b -i --nb "#3f3f3f" --nf "#dcdccc" --fn "Iosevka 16"
-bindsym $mod+Shift+p exec pass $(ls .local/share/password-store/ | sed 's/\.gpg//' | sed '/\.tmp\./d' | bemenu -b) | head -n1 | wl-copy --paste-once
-#bindsym $mod+y exec --no-startup-id rofi -show ssh
-
-# move in workspaces
-#bindsym $mod+Tab exec --no-startup-id rofi -show window
-
-# Show clipboard
-#bindsym $mod+i exec --no-startup-id rofi -modi "clipboard:greenclip print" -show clipboard
+bindsym $mod+d exec wofi --show drun
+bindsym $mod+Shift+d exec wofi --show run
+bindsym $mod+Shift+p exec ~/.local/bin/get_pass
 
 # kill focused window
 bindsym $mod+Shift+q kill
@@ -110,7 +101,7 @@ bindsym $mod+w layout tabbed
 bindsym $mod+e layout toggle split
 
 # toggle tiling / floating
-bindsym $sup+space floating toggle
+#bindsym $sup+space floating toggle
 
 # change focus between tiling / floating windows
 bindsym $mod+shift+space focus mode_toggle
@@ -121,12 +112,12 @@ bindsym $mod+a focus parent
 # focus the child container
 #bindsym $mod+d focus child
 
-# bar {
-#     swaybar_command waybar
+bar {
+    swaybar_command waybar
 #     # status_command swaybar
 #     position top
 #     # tray_output all
-# }
+}
 
 # switch to workspace
 bindsym $mod+1 workspace $workspace1
@@ -232,7 +223,7 @@ bindsym XF86MonBrightnessDown exec "brightnessctl set 15%-; notify-send 'Brightn
 bindsym $mod+Shift+w move workspace to output right
 
 # workspace screens
-workspace $workspace1 output $monitor1
+workspace $workspace1 output $monitor2
 workspace $workspace2 output $monitor1
 workspace $workspace3 output $monitor1
 workspace $workspace4 output $monitor1
@@ -265,8 +256,8 @@ client.background       #1c1c1c
 smart_gaps on
 
 # Set inner/outer gaps
-gaps inner 7
-gaps outer 2
+#gaps inner 7
+#gaps outer 2
 
 # Smart borders (draw borders around container only if it is not the only container on this workspace)
 # on|no_gaps (on=always activate and no_gaps=only activate if the gap size to the edge of the screen is$
@@ -308,6 +299,16 @@ mode "$mode_gaps_outer" {
     bindsym Escape mode "default"
 }
 
+bindsym $mod+Space exec env RUST_BACKTRACE=1 ~/.cargo/bin/swayr switch-window >> /tmp/swayr.log 2>&1
+
+bindsym $mod+Backspace exec env RUST_BACKTRACE=1 ~/.cargo/bin/swayr quit-window > /tmp/swayr.log 2>&1
+
+bindsym $mod+Tab exec env RUST_BACKTRACE=1 ~/.cargo/bin/swayr switch-to-urgent-or-lru-window >> /tmp/swayr.log 2>&1
+
+bindsym $mod+Next exec env RUST_BACKTRACE=1 ~/.cargo/bin/swayr next-window >> /tmp/swayr.log 2>&2
+
+bindsym $mod+Prior exec env RUST_BACKTRACE=1 ~/.cargo/bin/swayr prev-window >> /tmp/swayr.log 2>&2
+
 # Set keyboard layout
 # input * xkb_layout it
 
@@ -323,15 +324,21 @@ mode "$mode_gaps_outer" {
 # input 1133:16492:Logitech_G603 accel_profile flat
 
 # Set wallpaper
-output * bg ~/Pictures/Wallpapers/SteinsGate01.jpg fill
+#output * bg ~/Pictures/Wallpapers/SteinsGate01.jpg fill
 
 seat seat0 xcursor_theme Paper 12
 
+output DP-3 transform 270 pos 0 0
+output DP-5 scale 2.0 pos 1080 410
+output eDP-1 disable
+
+#seat seat0 hide_cursor 10000
+#seat seat0 hide_cursor when-typing enable
+
 # Run statusbar
-exec waybar
 
 #exec dbus-daemon --session --nosyslog --address=unix:path=/run/user/1000/bus
-#exec mako
+exec mako
 #exec swayidle -w \
 #     timeout 1200 'swaylock -f -c 000000' \
 #     timeout 1800 'swaymsg "output * dpms off"' \
@@ -340,5 +347,9 @@ exec waybar
 #exec /home/danyspin97/Projects/coding/redshift/src/redshift
 ##exec kanshi
 #exec mkfifo $SWAYSOCK.wob && tail -f $SWAYSOCK.wob | wob
+exec env RUST_BACKTRACE=1 ~/.cargo/bin/swayrd > /tmp/swayrd.log 2>&1
 
-# vim:filetype=i3
+exec ~/.local/bin/wpaperd
+
+# include /etc/sway/config.d/*
+

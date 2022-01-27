@@ -74,11 +74,11 @@ plug 'alexherbo2/palette.kak'
 
 plug 'alexherbo2/search-highlighter.kak'
 
-# Create dirs when saving files
-plug "alexherbo2/mkdir.kak"
-hook global BufWritePre .* %{
-    mkdir -p %sh(dirname "$kak_hook_param")
-}
+## Create dirs when saving files
+#plug "alexherbo2/mkdir.kak"
+#hook global BufWritePre .* %{
+#    mkdir -p %sh(dirname "$kak_hook_param")
+#}
 
 # Add move-line feature
 plug 'alexherbo2/move-line.kak'
@@ -104,12 +104,12 @@ plug "ul/kak-lsp" config %{
     #set-option global lsp_server_configuration rust.clippy_preference="on"
     #set-option -add global lsp_server_configuration latex.build.executable="tectonic"
     #set-option -add global lsp_server_configuration latex.build.args=["%f","--synctex","--keep-logs","--keep-intermediates"]
-    set-option -add global lsp_server_configuration latex.build.onSave=true
-    set-option -add global lsp_server_configuration latex.lint.onChange=true
-    set-option -add global lsp_server_configuration latex.lint.onSave=true
+    #set-option -add global lsp_server_configuration latex.build.onSave=true
+    #set-option -add global lsp_server_configuration latex.lint.onChange=true
+    #set-option -add global lsp_server_configuration latex.lint.onSave=true
 
-    #eval %sh{echo ${kak_opt_lsp_cmd} >> /tmp/kak-lsp.log}
-    #set global lsp_cmd "kak-lsp -s %val{session} -vvv --log /tmp/kak-lsp.log"
+    # eval %sh{echo ${kak_opt_lsp_cmd} >> /tmp/kak-lsp.log}
+    # set global lsp_cmd "kak-lsp -s %val{session} -vvv --log /tmp/kak-lsp.log"
 
     define-command ne -docstring 'go to next error/warning from lsp' %{ lsp-find-error --include-warnings }
     define-command pe -docstring 'go to previous error/warning from lsp' %{ lsp-find-error --previous --include-warnings }
@@ -122,12 +122,12 @@ plug "ul/kak-lsp" config %{
         set-option window lsp_auto_highlight_references true
         echo -debug "Enabling LSP for filtetype %opt{filetype}"
         lsp-enable-window
-        lsp-inlay-diagnostics-enable global
+        #lsp-inlay-diagnostics-enable global
     }
 
-    hook global WinSetOption filetype=(c|cpp|rust|zig) %{
-        hook window BufWritePre .* lsp-formatting-sync
-    }
+    # hook global WinSetOption filetype=(c|cpp|rust|zig) %{
+    #     hook window BufWritePre .* lsp-formatting-sync
+    # }
     hook global WinSetOption filetype=(c|cpp|rust) %{
         hook window -group semantic-tokens BufReload .* lsp-semantic-tokens
         hook window -group semantic-tokens NormalIdle .* lsp-semantic-tokens
@@ -286,8 +286,8 @@ colorscheme monokai-pro
 
 hook global WinCreate ^[^*]+$ %{
     require-module prelude
-    require-module auto-pairs
-    require-module mkdir
+    #require-module auto-pairs
+    #require-module mkdir
     require-module palette
     require-module search-highlighter
 
@@ -304,7 +304,7 @@ hook global WinCreate ^[^*]+$ %{
 
     palette-enable
 
-    auto-pairs-enable
+    #auto-pairs-enable
     search-highlighter-enable
 }
 

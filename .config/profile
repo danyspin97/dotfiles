@@ -2,8 +2,8 @@
 
 export PATH=${HOME}/.local/bin:/usr/local/benice:/usr/bin
 
-export EDITOR=kak
-export VISUAL=kak
+export EDITOR=hx
+export VISUAL=hx
 
 export GPG_TTY=$(tty)
 
@@ -18,3 +18,6 @@ export GRADLE_USER_HOME=${XDG_CONFIG_HOME}/gradle
 
 # add rustup
 source "$HOME/.cargo/env"
+
+export NNN_PLUG='p:preview'
+export NNN_FIFO=/tmp/nnn.fifo

@@ -50,9 +50,9 @@ focus_on_window_activation urgent
 popup_during_fullscreen smart
 
 # Start a terminal in the home directory
-bindsym $mod+Return exec kitty
+bindsym $mod+Return exec alacritty
 # Start a terminal in the same directory of the current window
-bindsym $mod+Shift+Return exec kitty --working-directory $(~/.local/bin/get_terminal_folder_sway)
+bindsym $mod+Shift+Return exec alacritty --working-directory $(~/.local/bin/get_terminal_folder_sway)
 
 # Application launcher
 bindsym $mod+d exec wofi --show drun
@@ -104,7 +104,7 @@ bindsym $mod+e layout toggle split
 #bindsym $sup+space floating toggle
 
 # change focus between tiling / floating windows
-bindsym $mod+shift+space focus mode_toggle
+#bindsym $mod+shift+space focus mode_toggle
 
 # focus the parent container
 bindsym $mod+a focus parent
@@ -299,55 +299,38 @@ mode "$mode_gaps_outer" {
     bindsym Escape mode "default"
 }
 
-bindsym $mod+Space exec env RUST_BACKTRACE=1 ~/.cargo/bin/swayr switch-window >> /tmp/swayr.log 2>&1
+bindsym $mod+Space exec env RUST_BACKTRACE=1 \
+    ~/.cargo/bin/swayr switch-window >> /tmp/swayr.log 2>&1
 
-bindsym $mod+Backspace exec env RUST_BACKTRACE=1 ~/.cargo/bin/swayr quit-window > /tmp/swayr.log 2>&1
+bindsym $mod+Tab exec env RUST_BACKTRACE=1 \
+    ~/.cargo/bin/swayr switch-to-urgent-or-lru-window >> /tmp/swayr.log 2>&1
 
-bindsym $mod+Tab exec env RUST_BACKTRACE=1 ~/.cargo/bin/swayr switch-to-urgent-or-lru-window >> /tmp/swayr.log 2>&1
+bindsym $mod+Next exec env RUST_BACKTRACE=1 \
+    ~/.cargo/bin/swayr next-window all-workspaces >> /tmp/swayr.log 2>&2
 
-bindsym $mod+Next exec env RUST_BACKTRACE=1 ~/.cargo/bin/swayr next-window >> /tmp/swayr.log 2>&2
+bindsym $mod+Prior exec env RUST_BACKTRACE=1 \
+    ~/.cargo/bin/swayr prev-window all-workspaces >> /tmp/swayr.log 2>&2
 
-bindsym $mod+Prior exec env RUST_BACKTRACE=1 ~/.cargo/bin/swayr prev-window >> /tmp/swayr.log 2>&2
+bindsym $mod+Shift+Space exec env RUST_BACKTRACE=1 \
+    ~/.cargo/bin/swayr switch-workspace-or-window >> /tmp/swayr.log 2>&1
 
-# Set keyboard layout
-# input * xkb_layout it
+output DP-1 pos 0 0
+output HDMI-A-1 scale 2.0 pos 1920 0
 
-# input 65261:24672:OLKB_Planck xkb_layout us
-# input 65261:24672:OLKB_Planck_Consumer_Control xkb_layout us
-# input 65261:24672:OLKB_Planck_Keyboard xkb_layout us
-# input 65261:24672:OLKB_Planck_System_Control xkb_layout us
-# input 65261:24673:OLKB_Preonic xkb_layout us
-# input 65261:24673:OLKB_Preonic_Keyboard xkb_layout us
-# input 65261:24673:OLKB_Preonic_Consumer_Control xkb_layout us
-# input 65261:24673:OLKB_Preonic_System_Control xkb_layout us
+seat seat0 hide_cursor 10000
+seat seat0 hide_cursor when-typing enable
 
-# input 1133:16492:Logitech_G603 accel_profile flat
-
-# Set wallpaper
-#output * bg ~/Pictures/Wallpapers/SteinsGate01.jpg fill
-
-seat seat0 xcursor_theme Paper 12
-
-output DP-3 transform 270 pos 0 0
-output DP-5 scale 2.0 pos 1080 410
-output eDP-1 disable
-
-#seat seat0 hide_cursor 10000
-#seat seat0 hide_cursor when-typing enable
-
-# Run statusbar
-
-#exec dbus-daemon --session --nosyslog --address=unix:path=/run/user/1000/bus
-exec mako
 #exec swayidle -w \
 #     timeout 1200 'swaylock -f -c 000000' \
 #     timeout 1800 'swaymsg "output * dpms off"' \
 #     resume 'swaymsg "output * dpms on"' \
 #     before-sleep 'swaylock -f -c 000000'
-#exec /home/danyspin97/Projects/coding/redshift/src/redshift
-##exec kanshi
-#exec mkfifo $SWAYSOCK.wob && tail -f $SWAYSOCK.wob | wob
 exec env RUST_BACKTRACE=1 ~/.cargo/bin/swayrd > /tmp/swayrd.log 2>&1
+exec swaync
+exec wlsunset -t 3000 -T 5250
+
+# Toggle control center
+bindsym $mod+Shift+n exec /usr/local/bin/swaync-client -t -sw
 
 exec ~/.local/bin/wpaperd
 

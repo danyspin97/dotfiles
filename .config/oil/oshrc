@@ -13,5 +13,4 @@
 . ${XDG_CONFIG_HOME}/oil/functions
 . ${XDG_CONFIG_HOME}/oil/keys
 . ${XDG_CONFIG_HOME}/oil/prompt
-. ${XDG_CONFIG_HOME}/oil/plugins
 . ${XDG_CONFIG_HOME}/LESS_TERMCAP

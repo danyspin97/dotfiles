@@ -1,0 +1,84 @@
+# This is your rocks.nvim plugins declaration file.
+# Here is a small yet pretty detailed example on how to use it:
+#
+# [plugins]
+# nvim-treesitter = "semver_version"  # e.g. "1.0.0"
+
+# List of non-Neovim rocks.
+# This includes things like `toml` or other lua packages.
+[rocks]
+
+# List of Neovim plugins to install alongside their versions.
+# If the plugin name contains a dot then you must add quotes to the key name!
+[plugins]
+"rocks.nvim" = "2.21.1"
+neorg = "8.4.0"
+"neoconf.nvim" = "1.2.2"
+"neodev.nvim" = "2.5.2"
+cmp-cmdline = "scm"
+cmp-nvim-lsp = { git = "hrsh7th/cmp-nvim-lsp" }
+nvim-cmp = { git = "hrsh7th/nvim-cmp" }
+cmp-buffer = { git = "hrsh7th/cmp-buffer" }
+cmp-path = { git = "hrsh7th/cmp-path" }
+LuaSnip = { git = "L3MON4D3/LuaSnip" }
+cmp_luasnip = { git = "saadparwaiz1/cmp_luasnip" }
+"telescope.nvim" = "scm"
+nvim-ufo = "1.4.0"
+"fidget.nvim" = "1.1.0"
+nvim-lspconfig = { git = "neovim/nvim-lspconfig" }
+"noice.nvim" = "scm"
+"rainbow-delimiters.nvim" = "0.3.0"
+"hlchunk.nvim" = "1.0.1"
+"conform.nvim" = "5.6.0"
+"comment.nvim" = "0.8.0"
+"which-key.nvim" = "1.6.0"
+nvim-web-devicons = "0.99"
+"rocks-git.nvim" = "1.4.0"
+nvim-hlslens = { git = "kevinhwang91/nvim-hlslens" }
+"nougat.nvim" = { git = "MunifTanjim/nougat.nvim" }
+nvim-biscuits = { git = "code-biscuits/nvim-biscuits" }
+nvim-commaround = { git = "gennaro-tedesco/nvim-commaround" }
+"cutlass.nvim" = { git = "gbprod/cutlass.nvim" }
+"crates.nvim" = { git = "Saecki/crates.nvim" }
+"statuscol.nvim" = "scm"
+vim-illuminate = { git = "RRethy/vim-illuminate" }
+"virt-column.nvim" = { git = "lukas-reineke/virt-column.nvim" }
+"lspkind.nvim" = "scm"
+nvim-lint = "scm"
+neotest = "4.2.0"
+neotest-rust = { git = "rouge8/neotest-rust" }
+nvim-dap = "0.7.0"
+nvim-dap-ui = "4.0.0"
+nvim-dap-virtual-text = "scm"
+neogit = "scm"
+"lsp_lines.nvim" = { git = "https://git.sr.ht:~whynothugo/lsp_lines.nvim" }
+"hlargs.nvim" = { git = "m-demare/hlargs.nvim" }
+"monokai-pro.nvim" = { git = "loctvl842/monokai-pro.nvim" }
+"suit.nvim" = { git = "doums/suit.nvim" }
+"lsp_signature.nvim" = "0.3.1"
+"trouble.nvim" = "2.10.0"
+"telescope-symbols.nvim" = { git = "nvim-telescope/telescope-symbols.nvim" }
+"leap.nvim" = { git = "ggandor/leap.nvim" }
+"flit.nvim" = { git = "ggandor/flit.nvim" }
+"neowords.nvim" = { git = "backdround/neowords.nvim" }
+"full_visual_line.nvim" = { git = "0xAdk/full_visual_line.nvim" }
+"inc-rename.nvim" = "scm"
+"headlines.nvim" = "4.0.1"
+nvim-cmp-lsp-rs = { git = "zjp-CN/nvim-cmp-lsp-rs" }
+cmp-cmdline-history = { git = "dmitmel/cmp-cmdline-history" }
+"codeium.nvim" = { git = "Exafunction/codeium.nvim" }
+"gitsigns.nvim" = { git = "lewis6991/gitsigns.nvim" }
+nvim-autopairs = "scm"
+"rocks-treesitter.nvim" = "scm"
+tree-sitter-rust = "scm"
+tree-sitter-toml = "scm"
+tree-sitter-java = "scm"
+tree-sitter-json = "scm"
+
+[plugins.nvim-jdtls]
+git = "mfussenegger/nvim-jdtls"
+rev = "0.2.0^{}"
+
+[treesitter]
+auto_highlight = "all"
+auto_install = true

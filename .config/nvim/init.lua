@@ -2,6 +2,7 @@ vim.g.mapleader = " "
 -- Remove the default statuts line by using cmdheight=0
 vim.opt.cmdheight = 0
 vim.opt.number = true
+vim.wo.relativenumber = true
 
 -- Copied from installer.lua
 local rocks_config = {
@@ -38,6 +39,8 @@ local proj_config = {
 -- 	vim.secure.read(localconfpath)
 -- end
 
+vim.o.autowriteall = true
+
 -- Used for which-key
 vim.o.timeout = true
 vim.o.timeoutlen = 300
@@ -49,7 +52,7 @@ vim.o.timeoutlen = 300
 -- Use 4 spaces as tab
 vim.o.shiftwidth = 4
 vim.o.tabstop = 4
---
+
 require("which-key").setup()
 require("cutlass").setup({
 	-- your configuration comes here
@@ -78,8 +81,16 @@ require("statuscol").setup({
 	},
 })
 require("virt-column").setup()
-require("neogit").setup()
--- require("lsp_lines").setup()
+require("neogit").setup({
+	disable_signs = true,
+	graph_style = "unicode",
+	integrations = {
+		diffview = true,
+	},
+})
+require("diffview").setup({})
+
+require("lsp_lines").setup()
 
 require("monokai-pro").setup({
 	filter = "spectrum",
@@ -95,7 +106,35 @@ require("monokai-pro").setup({
 })
 
 vim.cmd.colorscheme("monokai-pro")
-require("trouble").setup({})
+require("trouble").setup({
+	modes = {
+		preview_float = {
+			mode = "diagnostics",
+			preview = {
+				type = "float",
+				relative = "editor",
+				border = "rounded",
+				title = "Preview",
+				title_pos = "center",
+				position = { 0, -2 },
+				size = { width = 0.3, height = 0.3 },
+				zindex = 200,
+			},
+		},
+		cascade = {
+			mode = "diagnostics", -- inherit from diagnostics mode
+			filter = function(items)
+				local severity = vim.diagnostic.severity.HINT
+				for _, item in ipairs(items) do
+					severity = math.min(severity, item.severity)
+				end
+				return vim.tbl_filter(function(item)
+					return item.severity == severity
+				end, items)
+			end,
+		},
+	},
+})
 require("full_visual_line").setup({})
 vim.opt.cursorline = true
 vim.opt.tabstop = 4
@@ -107,10 +146,10 @@ vim.opt.cursorcolumn = false
 vim.opt.undofile = true
 vim.opt.expandtab = true
 
-require("neodev").setup({})
+require("lazydev").setup({})
 
 local capabilities = vim.lsp.protocol.make_client_capabilities()
-local capabilities = require("cmp_nvim_lsp").default_capabilities(capabilities)
+capabilities = require("cmp_nvim_lsp").default_capabilities(capabilities)
 capabilities.textDocument.foldingRange = {
 	dynamicRegistration = false,
 	lineFoldingOnly = true,
@@ -134,7 +173,7 @@ configs.rpmspec = {
   ]],
 	},
 }
-local language_servers = { "pyright", "clangd", "rpmspec" } -- or list servers manually like {'gopls', 'clangd'}
+local language_servers = { "pyright", "clangd", "rpmspec", "bashls" }
 for _, ls in ipairs(language_servers) do
 	lspconfig[ls].setup({
 		capabilities = capabilities,
@@ -156,7 +195,36 @@ lspconfig.rust_analyzer.setup({
 				enable = true,
 			},
 			inlayHints = {
-				enable = true,
+				bindingModeHints = {
+					enable = false,
+				},
+				chainingHints = {
+					enable = true,
+				},
+				closingBraceHints = {
+					enable = true,
+					minLines = 25,
+				},
+				closureReturnTypeHints = {
+					enable = "never",
+				},
+				lifetimeElisionHints = {
+					enable = "never",
+					useParameterNames = false,
+				},
+				maxLength = 25,
+				parameterHints = {
+					enable = true,
+				},
+				reborrowHints = {
+					enable = "never",
+				},
+				renderColons = true,
+				typeHints = {
+					enable = true,
+					hideClosureInitialization = false,
+					hideNamedConstructor = false,
+				},
 			},
 			check = {
 				command = "clippy",
@@ -203,7 +271,7 @@ lspconfig.ltex.setup({
 	},
 })
 
-require("codeium").setup({})
+-- require("codeium").setup({})
 
 local luasnip = require("luasnip")
 local cmp = require("cmp")
@@ -211,9 +279,19 @@ local cmp = require("cmp")
 local lspkind = require("lspkind")
 
 local compare = require("cmp.config.compare")
+compare.locality.lines_count = 300
 
 local cmp_lsp_rs = require("cmp_lsp_rs")
+cmp_lsp_rs.setup()
 local comparators = cmp_lsp_rs.comparators
+
+local has_words_before = function()
+	if vim.api.nvim_buf_get_option(0, "buftype") == "prompt" then
+		return false
+	end
+	local line, col = unpack(vim.api.nvim_win_get_cursor(0))
+	return col ~= 0 and vim.api.nvim_buf_get_text(0, line - 1, 0, line - 1, col, {})[1]:match("^%s*$") == nil
+end
 
 local cmp_opts = {
 	completion = {
@@ -234,7 +312,7 @@ local cmp_opts = {
 		-- ... Your other mappings ...
 
 		["<Tab>"] = cmp.mapping(function(fallback)
-			if cmp.visible() then
+			if cmp.visible() and has_words_before() then
 				cmp.select_next_item({ behavior = cmp.SelectBehavior.Select })
 				-- You could replace the expand_or_jumpable() calls with expand_or_locally_jumpable()
 				-- that way you will only jump inside the snippet region
@@ -272,31 +350,50 @@ local cmp_opts = {
 	},
 	sources = cmp.config.sources({
 		-- Other Sources
+		{ name = "copilot" },
 		{ name = "nvim_lsp" },
 		{ name = "buffer" },
 		{ name = "path" },
 		{ name = "codeium" },
 		{ name = "luasnip" },
 		{ name = "crates" },
-		{ name = "neorg" },
+		-- { name = "neorg" },
+		{
+			name = "lazydev",
+			group_index = 0, -- set group index to 0 to skip loading LuaLS completions
+		},
 		-- { name = "fuzzy_path" },
 		-- { name = "fuzzy_buffer" },
 	}),
 	sorting = {
 		comparators = {
-			comparators.inherent_inscope_import,
+			compare.offset,
+			compare.exact,
+			comparators.inscope_inherent_import,
 			comparators.sort_by_label_but_underscore_last,
+			-- compare.score,
+			compare.recently_used,
+			compare.locality,
+			compare.kind,
+			compare.sort_text,
 		},
 	},
 	matching = {
-		disallow_partial_fuzzy_matching = false,
+		-- disallow_partial_fuzzy_matching = false,
+		disallow_fuzzy_matching = true,
+		disallow_fullfuzzy_matching = true,
+		disallow_partial_fuzzy_matching = true,
+		disallow_partial_matching = false,
+		disallow_prefix_unmatching = true,
 	},
 	formatting = {
 		format = lspkind.cmp_format({
 			mode = "symbol_text",
 			maxwidth = 50,
 			ellipsis_char = "...",
-			symbol_map = { Codeium = "" },
+			symbol_map = {
+				Copilot = "",
+			},
 		}),
 	},
 	experimental = {
@@ -305,6 +402,8 @@ local cmp_opts = {
 		},
 	},
 }
+
+vim.api.nvim_set_hl(0, "CmpItemKindCopilot", { fg = "#6CC644" })
 
 for _, source in ipairs(cmp_opts.sources) do
 	cmp_lsp_rs.filter_out.entry_filter(source)
@@ -329,19 +428,20 @@ cmp.setup.cmdline({ "/", "?" }, {
 	}),
 })
 
+require("nvim-autopairs").setup({})
 local cmp_autopairs = require("nvim-autopairs.completion.cmp")
 cmp.event:on("confirm_done", cmp_autopairs.on_confirm_done())
 
 local telescope = require("telescope")
-local trouble = require("trouble.providers.telescope")
+local open_with_trouble = require("trouble.sources.telescope").open
 telescope.setup({
 	defaults = {
 		mappings = {
 			i = {
-				["<C-t>"] = trouble.open_with_trouble,
+				["<C-t>"] = open_with_trouble,
 			},
 			n = {
-				["<C-t>"] = trouble.open_with_trouble,
+				["<C-t>"] = open_with_trouble,
 			},
 		},
 	},
@@ -352,14 +452,22 @@ vim.keymap.set("n", "<leader>G", require("neogit").open, { desc = "Open Neogit i
 telescope.load_extension("noice")
 local builtin = require("telescope.builtin")
 vim.keymap.set("n", "<leader>ff", builtin.find_files, { desc = "Find files in all subdirectories" })
+vim.keymap.set(
+	"n",
+	"<leader>f*",
+	builtin.grep_string,
+	{ desc = "Search the word under the cursor in the current working directory" }
+)
 vim.keymap.set("n", "<leader>f/", builtin.live_grep, { desc = "Search through all files content" })
-vim.keymap.set("n", "<leader>fb", builtin.buffers, {})
-vim.keymap.set("n", "<leader>fh", builtin.help_tags, {})
-vim.keymap.set("n", "<leader>fc", builtin.commands, {})
-vim.keymap.set("n", "<leader>fm", builtin.man_pages, {})
-vim.keymap.set("n", "<leader>fk", builtin.keymaps, {})
+vim.keymap.set("n", "<leader>f.", builtin.current_buffer_fuzzy_find, { desc = "Search through the current file" })
+vim.keymap.set("n", "<leader>fb", builtin.buffers, { desc = "Search through buffers" })
+vim.keymap.set("n", "<leader>fh", builtin.help_tags, { desc = "Search through help tags" })
+vim.keymap.set("n", "<leader>fc", builtin.commands, { desc = "Search through commands" })
+vim.keymap.set("n", "<leader>fm", builtin.man_pages, { desc = "Search through man pages" })
+vim.keymap.set("n", "<leader>fk", builtin.keymaps, { desc = "Search through keymaps" })
 vim.keymap.set("n", "<leader>fd", builtin.diagnostics, { desc = "Search through the workspace diagnostics" })
 vim.keymap.set("n", "<leader>lg", builtin.lsp_definitions, { desc = "Search (or go to) the LSP definitions" })
+vim.keymap.set("n", "<leader>li", builtin.lsp_implementations, { desc = "Search (or go to) the LSP implementations" })
 vim.keymap.set("n", "<leader>ls", builtin.lsp_document_symbols, { desc = "Search through the LSP document symbols" })
 vim.keymap.set("n", "<leader>lr", builtin.lsp_references, { desc = "Search through the LSP references" })
 vim.keymap.set("n", "<leader>lw", builtin.lsp_workspace_symbols, { desc = "Search through the LSP workspace symbols" })
@@ -418,7 +526,7 @@ vim.keymap.set("n", "K", function()
 	end
 end)
 
-require("fidget").setup()
+require("fidget").setup({})
 
 local kopts = { noremap = true, silent = true }
 
@@ -616,7 +724,11 @@ dap.configurations.rust = {
 		stopOnEntry = false,
 		args = function()
 			local args_string = vim.fn.input("Arguments: ")
-			return vim.split(args_string, " ")
+			if args_string == "" then
+				return {}
+			else
+				return vim.split(args_string, " ")
+			end
 		end,
 		-- 		initCommands = function()
 		-- 			-- Find out where to look for the pretty printer Python module
@@ -690,7 +802,7 @@ vim.diagnostic.config({
 	},
 })
 
--- require("lsp-lens").setup({})
+require("lsp-lens").setup({})
 
 require("hlargs").setup()
 
@@ -710,37 +822,37 @@ require("lsp_signature").setup({
 
 require("luasnip.loaders.from_vscode").lazy_load()
 
-require("neorg").setup({
-	load = {
-		["core.defaults"] = {},
-		["core.esupports.metagen"] = { config = { type = "auto", update_date = true } },
-		["core.qol.toc"] = {},
-		["core.qol.todo_items"] = {},
-		["core.concealer"] = {}, -- Adds pretty icons to your documents
-		["core.dirman"] = {
-			config = {
-				workspaces = {
-					work = "~/notes/work",
-					home = "~/notes/home",
-				},
-			},
-		},
-		["core.journal"] = {
-			config = {
-				journal_folder = "report",
-				workspace = "work",
-				strategy = "flat",
-			},
-		},
-		["core.completion"] = {
-			config = {
-				engine = "nvim-cmp",
-			},
-		},
-		["core.export"] = {},
-	},
-})
-
+-- require("neorg").setup({
+-- 	load = {
+-- 		["core.defaults"] = {},
+-- 		["core.esupports.metagen"] = { config = { type = "auto", update_date = true } },
+-- 		["core.qol.toc"] = {},
+-- 		["core.qol.todo_items"] = {},
+-- 		["core.concealer"] = {}, -- Adds pretty icons to your documents
+-- 		["core.dirman"] = {
+-- 			config = {
+-- 				workspaces = {
+-- 					work = "~/notes/work",
+-- 					home = "~/notes/home",
+-- 				},
+-- 			},
+-- 		},
+-- 		["core.journal"] = {
+-- 			config = {
+-- 				journal_folder = "report",
+-- 				workspace = "work",
+-- 				strategy = "flat",
+-- 			},
+-- 		},
+-- 		["core.completion"] = {
+-- 			config = {
+-- 				engine = "nvim-cmp",
+-- 			},
+-- 		},
+-- 		["core.export"] = {},
+-- 	},
+-- })
+--
 local function get_next_friday()
 	local today_time = os.time()
 	local today = os.date("*t", today_time)
@@ -754,15 +866,15 @@ vim.keymap.set("n", "<Leader>wr", function()
 	vim.cmd("Neorg journal custom " .. friday)
 end)
 
-vim.api.nvim_create_autocmd("LspAttach", {
-	group = vim.api.nvim_create_augroup("InlayHints", {}),
-	callback = function(args)
-		local client = vim.lsp.get_client_by_id(args.data.client_id)
-		if client.server_capabilities.inlayHintProvider then
-			vim.lsp.inlay_hint.enable(0, true)
-		end
-	end,
-})
+-- vim.api.nvim_create_autocmd("LspAttach", {
+-- 	group = vim.api.nvim_create_augroup("InlayHints", {}),
+-- 	callback = function(args)
+-- 		local client = vim.lsp.get_client_by_id(args.data.client_id)
+-- 		if client.server_capabilities.inlayHintProvider then
+-- 			vim.lsp.inlay_hint.enable(0, true)
+-- 		end
+-- 	end,
+-- })
 
 vim.filetype.add({
 	extension = {
@@ -808,18 +920,18 @@ require("suit").setup({})
 
 local api = vim.api
 local keymap_restore = {}
-dap.listeners.after["event_initialized"]["me"] = function()
-	for _, buf in pairs(api.nvim_list_bufs()) do
-		local keymaps = api.nvim_buf_get_keymap(buf, "n")
-		for _, keymap in pairs(keymaps) do
-			if keymap.lhs == "K" then
-				table.insert(keymap_restore, keymap)
-				api.nvim_buf_del_keymap(buf, "n", "K")
-			end
-		end
-	end
-	api.nvim_set_keymap("n", "K", '<Cmd>lua require("dap.ui.widgets").hover()<CR>', { silent = true })
-end
+-- dap.listeners.after["event_initialized"]["me"] = function()
+-- 	for _, buf in pairs(api.nvim_list_bufs()) do
+-- 		local keymaps = api.nvim_buf_get_keymap(buf, "n")
+-- 		for _, keymap in pairs(keymaps) do
+-- 			if keymap.lhs == "K" then
+-- 				table.insert(keymap_restore, keymap)
+-- 				api.nvim_buf_del_keymap(buf, "n", "K")
+-- 			end
+-- 		end
+-- 	end
+-- 	api.nvim_set_keymap("n", "K", '<Cmd>lua require("dap.ui.widgets").hover()<CR>', { silent = true })
+-- end
 
 dap.listeners.after["event_terminated"]["me"] = function()
 	for _, keymap in pairs(keymap_restore) do
@@ -932,6 +1044,7 @@ vim.opt.listchars:append({
 
 require("hlchunk").setup({
 	chunk = {
+		enable = true,
 		chars = {
 			horizontal_line = "─",
 			vertical_line = "│",
@@ -942,6 +1055,7 @@ require("hlchunk").setup({
 		style = "#806d9c",
 	},
 	indent = {
+		enable = true,
 		chars = {
 			"│",
 			"¦",
@@ -950,20 +1064,6 @@ require("hlchunk").setup({
 		},
 		style = {
 			vim.fn.synIDattr(vim.fn.synIDtrans(vim.fn.hlID("Whitespace")), "fg", "gui"),
-		},
-	},
-	blank = {
-		chars = {
-			"․",
-			"⁚",
-			"⁖",
-			"⁘",
-			"⁙",
-		},
-		style = {
-			"#666666",
-			"#555555",
-			"#444444",
 		},
 	},
 })
@@ -988,3 +1088,152 @@ augroup END
 ]])
 
 require("gitsigns").setup({})
+
+-- triggers CursorHold event faster
+vim.opt.updatetime = 200
+
+-- require("barbecue").setup({
+-- 	create_autocmd = false, -- prevent barbecue from updating itself automatically
+-- })
+--
+-- vim.api.nvim_create_autocmd({
+-- 	"WinResized", -- or WinResized on NVIM-v0.9 and higher
+-- 	"BufWinEnter",
+-- 	"CursorHold",
+-- 	"InsertLeave",
+--
+-- 	-- include this if you have set `show_modified` to `true`
+-- 	"BufModifiedSet",
+-- }, {
+-- 	group = vim.api.nvim_create_augroup("barbecue.updater", {}),
+-- 	callback = function()
+-- 		require("barbecue.ui").update()
+-- 	end,
+-- })
+
+require("barbar").setup()
+
+require("inlay-hints").setup()
+
+require("render-markdown").setup()
+
+require("neodim").setup({
+	alpha = 0.75,
+	blend_color = "#000000",
+	hide = {
+		underline = true,
+		virtual_text = true,
+		signs = true,
+	},
+	regex = {
+		"[uU]nused",
+		"[nN]ever [rR]ead",
+		"[nN]ot [rR]ead",
+		rust = {},
+	},
+	priority = 128,
+	disable = {},
+})
+
+require("git-conflict").setup()
+
+require("hardtime").setup({
+	disabled_keys = {
+		["<Up>"] = {},
+		["<Left>"] = {},
+		["<Right>"] = {},
+		["<Down>"] = {},
+	},
+})
+
+local navic = require("nvim-navic")
+navic.setup({
+	lsp = {
+		auto_attach = true,
+	},
+})
+
+local devicons = require("nvim-web-devicons")
+-- require("incline").setup({
+-- 	---@class InclineRenderProps
+-- 	---@field buf number
+-- 	---@field win number
+-- 	---@field focused boolean
+--
+-- 	---@param props InclineRenderProps
+-- 	render = function(props)
+-- 		if not props.focused then
+-- 			return ""
+-- 		end
+--
+-- 		local count = vim.fn.searchcount({ recompute = 1, maxcount = -1 })
+-- 		local contents = vim.fn.getreg("/")
+-- 		if string.len(contents) == 0 then
+-- 			return ""
+-- 		end
+--
+-- 		return {
+-- 			{
+-- 				" ? ",
+-- 				group = "dkoStatusKey",
+-- 			},
+-- 			{
+-- 				(" %s "):format(contents),
+-- 				group = "IncSearch",
+-- 			},
+-- 			{
+-- 				(" %d/%d "):format(count.current, count.total),
+-- 				group = "dkoStatusValue",
+-- 			},
+-- 		}
+-- 	end,
+--
+-- 	window = {
+-- 		margin = { horizontal = 0 },
+-- 		padding = 0,
+-- 	},
+-- })
+--
+require("deferred-clipboard").setup({
+	fallback = "unnamedplus", -- or your preferred setting for clipboard
+})
+
+require("tiny-code-action").setup({
+	--- The backend to use, currently only "vim", "delta" and "difftastic" are supported
+	backend = "delta",
+	backend_opts = {
+		delta = {
+			-- The arguments to pass to delta
+			-- If you have a custom configuration file, you can set the path to it like so:
+			-- args = {
+			--     "--config" .. os.getenv("HOME") .. "/.config/delta/config.yml",
+			-- }
+			args = {
+				"--line-numbers",
+			},
+		},
+	},
+})
+
+vim.keymap.set("n", "<leader>a", function()
+	require("tiny-code-action").code_action()
+end, { noremap = true, silent = true })
+
+require("render-markdown").setup({
+	render_modes = true,
+})
+
+-- Don't load Coqtail
+vim.cmd([[
+let g:loaded_coqtail = 1
+let g:coqtail#supported = 0
+]])
+
+require("coq-lsp").setup()
+
+require("copilot").setup({
+	suggestion = { enabled = false },
+	panel = { enabled = false },
+})
+
+require("copilot_cmp").setup()

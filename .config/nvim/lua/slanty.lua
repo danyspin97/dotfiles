@@ -14,15 +14,15 @@ local nut = {
 		branch = require("nougat.nut.git.branch").create,
 		status = require("nougat.nut.git.status"),
 	},
-	tab = {
-		tablist = {
-			tabs = require("nougat.nut.tab.tablist").create,
-			close = require("nougat.nut.tab.tablist.close").create,
-			icon = require("nougat.nut.tab.tablist.icon").create,
-			label = require("nougat.nut.tab.tablist.label").create,
-			modified = require("nougat.nut.tab.tablist.modified").create,
-		},
-	},
+	-- tab = {
+	-- 	tablist = {
+	-- 		tabs = require("nougat.nut.tab.tablist").create,
+	-- 		close = require("nougat.nut.tab.tablist.close").create,
+	-- 		icon = require("nougat.nut.tab.tablist.icon").create,
+	-- 		label = require("nougat.nut.tab.tablist.label").create,
+	-- 		modified = require("nougat.nut.tab.tablist.modified").create,
+	-- 	},
+	-- },
 	mode = require("nougat.nut.mode").create,
 	spacer = require("nougat.nut.spacer").create,
 	truncation_point = require("nougat.nut.truncation_point").create,
@@ -224,35 +224,35 @@ nougat.set_statusline(function(ctx)
 	return ctx.is_focused and stl or stl_inactive
 end)
 
-local tal = Bar("tabline")
+-- local tal = Bar("tabline")
 
-tal:add_item(nut.tab.tablist.tabs({
-	active_tab = {
-		hl = { bg = color.bg, fg = color.blue },
-		prefix = " ",
-		suffix = " ",
-		content = {
-			nut.tab.tablist.icon({ suffix = " " }),
-			nut.tab.tablist.label({}),
-			nut.tab.tablist.modified({ prefix = " ", config = { text = "●" } }),
-			nut.tab.tablist.close({ prefix = " ", config = { text = "󰅖" } }),
-		},
-		sep_left = sep.left_half_circle_solid({ bg = "bg", fg = color.bg }),
-		sep_right = sep.right_half_circle_solid({ bg = "bg", fg = color.bg }),
-	},
-	inactive_tab = {
-		hl = { bg = color.bg2, fg = color.fg2 },
-		prefix = " ",
-		suffix = " ",
-		content = {
-			nut.tab.tablist.icon({ suffix = " " }),
-			nut.tab.tablist.label({}),
-			nut.tab.tablist.modified({ prefix = " ", config = { text = "●" } }),
-			nut.tab.tablist.close({ prefix = " ", config = { text = "󰅖" } }),
-		},
-		sep_left = sep.left_half_circle_solid({ bg = "bg", fg = color.bg2 }),
-		sep_right = sep.right_half_circle_solid({ bg = "bg", fg = color.bg2 }),
-	},
-}))
-
-nougat.set_tabline(tal)
+-- tal:add_item(nut.tab.tablist.tabs({
+-- 	active_tab = {
+-- 		hl = { bg = color.bg, fg = color.blue },
+-- 		prefix = " ",
+-- 		suffix = " ",
+-- 		content = {
+-- 			nut.tab.tablist.icon({ suffix = " " }),
+-- 			nut.tab.tablist.label({}),
+-- 			nut.tab.tablist.modified({ prefix = " ", config = { text = "●" } }),
+-- 			nut.tab.tablist.close({ prefix = " ", config = { text = "󰅖" } }),
+-- 		},
+-- 		sep_left = sep.left_half_circle_solid({ bg = "bg", fg = color.bg }),
+-- 		sep_right = sep.right_half_circle_solid({ bg = "bg", fg = color.bg }),
+-- 	},
+-- 	inactive_tab = {
+-- 		hl = { bg = color.bg2, fg = color.fg2 },
+-- 		prefix = " ",
+-- 		suffix = " ",
+-- 		content = {
+-- 			nut.tab.tablist.icon({ suffix = " " }),
+-- 			nut.tab.tablist.label({}),
+-- 			nut.tab.tablist.modified({ prefix = " ", config = { text = "●" } }),
+-- 			nut.tab.tablist.close({ prefix = " ", config = { text = "󰅖" } }),
+-- 		},
+-- 		sep_left = sep.left_half_circle_solid({ bg = "bg", fg = color.bg2 }),
+-- 		sep_right = sep.right_half_circle_solid({ bg = "bg", fg = color.bg2 }),
+-- 	},
+-- }))
+--
+-- nougat.set_tabline(tal)

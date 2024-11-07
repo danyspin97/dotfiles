@@ -11,73 +11,234 @@
 # List of Neovim plugins to install alongside their versions.
 # If the plugin name contains a dot then you must add quotes to the key name!
 [plugins]
-"rocks.nvim" = "2.21.1"
-neorg = "8.4.0"
-"neoconf.nvim" = "1.2.2"
-"neodev.nvim" = "2.5.2"
+"rocks.nvim" = "2.41.2"
+"neoconf.nvim" = "1.3.3"
+"neodev.nvim" = "3.0.0"
 cmp-cmdline = "scm"
-cmp-nvim-lsp = { git = "hrsh7th/cmp-nvim-lsp" }
-nvim-cmp = { git = "hrsh7th/nvim-cmp" }
-cmp-buffer = { git = "hrsh7th/cmp-buffer" }
-cmp-path = { git = "hrsh7th/cmp-path" }
-LuaSnip = { git = "L3MON4D3/LuaSnip" }
-cmp_luasnip = { git = "saadparwaiz1/cmp_luasnip" }
 "telescope.nvim" = "scm"
 nvim-ufo = "1.4.0"
-"fidget.nvim" = "1.1.0"
-nvim-lspconfig = { git = "neovim/nvim-lspconfig" }
+"fidget.nvim" = "1.4.1"
+nvim-lspconfig = "1.0.0"
 "noice.nvim" = "scm"
-"rainbow-delimiters.nvim" = "0.3.0"
-"hlchunk.nvim" = "1.0.1"
-"conform.nvim" = "5.6.0"
+"rainbow-delimiters.nvim" = "scm"
+"conform.nvim" = "8.1.0"
 "comment.nvim" = "0.8.0"
-"which-key.nvim" = "1.6.0"
-nvim-web-devicons = "0.99"
-"rocks-git.nvim" = "1.4.0"
-nvim-hlslens = { git = "kevinhwang91/nvim-hlslens" }
-"nougat.nvim" = { git = "MunifTanjim/nougat.nvim" }
-nvim-biscuits = { git = "code-biscuits/nvim-biscuits" }
-nvim-commaround = { git = "gennaro-tedesco/nvim-commaround" }
-"cutlass.nvim" = { git = "gbprod/cutlass.nvim" }
-"crates.nvim" = { git = "Saecki/crates.nvim" }
+"which-key.nvim" = "3.13.3"
+nvim-web-devicons = "0.100"
+"rocks-git.nvim" = "2.5.1"
 "statuscol.nvim" = "scm"
-vim-illuminate = { git = "RRethy/vim-illuminate" }
-"virt-column.nvim" = { git = "lukas-reineke/virt-column.nvim" }
 "lspkind.nvim" = "scm"
 nvim-lint = "scm"
-neotest = "4.2.0"
-neotest-rust = { git = "rouge8/neotest-rust" }
-nvim-dap = "0.7.0"
+neotest = "5.6.1"
+nvim-dap = "0.8.0"
 nvim-dap-ui = "4.0.0"
 nvim-dap-virtual-text = "scm"
-neogit = "scm"
-"lsp_lines.nvim" = { git = "https://git.sr.ht:~whynothugo/lsp_lines.nvim" }
-"hlargs.nvim" = { git = "m-demare/hlargs.nvim" }
-"monokai-pro.nvim" = { git = "loctvl842/monokai-pro.nvim" }
-"suit.nvim" = { git = "doums/suit.nvim" }
+neogit = "1.0.0"
 "lsp_signature.nvim" = "0.3.1"
-"trouble.nvim" = "2.10.0"
-"telescope-symbols.nvim" = { git = "nvim-telescope/telescope-symbols.nvim" }
-"leap.nvim" = { git = "ggandor/leap.nvim" }
-"flit.nvim" = { git = "ggandor/flit.nvim" }
-"neowords.nvim" = { git = "backdround/neowords.nvim" }
-"full_visual_line.nvim" = { git = "0xAdk/full_visual_line.nvim" }
+"trouble.nvim" = "3.6.0"
 "inc-rename.nvim" = "scm"
-"headlines.nvim" = "4.0.1"
-nvim-cmp-lsp-rs = { git = "zjp-CN/nvim-cmp-lsp-rs" }
-cmp-cmdline-history = { git = "dmitmel/cmp-cmdline-history" }
-"codeium.nvim" = { git = "Exafunction/codeium.nvim" }
-"gitsigns.nvim" = { git = "lewis6991/gitsigns.nvim" }
 nvim-autopairs = "scm"
 "rocks-treesitter.nvim" = "scm"
 tree-sitter-rust = "scm"
 tree-sitter-toml = "scm"
 tree-sitter-java = "scm"
 tree-sitter-json = "scm"
+tree-sitter-cpp = "scm"
+tree-sitter-glsl = "scm"
+tree-sitter-diff = "scm"
+tree-sitter-html = "scm"
+tree-sitter-gitcommit = "scm"
+tree-sitter-markdown = "scm"
+tree-sitter-norg = "0.2.6"
+tree-sitter-bash = "scm"
+tree-sitter-xml = "scm"
+tree-sitter-fish = "scm"
+tree-sitter-meson = "scm"
+tree-sitter-make = "scm"
+tree-sitter-javascript = "scm"
+"hardtime.nvim" = "scm"
+nvim-navic = "scm"
+"render-markdown.nvim" = "7.5.0"
+"helpview.nvim" = "1.1.0"
+tree-sitter-regex = "0.0.34"
+tree-sitter-v = "scm"
+tree-sitter-ruby = "scm"
+tree-sitter-css = "scm"
+tree-sitter-git_rebase = "scm"
+tree-sitter-yaml = "0.0.29"
+cmp-nvim-lsp = "scm"
+luasnip = "2.3.0"
+copilot-cmp = "scm"
+"copilot.lua"= "scm"
+nvim-cmp= "scm"
+
+[plugins.cmp-buffer ]
+git = "hrsh7th/cmp-buffer"
+rev = "3022dbc9166796b644a841a02de8dd1cc1d311fa"
+
+[plugins.cmp-path ]
+git = "hrsh7th/cmp-path"
+rev = "91ff86cd9c29299a64f968ebb45846c485725f23"
+
+[plugins.cmp_luasnip ]
+git = "saadparwaiz1/cmp_luasnip"
+rev = "05a9ab28b53f71d1aece421ef32fee2cb857a843"
+
+[plugins.nvim-hlslens ]
+git = "kevinhwang91/nvim-hlslens"
+rev = "v1.0.0"
+
+[plugins."nougat.nvim" ]
+git = "MunifTanjim/nougat.nvim"
+rev = "0.4.0"
+
+[plugins.nvim-commaround ]
+git = "gennaro-tedesco/nvim-commaround"
+rev = "f0d4c7911d3a4c8c6da63df67457783c130655ef"
+
+[plugins."cutlass.nvim" ]
+git = "gbprod/cutlass.nvim"
+rev = "v1.0.1"
+
+[plugins."crates.nvim" ]
+git = "Saecki/crates.nvim"
+rev = "v0.5.2"
+
+[plugins.vim-illuminate ]
+git = "RRethy/vim-illuminate"
+rev = "5eeb7951fc630682c322e88a9bbdae5c224ff0aa"
+
+[plugins."virt-column.nvim" ]
+git = "lukas-reineke/virt-column.nvim"
+rev = "v2.0.2"
+
+[plugins.neotest-rust ]
+git = "rouge8/neotest-rust"
+rev = "0418811e1e3499b2501593f2e131d02f5e6823d4"
+
+[plugins."lsp_lines.nvim" ]
+git = "https://git.sr.ht/~whynothugo/lsp_lines.nvim"
+rev = "v3.0.0"
+
+[plugins."hlargs.nvim" ]
+git = "m-demare/hlargs.nvim"
+rev = "cc0d9ee75e5ffba730393049119361b9e3a5b1b6"
+
+[plugins."monokai-pro.nvim" ]
+git = "loctvl842/monokai-pro.nvim"
+rev = "v1.9.0"
+
+[plugins."suit.nvim" ]
+git = "doums/suit.nvim"
+rev = "400478b71ba55c8167bdd255eede69841e3f0c75"
+
+[plugins."telescope-symbols.nvim" ]
+git = "nvim-telescope/telescope-symbols.nvim"
+rev = "a6d0127a53d39b9fc2af75bd169d288166118aec"
+
+[plugins."leap.nvim" ]
+git = "ggandor/leap.nvim"
+rev = "c099aecaf858574909bd38cbadb8543c4dd16611"
+
+[plugins."flit.nvim" ]
+git = "ggandor/flit.nvim"
+rev = "a9be4e76c30a128f1e51af448c8321bf8366bcd4"
+
+[plugins."neowords.nvim" ]
+git = "backdround/neowords.nvim"
+rev = "09cd0d6cf0b1a9d2ef08934e6ae2c4a70727703d"
+
+[plugins."full_visual_line.nvim" ]
+git = "0xAdk/full_visual_line.nvim"
+rev = "c6375ff50338ac6069aec99fb9adfaadc9174618"
+
+[plugins.nvim-cmp-lsp-rs ]
+git = "zjp-cn/nvim-cmp-lsp-rs"
+rev = "d6a5249948b0334be361788fe88a81e476e7a7ee"
+
+[plugins.cmp-cmdline-history ]
+git = "dmitmel/cmp-cmdline-history"
+rev = "003573b72d4635ce636234a826fa8c4ba2895ffe"
+
+[plugins."codeium.nvim" ]
+git = "Exafunction/codeium.nvim"
+rev = "f6a2ef32a9e923cb0104a19d3e426b0e40e49505"
+
+[plugins."gitsigns.nvim" ]
+git = "lewis6991/gitsigns.nvim"
+rev = "v0.9.0"
+
+[plugins."barbar.nvim" ]
+git = "romgrk/barbar.nvim"
+rev = "v1.9.1"
 
 [plugins.nvim-jdtls]
 git = "mfussenegger/nvim-jdtls"
-rev = "0.2.0^{}"
+rev = "0.2.0"
+
+[plugins."lsp-lens.nvim"]
+git = "VidocqH/lsp-lens.nvim"
+rev = "48bb1a7e271424c15f3d588d54adc9b7c319d977"
+
+[plugins."inlay-hints.nvim"]
+git = "MysticalDevil/inlay-hints.nvim"
+rev = "v0.0.4"
+
+[plugins.LuaSnip]
+git = "L3MON4D3/LuaSnip"
+rev = "v2.3.0"
+
+[plugins."hlchunk.nvim"]
+git = "shellRaining/hlchunk.nvim"
+rev = "v1.3.0"
+
+[plugins.nvim-rip-substitute]
+git = "chrisgrieser/nvim-rip-substitute"
+rev = "d083affa058823c738efc85e293cbd201d5225e3"
+
+[plugins."lazydev.nvim"]
+git = "folke/lazydev.nvim"
+rev = "v1.8.0"
+
+[plugins."markdown.nvim"]
+git = "MeanderingProgrammer/markdown.nvim"
+rev = "v7.5.0"
+
+[plugins.neodim]
+git = "zbirenbaum/neodim"
+rev = "d87470828690342d0139efc2fd56ea0b29e9ecb3"
+
+[plugins."git-conflict.nvim"]
+git = "akinsho/git-conflict.nvim"
+rev = "v2.0.0"
+
+[plugins."deferred-clipboard.nvim"]
+git = "etiamnullam/deferred-clipboard.nvim"
+rev = "v0.9.0"
+
+[plugins."tiny-code-action.nvim"]
+git = "rachartier/tiny-code-action.nvim"
+rev = "bbbfc683644ae61c7ec96792b8ba7857fe5145cd"
+
+[plugins."citruszest.nvim"]
+git = "zootedb0t/citruszest.nvim"
+rev = "d12c99f937114b908e935a9cda1953bb8f16bcc8"
+
+[plugins.sonokai]
+git = "sainnhe/sonokai"
+rev = "v0.3.3"
+
+[plugins."coq-lsp.nvim"]
+git = "tomtomjhj/coq-lsp.nvim"
+rev = "e8f8edd56bde52e64f98824d0737127356b8bd4e"
+
+[plugins.coqtail]
+git = "whonore/coqtail"
+rev = "v1.7.2"
+
+[plugins."diffview.nvim"]
+git = "sindrets/diffview.nvim"
+rev = "4516612fe98ff56ae0415a259ff6361a89419b0a"
 
 [treesitter]
 auto_highlight = "all"

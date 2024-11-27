@@ -889,7 +889,7 @@ vim.keymap.set("n", "<leader>qw", function()
 	require("trouble").toggle("workspace_diagnostics")
 end, { desc = "Show workspace diagnostics" })
 vim.keymap.set("n", "<leader>qd", function()
-	require("trouble").toggle("document_diagnostics")
+	require("trouble").toggle("diagnostics")
 end, { desc = "Show document diagnostics" })
 vim.keymap.set("n", "<leader>qq", function()
 	require("trouble").toggle("quickfix")
@@ -1237,3 +1237,5 @@ require("copilot").setup({
 })
 
 require("copilot_cmp").setup()
+
+require("colorizer").setup()

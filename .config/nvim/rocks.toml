@@ -11,17 +11,16 @@
 # List of Neovim plugins to install alongside their versions.
 # If the plugin name contains a dot then you must add quotes to the key name!
 [plugins]
-"rocks.nvim" = "2.41.2"
+"rocks.nvim" = "2.42.2"
 "neoconf.nvim" = "1.3.3"
 "neodev.nvim" = "3.0.0"
 cmp-cmdline = "scm"
-"telescope.nvim" = "scm"
 nvim-ufo = "1.4.0"
 "fidget.nvim" = "1.4.1"
 nvim-lspconfig = "1.0.0"
 "noice.nvim" = "scm"
 "rainbow-delimiters.nvim" = "scm"
-"conform.nvim" = "8.1.0"
+"conform.nvim" = "8.2.0"
 "comment.nvim" = "0.8.0"
 "which-key.nvim" = "3.13.3"
 nvim-web-devicons = "0.100"
@@ -60,7 +59,7 @@ tree-sitter-javascript = "scm"
 nvim-navic = "scm"
 "render-markdown.nvim" = "7.5.0"
 "helpview.nvim" = "1.1.0"
-tree-sitter-regex = "0.0.34"
+tree-sitter-regex = "0.0.37"
 tree-sitter-v = "scm"
 tree-sitter-ruby = "scm"
 tree-sitter-css = "scm"
@@ -70,7 +69,16 @@ cmp-nvim-lsp = "scm"
 luasnip = "2.3.0"
 copilot-cmp = "scm"
 "copilot.lua"= "scm"
+tree-sitter-kdl = "scm"
 nvim-cmp= "scm"
+tree-sitter-yuck = "scm"
+tree-sitter-scss = "scm"
+tree-sitter-kotlin = "scm"
+"nvim-colorizer.lua"= "scm"
+
+[plugins."rocks-config.nvim" ]
+git = "nvim-neorocks/rocks-config.nvim"
+rev = "main"
 
 [plugins.cmp-buffer ]
 git = "hrsh7th/cmp-buffer"
@@ -110,7 +118,7 @@ rev = "5eeb7951fc630682c322e88a9bbdae5c224ff0aa"
 
 [plugins."virt-column.nvim" ]
 git = "lukas-reineke/virt-column.nvim"
-rev = "v2.0.2"
+rev = "v2.0.3"
 
 [plugins.neotest-rust ]
 git = "rouge8/neotest-rust"
@@ -196,10 +204,6 @@ rev = "v1.3.0"
 git = "chrisgrieser/nvim-rip-substitute"
 rev = "d083affa058823c738efc85e293cbd201d5225e3"
 
-[plugins."lazydev.nvim"]
-git = "folke/lazydev.nvim"
-rev = "v1.8.0"
-
 [plugins."markdown.nvim"]
 git = "MeanderingProgrammer/markdown.nvim"
 rev = "v7.5.0"
@@ -210,7 +214,7 @@ rev = "d87470828690342d0139efc2fd56ea0b29e9ecb3"
 
 [plugins."git-conflict.nvim"]
 git = "akinsho/git-conflict.nvim"
-rev = "v2.0.0"
+rev = "v2.1.0"
 
 [plugins."deferred-clipboard.nvim"]
 git = "etiamnullam/deferred-clipboard.nvim"
@@ -231,6 +235,12 @@ rev = "v0.3.3"
 [plugins."coq-lsp.nvim"]
 git = "tomtomjhj/coq-lsp.nvim"
 rev = "e8f8edd56bde52e64f98824d0737127356b8bd4e"
+[plugins."coq-lsp.nvim".config]
+auto-setup = true
+
+[plugins.copilot.config]
+suggestion = { enabled = false }
+panel = { enabled = false }
 
 [plugins.coqtail]
 git = "whonore/coqtail"
@@ -240,6 +250,48 @@ rev = "v1.7.2"
 git = "sindrets/diffview.nvim"
 rev = "4516612fe98ff56ae0415a259ff6361a89419b0a"
 
+[plugins."lazydev.nvim"]
+git = "folke/lazydev.nvim"
+rev = "main"
+
+[plugins."telescope.nvim"]
+git = "nvim-telescope/telescope.nvim"
+rev = "master"
+
+[plugins."yuck.vim"]
+git = "elkowar/yuck.vim"
+rev = "9b5e0370f70cc30383e1dabd6c215475915fe5c3"
+
+[plugins.parinfer-rust]
+git = "eraserhd/parinfer-rust"
+rev = "master"
+build = "cargo build --release"
+
+[plugins."smear-cursor.nvim"]
+git = "sphamba/smear-cursor.nvim"
+rev = "8505320e48c5c8ea9edb8e039411af5ae6fee5cb"
+
 [treesitter]
 auto_highlight = "all"
 auto_install = true
+
+[plugins.smear_cursor]
+config = true
+
+[plugins."hunk.nvim"]
+git = "julienvincent/hunk.nvim"
+rev = "v1.5.0"
+config = true
+
+# [plugins.colorizer]
+# config = true
+#
+# [plugins."coq-lsp"]
+# config = true
+#
+# [plugins.copilot.config]
+# options = { suggestion = { enabled = false }, panel = { enabled = false } }
+#
+# [plugins.copilot_cmp]
+# config = true
+

@@ -22,9 +22,9 @@ nvim-lspconfig = "1.0.0"
 "rainbow-delimiters.nvim" = "scm"
 "conform.nvim" = "8.2.0"
 "comment.nvim" = "0.8.0"
-"which-key.nvim" = "3.13.3"
+"which-key.nvim" = "3.14.1"
 nvim-web-devicons = "0.100"
-"rocks-git.nvim" = "2.5.1"
+"rocks-git.nvim" = "2.5.2"
 "statuscol.nvim" = "scm"
 "lspkind.nvim" = "scm"
 nvim-lint = "scm"
@@ -32,7 +32,7 @@ neotest = "5.6.1"
 nvim-dap = "0.8.0"
 nvim-dap-ui = "4.0.0"
 nvim-dap-virtual-text = "scm"
-neogit = "1.0.0"
+neogit = "2.0.0"
 "lsp_signature.nvim" = "0.3.1"
 "trouble.nvim" = "3.6.0"
 "inc-rename.nvim" = "scm"
@@ -57,14 +57,14 @@ tree-sitter-make = "scm"
 tree-sitter-javascript = "scm"
 "hardtime.nvim" = "scm"
 nvim-navic = "scm"
-"render-markdown.nvim" = "7.5.0"
+"render-markdown.nvim" = "7.7.0"
 "helpview.nvim" = "1.1.0"
 tree-sitter-regex = "0.0.37"
 tree-sitter-v = "scm"
 tree-sitter-ruby = "scm"
 tree-sitter-css = "scm"
 tree-sitter-git_rebase = "scm"
-tree-sitter-yaml = "0.0.29"
+tree-sitter-yaml = "0.0.30"
 cmp-nvim-lsp = "scm"
 luasnip = "2.3.0"
 copilot-cmp = "scm"
@@ -75,10 +75,8 @@ tree-sitter-yuck = "scm"
 tree-sitter-scss = "scm"
 tree-sitter-kotlin = "scm"
 "nvim-colorizer.lua"= "scm"
-
-[plugins."rocks-config.nvim" ]
-git = "nvim-neorocks/rocks-config.nvim"
-rev = "main"
+"rocks-config.nvim" = "3.1.0"
+tree-sitter-python = "scm"
 
 [plugins.cmp-buffer ]
 git = "hrsh7th/cmp-buffer"
@@ -206,7 +204,7 @@ rev = "d083affa058823c738efc85e293cbd201d5225e3"
 
 [plugins."markdown.nvim"]
 git = "MeanderingProgrammer/markdown.nvim"
-rev = "v7.5.0"
+rev = "v7.7.0"
 
 [plugins.neodim]
 git = "zbirenbaum/neodim"
@@ -282,6 +280,22 @@ config = true
 git = "julienvincent/hunk.nvim"
 rev = "v1.5.0"
 config = true
+
+[plugins."flash.nvim"]
+git = "folke/flash.nvim"
+rev = "main"
+
+[plugins."telescope-recent-files.nvim"]
+git = "mollerhoj/telescope-recent-files.nvim"
+rev = "main"
+
+[plugins."telescope-jj.nvim"]
+git = "zschreur/telescope-jj.nvim"
+rev = "main"
+
+[plugins."visual-whitespace.nvim"]
+git = "mcauley-penney/visual-whitespace.nvim"
+rev = "3a10ba59c1efb0874f15bfc5632d02e25cfa080e"
 
 # [plugins.colorizer]
 # config = true

@@ -91,6 +91,7 @@ require("neogit").setup({
 require("diffview").setup({})
 
 require("lsp_lines").setup()
+vim.keymap.set("", "<Leader>ll", require("lsp_lines").toggle, { desc = "Toggle lsp_lines" })
 
 require("monokai-pro").setup({
 	filter = "spectrum",
@@ -450,8 +451,27 @@ telescope.setup({
 vim.keymap.set("n", "<leader>G", require("neogit").open, { desc = "Open Neogit interface" })
 
 telescope.load_extension("noice")
+telescope.load_extension("recent-files")
+telescope.load_extension("jj")
 local builtin = require("telescope.builtin")
-vim.keymap.set("n", "<leader>ff", builtin.find_files, { desc = "Find files in all subdirectories" })
+local vcs_picker = function(opts)
+	local jj_pick_status, jj_res = pcall(telescope.extensions.jj.files, opts)
+	if jj_pick_status then
+		return
+	end
+
+	local git_files_status, git_res = pcall(builtin.git_files, opts)
+	if not git_files_status then
+		error("Could not launch jj/git files: \n" .. jj_res .. "\n" .. git_res)
+	end
+end
+vim.keymap.set(
+	"n",
+	"<leader>fF",
+	telescope.extensions["recent-files"].recent_files,
+	{ desc = "Find files in all subdirectories" }
+)
+vim.keymap.set("n", "<leader>ff", vcs_picker, { desc = "Find all tracked files in all subdirectories" })
 vim.keymap.set(
 	"n",
 	"<leader>f*",
@@ -548,15 +568,6 @@ vim.api.nvim_set_keymap("n", "g*", [[g*<Cmd>lua require('hlslens').start()<CR>]]
 vim.api.nvim_set_keymap("n", "g#", [[g#<Cmd>lua require('hlslens').start()<CR>]], kopts)
 
 vim.api.nvim_set_keymap("n", "<Leader>l", "<Cmd>noh<CR>", kopts)
-
-vim.keymap.set({ "n", "x" }, "<Leader>L", function()
-	vim.schedule(function()
-		if require("hlslens").exportLastSearchToQuickfix() then
-			vim.cmd("cw")
-		end
-	end)
-	return ":noh<CR>"
-end, { expr = true })
 
 require("noice").setup({
 	lsp = {
@@ -790,7 +801,10 @@ require("nvim-dap-virtual-text").setup({
 vim.cmd([[autocmd FileType * set formatoptions-=ro]])
 
 vim.diagnostic.config({
-	virtual_lines = { only_current_line = true },
+	virtual_lines = {
+		-- only_current_line = true,
+		highlight_whole_line = false,
+	},
 	virtual_text = false,
 	signs = {
 		text = {
@@ -861,10 +875,10 @@ local function get_next_friday()
 	return friday
 end
 -- add a keymap that create a new journal for the next friday, using Neorg journal custom command
-vim.keymap.set("n", "<Leader>wr", function()
-	local friday = get_next_friday()
-	vim.cmd("Neorg journal custom " .. friday)
-end)
+-- vim.keymap.set("n", "<Leader>wr", function()
+-- 	local friday = get_next_friday()
+-- 	vim.cmd("Neorg journal custom " .. friday)
+-- end)
 
 -- vim.api.nvim_create_autocmd("LspAttach", {
 -- 	group = vim.api.nvim_create_augroup("InlayHints", {}),
@@ -875,6 +889,8 @@ end)
 -- 		end
 -- 	end,
 -- })
+
+vim.keymap.set("n", "<Leader>w", "<cmd>update<cr><esc>", { desc = "Save file" })
 
 vim.filetype.add({
 	extension = {
@@ -1239,3 +1255,51 @@ require("copilot").setup({
 require("copilot_cmp").setup()
 
 require("colorizer").setup()
+
+-- Restore the cursor position when opening a file
+-- https://github.com/neovim/neovim/issues/16339#issuecomment-1457394370
+vim.api.nvim_create_autocmd("BufRead", {
+	callback = function(opts)
+		vim.api.nvim_create_autocmd("BufWinEnter", {
+			once = true,
+			buffer = opts.buf,
+			callback = function()
+				local ft = vim.bo[opts.buf].filetype
+				local last_known_line = vim.api.nvim_buf_get_mark(opts.buf, '"')[1]
+				if
+					not (ft:match("commit") and ft:match("rebase"))
+					and last_known_line > 1
+					and last_known_line <= vim.api.nvim_buf_line_count(opts.buf)
+				then
+					vim.api.nvim_feedkeys([[g`"]], "nx", false)
+				end
+			end,
+		})
+	end,
+})
+
+local flash = require("flash")
+
+flash.setup({
+	moparse_pathdes = {
+		search = {
+			enabled = true,
+		},
+	},
+})
+
+vim.keymap.set({ "n", "x", "o" }, "s", flash.jump, { desc = "Flash" })
+vim.keymap.set({ "n", "x", "o" }, "S", flash.treesitter, { desc = "Flash Treesitter" })
+-- vim.keymap.set("r", "o", require("flash").remote(), { desc = "Remote Flash" })
+vim.keymap.set({ "o", "x" }, "R", flash.treesitter_search, { desc = "Treesitter Search" })
+vim.keymap.set({ "c" }, "<c-s>", flash.toggle, { desc = "Toggle Flash Search" })
+
+vim.api.nvim_create_autocmd("VimEnter", {
+	callback = function()
+		if vim.fn.argc() == 0 then
+			require("telescope").extensions["recent-files"].recent_files({})
+		end
+	end,
+})
+
+require("visual-whitespace").setup()

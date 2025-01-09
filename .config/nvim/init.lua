@@ -64,7 +64,7 @@ require("cutlass").setup({
 -- require("nvim-biscuits").setup({})
 
 require("crates").setup({
-	src = {
+	completion = {
 		cmp = {
 			enabled = true,
 		},
@@ -150,7 +150,6 @@ vim.opt.expandtab = true
 require("lazydev").setup({})
 
 local capabilities = vim.lsp.protocol.make_client_capabilities()
-capabilities = require("cmp_nvim_lsp").default_capabilities(capabilities)
 capabilities.textDocument.foldingRange = {
 	dynamicRegistration = false,
 	lineFoldingOnly = true,
@@ -183,13 +182,6 @@ for _, ls in ipairs(language_servers) do
 end
 lspconfig.rust_analyzer.setup({
 	cmd = vim.lsp.rpc.connect("127.0.0.1", 27631),
-	init_options = {
-		lspMux = {
-			version = "1",
-			method = "connect",
-			server = "rust-analyzer",
-		},
-	},
 	settings = {
 		["rust-analyzer"] = {
 			diagnostics = {
@@ -230,6 +222,11 @@ lspconfig.rust_analyzer.setup({
 			check = {
 				command = "clippy",
 				extraArgs = { "--all", "--", "-W", "clippy::all" },
+			},
+			lspMux = {
+				version = "1",
+				method = "connect",
+				server = "rust-analyzer",
 			},
 		},
 	},
@@ -274,164 +271,7 @@ lspconfig.ltex.setup({
 
 -- require("codeium").setup({})
 
-local luasnip = require("luasnip")
-local cmp = require("cmp")
-
-local lspkind = require("lspkind")
-
-local compare = require("cmp.config.compare")
-compare.locality.lines_count = 300
-
-local cmp_lsp_rs = require("cmp_lsp_rs")
-cmp_lsp_rs.setup()
-local comparators = cmp_lsp_rs.comparators
-
-local has_words_before = function()
-	if vim.api.nvim_buf_get_option(0, "buftype") == "prompt" then
-		return false
-	end
-	local line, col = unpack(vim.api.nvim_win_get_cursor(0))
-	return col ~= 0 and vim.api.nvim_buf_get_text(0, line - 1, 0, line - 1, col, {})[1]:match("^%s*$") == nil
-end
-
-local cmp_opts = {
-	completion = {
-		completeopt = "menuone,noselect,preview",
-	},
-	preselect = cmp.PreselectMode.None,
-	snippet = {
-		-- REQUIRED - you must specify a snippet engine
-		expand = function(args)
-			require("luasnip").lsp_expand(args.body) -- For `luasnip` users.
-		end,
-	},
-	window = {
-		completion = cmp.config.window.bordered(),
-		documentation = cmp.config.window.bordered(),
-	},
-	mapping = {
-		-- ... Your other mappings ...
-
-		["<Tab>"] = cmp.mapping(function(fallback)
-			if cmp.visible() and has_words_before() then
-				cmp.select_next_item({ behavior = cmp.SelectBehavior.Select })
-				-- You could replace the expand_or_jumpable() calls with expand_or_locally_jumpable()
-				-- that way you will only jump inside the snippet region
-			elseif luasnip.expand_or_locally_jumpable() then
-				luasnip.expand_or_jump()
-			else
-				fallback()
-			end
-		end, { "i", "s" }),
-		["<S-Tab>"] = cmp.mapping(function(fallback)
-			if cmp.visible() then
-				cmp.select_prev_item()
-			elseif luasnip.jumpable(-1) then
-				luasnip.jump(-1)
-			else
-				fallback()
-			end
-		end, { "i", "s" }),
-		["<CR>"] = cmp.mapping({
-			i = function(fallback)
-				-- check if the completion menu is visible and if an entry is selected
-				if cmp.visible() and cmp.get_active_entry() then
-					cmp.confirm()
-				else
-					fallback()
-				end
-			end,
-			s = cmp.mapping.confirm({ select = true }),
-			c = cmp.mapping.confirm({ behavior = cmp.ConfirmBehavior.Replace }),
-		}),
-		["<C-Space>"] = cmp.mapping(cmp.mapping.complete(), { "i", "c" }),
-		["<C-b>"] = cmp.mapping(cmp.mapping.scroll_docs(-4), { "i", "c" }),
-		["<C-f>"] = cmp.mapping(cmp.mapping.scroll_docs(4), { "i", "c" }),
-		-- ... Your other mappings ...
-	},
-	sources = cmp.config.sources({
-		-- Other Sources
-		{ name = "copilot" },
-		{ name = "nvim_lsp" },
-		{ name = "buffer" },
-		{ name = "path" },
-		{ name = "codeium" },
-		{ name = "luasnip" },
-		{ name = "crates" },
-		-- { name = "neorg" },
-		{
-			name = "lazydev",
-			group_index = 0, -- set group index to 0 to skip loading LuaLS completions
-		},
-		-- { name = "fuzzy_path" },
-		-- { name = "fuzzy_buffer" },
-	}),
-	sorting = {
-		comparators = {
-			compare.offset,
-			compare.exact,
-			comparators.inscope_inherent_import,
-			comparators.sort_by_label_but_underscore_last,
-			-- compare.score,
-			compare.recently_used,
-			compare.locality,
-			compare.kind,
-			compare.sort_text,
-		},
-	},
-	matching = {
-		-- disallow_partial_fuzzy_matching = false,
-		disallow_fuzzy_matching = true,
-		disallow_fullfuzzy_matching = true,
-		disallow_partial_fuzzy_matching = true,
-		disallow_partial_matching = false,
-		disallow_prefix_unmatching = true,
-	},
-	formatting = {
-		format = lspkind.cmp_format({
-			mode = "symbol_text",
-			maxwidth = 50,
-			ellipsis_char = "...",
-			symbol_map = {
-				Copilot = "",
-			},
-		}),
-	},
-	experimental = {
-		ghost_text = {
-			hl_group = "CmpGhostText",
-		},
-	},
-}
-
-vim.api.nvim_set_hl(0, "CmpItemKindCopilot", { fg = "#6CC644" })
-
-for _, source in ipairs(cmp_opts.sources) do
-	cmp_lsp_rs.filter_out.entry_filter(source)
-end
-
-cmp.setup(cmp_opts)
-
-cmp.setup.cmdline(":", {
-	mapping = cmp.mapping.preset.cmdline(),
-	sources = cmp.config.sources({
-		{ name = "cmdline" },
-	}, {
-		{ name = "cmdline_history" },
-	}),
-})
-
--- setup nvim-cmp plugin for the cmdline / cmp
-cmp.setup.cmdline({ "/", "?" }, {
-	mapping = cmp.mapping.preset.cmdline(),
-	sources = cmp.config.sources({
-		{ name = "cmdline_history" },
-	}),
-})
-
 require("nvim-autopairs").setup({})
-local cmp_autopairs = require("nvim-autopairs.completion.cmp")
-cmp.event:on("confirm_done", cmp_autopairs.on_confirm_done())
 
 local telescope = require("telescope")
 local open_with_trouble = require("trouble.sources.telescope").open
@@ -461,9 +301,10 @@ local vcs_picker = function(opts)
 	end
 
 	local git_files_status, git_res = pcall(builtin.git_files, opts)
-	if not git_files_status then
-		error("Could not launch jj/git files: \n" .. jj_res .. "\n" .. git_res)
+	if git_files_status then
+		return
 	end
+	pcall(telescope.extensions["recent-files"].recent_files)
 end
 vim.keymap.set(
 	"n",
@@ -575,7 +416,7 @@ require("noice").setup({
 		override = {
 			["vim.lsp.util.convert_input_to_markdown_lines"] = true,
 			["vim.lsp.util.stylize_markdown"] = true,
-			["cmp.entry.get_documentation"] = true,
+			-- ["cmp.entry.get_documentation"] = true,
 		},
 		signature = {
 			enabled = false,
@@ -835,50 +676,6 @@ require("lsp_signature").setup({
 -- require("org-bullets").setup()
 
 require("luasnip.loaders.from_vscode").lazy_load()
-
--- require("neorg").setup({
--- 	load = {
--- 		["core.defaults"] = {},
--- 		["core.esupports.metagen"] = { config = { type = "auto", update_date = true } },
--- 		["core.qol.toc"] = {},
--- 		["core.qol.todo_items"] = {},
--- 		["core.concealer"] = {}, -- Adds pretty icons to your documents
--- 		["core.dirman"] = {
--- 			config = {
--- 				workspaces = {
--- 					work = "~/notes/work",
--- 					home = "~/notes/home",
--- 				},
--- 			},
--- 		},
--- 		["core.journal"] = {
--- 			config = {
--- 				journal_folder = "report",
--- 				workspace = "work",
--- 				strategy = "flat",
--- 			},
--- 		},
--- 		["core.completion"] = {
--- 			config = {
--- 				engine = "nvim-cmp",
--- 			},
--- 		},
--- 		["core.export"] = {},
--- 	},
--- })
---
-local function get_next_friday()
-	local today_time = os.time()
-	local today = os.date("*t", today_time)
-	local friday_wday = (6 - today.wday)
-	local friday = os.date("%Y-%m-%d", today_time + friday_wday * 24 * 60 * 60)
-	return friday
-end
--- add a keymap that create a new journal for the next friday, using Neorg journal custom command
--- vim.keymap.set("n", "<Leader>wr", function()
--- 	local friday = get_next_friday()
--- 	vim.cmd("Neorg journal custom " .. friday)
--- end)
 
 -- vim.api.nvim_create_autocmd("LspAttach", {
 -- 	group = vim.api.nvim_create_augroup("InlayHints", {}),
@@ -1252,8 +1049,6 @@ require("copilot").setup({
 	panel = { enabled = false },
 })
 
-require("copilot_cmp").setup()
-
 require("colorizer").setup()
 
 -- Restore the cursor position when opening a file
@@ -1303,3 +1098,117 @@ vim.api.nvim_create_autocmd("VimEnter", {
 })
 
 require("visual-whitespace").setup()
+require("blink.cmp").setup({
+	completion = {
+		list = {
+			selection = {
+				preselect = false,
+				auto_insert = true,
+			},
+		},
+		ghost_text = { enabled = true },
+		keyword = {
+			range = "full",
+		},
+		documentation = {
+			auto_show = true,
+			auto_show_delay_ms = 500,
+			window = { border = "single" },
+		},
+		menu = {
+			draw = {
+				treesitter = { "lsp" },
+			},
+		},
+		trigger = {
+			show_on_blocked_trigger_characters = { enabled = "true" },
+		},
+	},
+	keymap = {
+		preset = "enter",
+	},
+
+	signature = { enabled = true, window = { border = "single" } },
+	snippets = {
+		preset = "luasnip",
+		expand = function(snippet)
+			require("luasnip").lsp_expand(snippet)
+		end,
+		active = function(filter)
+			if filter and filter.direction then
+				return require("luasnip").jumpable(filter.direction)
+			end
+			return require("luasnip").in_snippet()
+		end,
+		jump = function(direction)
+			require("luasnip").jump(direction)
+		end,
+	},
+	sources = {
+		default = { "lsp", "path", "buffer", "copilot" },
+		providers = {
+			copilot = {
+				name = "copilot",
+				module = "blink-cmp-copilot",
+				score_offset = 100,
+				async = true,
+				transform_items = function(_, items)
+					local CompletionItemKind = require("blink.cmp.types").CompletionItemKind
+					local kind_idx = #CompletionItemKind + 1
+					CompletionItemKind[kind_idx] = "Copilot"
+					for _, item in ipairs(items) do
+						item.kind = kind_idx
+					end
+					return items
+				end,
+			},
+			lsp = {
+				override = {
+					get_trigger_characters = function(self)
+						local trigger_characters = self:get_trigger_characters()
+						vim.list_extend(trigger_characters, { "\n", "\t", " " })
+						return trigger_characters
+					end,
+				},
+			},
+		},
+	},
+	appearance = {
+		-- Blink does not expose its default kind icons so you must copy them all (or set your custom ones) and add Copilot
+		kind_icons = {
+			Copilot = "",
+			Text = "󰉿",
+			Method = "󰊕",
+			Function = "󰊕",
+			Constructor = "󰒓",
+
+			Field = "󰜢",
+			Variable = "󰆦",
+			Property = "󰖷",
+
+			Class = "󱡠",
+			Interface = "󱡠",
+			Struct = "󱡠",
+			Module = "󰅩",
+
+			Unit = "󰪚",
+			Value = "󰦨",
+			Enum = "󰦨",
+			EnumMember = "󰦨",
+
+			Keyword = "󰻾",
+			Constant = "󰏿",
+
+			Snippet = "󱄽",
+			Color = "󰏘",
+			File = "󰈔",
+			Reference = "󰬲",
+			Folder = "󰉋",
+			Event = "󱐋",
+			Operator = "󰪚",
+			TypeParameter = "󰬛",
+		},
+	},
+})
+
+vim.api.nvim_set_hl(0, "BlinkCmpGhostText", { fg = "#c1c0c0" })

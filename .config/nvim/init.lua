@@ -3,6 +3,11 @@ vim.g.mapleader = " "
 vim.opt.cmdheight = 0
 vim.opt.number = true
 vim.wo.relativenumber = true
+vim.opt.termguicolors = true
+
+vim.opt.guifont = "Iosevka:h12"
+
+vim.keymap.set({ "i", "c" }, "<S-Insert>", "<C-R>+", { remap = true })
 
 -- Copied from installer.lua
 local rocks_config = {
@@ -30,9 +35,6 @@ vim.opt.runtimepath:append(vim.fs.joinpath(rocks_config.rocks_path, "lib", "luar
 --    autocmd TermEnter term://* startinsert
 --    autocmd BufEnter term://* startinsert
 
-local proj_config = {
-	auto_format = false,
-}
 -- Read the project configuration (usually enabling the formatter)
 -- local localconfpath = vim.fn.getcwd() .. "./.nvimrc.lua"
 -- if vim.fn.filereadable(localconfpath) then
@@ -61,7 +63,6 @@ require("cutlass").setup({
 	exclude = { "ns", "nS" },
 	cut_key = "x",
 })
--- require("nvim-biscuits").setup({})
 
 require("crates").setup({
 	completion = {
@@ -80,22 +81,13 @@ require("statuscol").setup({
 		{ text = { builtin.lnumfunc, " " }, click = "v:lua.ScLa" },
 	},
 })
-require("virt-column").setup()
-require("neogit").setup({
-	disable_signs = true,
-	graph_style = "unicode",
-	integrations = {
-		diffview = true,
-	},
-})
-require("diffview").setup({})
 
-require("lsp_lines").setup()
-vim.keymap.set("", "<Leader>ll", require("lsp_lines").toggle, { desc = "Toggle lsp_lines" })
+vim.keymap.set("", "<Leader>ll", function()
+	vim.diagnostic.enable(not vim.diagnostic.is_enabled())
+end, { desc = "Toggle diagnostic lines" })
 
 require("monokai-pro").setup({
 	filter = "spectrum",
-	background_clear = { "float_win" },
 	-- override = function(colors) end,
 	overrideScheme = function(cs, p, config, hp)
 		local cs_override = {}
@@ -136,7 +128,6 @@ require("trouble").setup({
 		},
 	},
 })
-require("full_visual_line").setup({})
 vim.opt.cursorline = true
 vim.opt.tabstop = 4
 vim.opt.writebackup = false
@@ -147,7 +138,9 @@ vim.opt.cursorcolumn = false
 vim.opt.undofile = true
 vim.opt.expandtab = true
 
-require("lazydev").setup({})
+vim.g.markdown_fenced_languages = {
+	"ts=typescript",
+}
 
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities.textDocument.foldingRange = {
@@ -173,7 +166,8 @@ configs.rpmspec = {
   ]],
 	},
 }
-local language_servers = { "pyright", "clangd", "rpmspec", "bashls" }
+vim.lsp.enable("denols")
+local language_servers = { "pyright", "clangd", "rpmspec", "bashls", "marksman" }
 for _, ls in ipairs(language_servers) do
 	lspconfig[ls].setup({
 		capabilities = capabilities,
@@ -185,50 +179,28 @@ lspconfig.rust_analyzer.setup({
 	settings = {
 		["rust-analyzer"] = {
 			diagnostics = {
-				enable = true,
-			},
-			inlayHints = {
-				bindingModeHints = {
-					enable = false,
-				},
-				chainingHints = {
+				experimental = {
 					enable = true,
 				},
-				closingBraceHints = {
+				styleLints = {
 					enable = true,
-					minLines = 25,
-				},
-				closureReturnTypeHints = {
-					enable = "never",
-				},
-				lifetimeElisionHints = {
-					enable = "never",
-					useParameterNames = false,
-				},
-				maxLength = 25,
-				parameterHints = {
-					enable = true,
-				},
-				reborrowHints = {
-					enable = "never",
-				},
-				renderColons = true,
-				typeHints = {
-					enable = true,
-					hideClosureInitialization = false,
-					hideNamedConstructor = false,
 				},
 			},
 			check = {
 				command = "clippy",
 				extraArgs = { "--all", "--", "-W", "clippy::all" },
 			},
-			lspMux = {
-				version = "1",
-				method = "connect",
-				server = "rust-analyzer",
-			},
 		},
+	},
+	init_options = {
+		lspMux = {
+			version = "1",
+			method = "connect",
+			server = "rust-analyzer",
+		},
+	},
+	config = {
+		filetypes = { "rs" },
 	},
 	capabilities = capabilities,
 })
@@ -260,22 +232,28 @@ lspconfig.lua_ls.setup({
 	},
 	capabilities = capabilities,
 })
-lspconfig.ltex.setup({
-	filetypes = { "gitcommit", "markdown", "norg", "plaintex", "rst", "tex", "pandoc" },
+lspconfig.harper_ls.setup({
 	settings = {
-		ltex = {
-			language = "en-US",
+		["harper-ls"] = {
+			linters = {
+				SentenceCapitalization = false,
+			},
 		},
 	},
 })
 
--- require("codeium").setup({})
-
-require("nvim-autopairs").setup({})
-
 local telescope = require("telescope")
 local open_with_trouble = require("trouble.sources.telescope").open
 telescope.setup({
+	extensions = {
+		fzf = {
+			fuzzy = true, -- false will only do exact matching
+			override_generic_sorter = true, -- override the generic sorter
+			override_file_sorter = true, -- override the file sorter
+			case_mode = "smart_case", -- or "ignore_case" or "respect_case"
+			-- the default case_mode is "smart_case"
+		},
+	},
 	defaults = {
 		mappings = {
 			i = {
@@ -288,11 +266,11 @@ telescope.setup({
 	},
 })
 
-vim.keymap.set("n", "<leader>G", require("neogit").open, { desc = "Open Neogit interface" })
-
 telescope.load_extension("noice")
 telescope.load_extension("recent-files")
 telescope.load_extension("jj")
+telescope.load_extension("fzf")
+telescope.load_extension("undo")
 local builtin = require("telescope.builtin")
 local vcs_picker = function(opts)
 	local jj_pick_status, jj_res = pcall(telescope.extensions.jj.files, opts)
@@ -332,6 +310,7 @@ vim.keymap.set("n", "<leader>li", builtin.lsp_implementations, { desc = "Search 
 vim.keymap.set("n", "<leader>ls", builtin.lsp_document_symbols, { desc = "Search through the LSP document symbols" })
 vim.keymap.set("n", "<leader>lr", builtin.lsp_references, { desc = "Search through the LSP references" })
 vim.keymap.set("n", "<leader>lw", builtin.lsp_workspace_symbols, { desc = "Search through the LSP workspace symbols" })
+vim.keymap.set("n", "<leader>fu", telescope.extensions["undo"].undo, { desc = "Search through the undotree" })
 
 --vim.keymap.set("n", "<leader>lh", vim.lsp.buf.hover, {})
 
@@ -387,8 +366,6 @@ vim.keymap.set("n", "K", function()
 	end
 end)
 
-require("fidget").setup({})
-
 local kopts = { noremap = true, silent = true }
 
 vim.api.nvim_set_keymap(
@@ -412,45 +389,25 @@ vim.api.nvim_set_keymap("n", "<Leader>l", "<Cmd>noh<CR>", kopts)
 
 require("noice").setup({
 	lsp = {
-		-- override markdown rendering so that **cmp** and other plugins use **Treesitter**
-		override = {
-			["vim.lsp.util.convert_input_to_markdown_lines"] = true,
-			["vim.lsp.util.stylize_markdown"] = true,
-			-- ["cmp.entry.get_documentation"] = true,
-		},
 		signature = {
 			enabled = false,
 		},
-		hover = {
+		progress = {
 			enabled = false,
 		},
 	},
 	-- you can enable a preset for easier configuration
 	presets = {
-		bottom_search = true, -- use a classic bottom cmdline for search
 		command_palette = true, -- position the cmdline and popupmenu together
-		long_message_to_split = true, -- long messages will be sent to a split
 		inc_rename = true, -- enables an input dialog for inc-rename.nvim
-		lsp_doc_border = false, -- add a border to hover docs and signature help
+		lsp_doc_border = true, -- add a border to hover docs and signature help
 	},
 	messages = {
-		enabled = true,
-		view = "notify",
-	},
-	notify = {
-		-- Noice can be used as `vim.notify` so you can route any notification like other messages
-		-- Notification messages have their level and other properties set.
-		-- event is always "notify" and kind can be any log level as a string
-		-- The default routes will forward notifications to nvim-notify
-		-- Benefit of using Noice for this is the routing and consistent history view
-		enabled = true,
-		view = "notify",
+		view_search = false,
 	},
 })
 
 require("nvim-web-devicons").setup({})
-
--- vim.keymap.set("n", "<leader>F", require("conform").format, { desc = "Format the current buffer" })
 
 local crates = require("crates")
 local function show_documentation()
@@ -477,22 +434,17 @@ vim.keymap.set("n", "<leader>rf", crates.focus_popup, { desc = "Focus the crates
 vim.keymap.set("n", "<leader>rF", crates.show_features_popup, { desc = "Update all crates in the buffer" })
 vim.keymap.set("n", "<leader>ro", crates.open_crates_io, { desc = "Open the crates.io page" })
 
--- require("nvim-treesitter").setup({})
--- require("nvim-treesitter.configs").setup({
--- 	auto_install = true,
--- })
-
 require("virt-column").setup({
 	virtcolumn = "100",
 	char = "┊",
 	highlight = "Whitespace",
 })
 
-vim.api.nvim_create_autocmd({ "BufWritePost" }, {
-	callback = function()
-		require("lint").try_lint()
-	end,
-})
+-- vim.api.nvim_create_autocmd({ "BufWritePost" }, {
+-- 	callback = function()
+-- 		require("lint").try_lint()
+-- 	end,
+-- })
 
 local neotest = require("neotest")
 neotest.setup({
@@ -642,11 +594,7 @@ require("nvim-dap-virtual-text").setup({
 vim.cmd([[autocmd FileType * set formatoptions-=ro]])
 
 vim.diagnostic.config({
-	virtual_lines = {
-		-- only_current_line = true,
-		highlight_whole_line = false,
-	},
-	virtual_text = false,
+	virtual_lines = true,
 	signs = {
 		text = {
 			[vim.diagnostic.severity.ERROR] = " ",
@@ -657,23 +605,7 @@ vim.diagnostic.config({
 	},
 })
 
-require("lsp-lens").setup({})
-
 require("hlargs").setup()
-
-require("lsp_signature").setup({
-	bind = true, -- This is mandatory, otherwise border config won't get registered.
-	noice = true,
-	handler_opts = {
-		border = "rounded",
-	},
-	hint_enable = false,
-	hint_inline = function()
-		return true
-	end,
-})
-
--- require("org-bullets").setup()
 
 require("luasnip.loaders.from_vscode").lazy_load()
 
@@ -689,29 +621,35 @@ require("luasnip.loaders.from_vscode").lazy_load()
 
 vim.keymap.set("n", "<Leader>w", "<cmd>update<cr><esc>", { desc = "Save file" })
 
-vim.filetype.add({
-	extension = {
-		ysh = "ysh",
-	},
-})
+-- vim.filetype.add({
+-- 	extension = {
+-- 		ysh = "ysh",
+-- 	},
+-- })
 
 vim.keymap.set("n", "<leader>qx", function()
 	require("trouble").toggle()
 end, { desc = "Toggle Trouble plugin" })
 vim.keymap.set("n", "<leader>qw", function()
-	require("trouble").toggle("workspace_diagnostics")
+	require("trouble").open("lsp")
 end, { desc = "Show workspace diagnostics" })
 vim.keymap.set("n", "<leader>qd", function()
-	require("trouble").toggle("diagnostics")
+	require("trouble").open("diagnostics")
 end, { desc = "Show document diagnostics" })
+vim.keymap.set("n", "<leader>qs", function()
+	require("trouble").open("symbols")
+end, { desc = "Show workspace diagnostics" })
 vim.keymap.set("n", "<leader>qq", function()
-	require("trouble").toggle("quickfix")
+	require("trouble").open("quickfix")
 end, { desc = "Show quickfix" })
 vim.keymap.set("n", "<leader>ql", function()
-	require("trouble").toggle("loclist")
+	require("trouble").open("loclist")
 end, { desc = "Show loclist" })
+vim.keymap.set("n", "<leader>qt", function()
+	require("trouble").open("telescope")
+end, { desc = "Show telescope results" })
 vim.keymap.set("n", "gR", function()
-	require("trouble").toggle("lsp_references")
+	require("trouble").open("lsp_references")
 end, { desc = "Show lsp references" })
 
 vim.keymap.set("n", "<leader>qn", function()
@@ -723,6 +661,12 @@ vim.keymap.set("n", "<leader>qp", function()
 	-- jump to the previous item, skipping the groups
 	require("trouble").previous({ skip_groups = true, jump = true })
 end, { desc = "Previous item in quickfix" })
+
+vim.api.nvim_create_autocmd("QuickFixCmdPost", {
+	callback = function()
+		vim.cmd([[Trouble qflist open]])
+	end,
+})
 
 require("inc_rename").setup()
 vim.keymap.set("n", "<leader>rn", function()
@@ -802,8 +746,9 @@ local function text_format(symbol)
 	return res
 end
 
-require("hlslens").setup({})
-require("slanty")
+require("hlslens").setup({
+	calm_down = true,
+})
 
 require("leap").add_default_mappings()
 -- Hide the (real) cursor when leaping, and restore it afterwards.
@@ -832,15 +777,14 @@ local hops = neowords.get_word_hops(p.snake_case, p.camel_case, p.upper_case, p.
 
 vim.keymap.set({ "n", "x", "o" }, "w", hops.forward_start)
 vim.keymap.set({ "n", "x", "o" }, "e", hops.forward_end)
-vim.keymap.set({ "n", "x", "o" }, "q", hops.backward_start)
+vim.keymap.set({ "n", "x", "o" }, "b", hops.backward_start)
 vim.keymap.set({ "n", "x", "o" }, "ge", hops.backward_end)
 
 local bigword_hops = neowords.get_word_hops(p.any_word, p.number, p.hex_color)
 
 vim.keymap.set({ "n", "x", "o" }, "W", bigword_hops.forward_start)
 vim.keymap.set({ "n", "x", "o" }, "E", bigword_hops.forward_end)
-vim.keymap.set({ "n", "x", "o" }, "Q", bigword_hops.backward_start)
-vim.keymap.set({ "n", "x", "o" }, "Q", bigword_hops.backward_start)
+vim.keymap.set({ "n", "x", "o" }, "B", bigword_hops.backward_start)
 
 vim.opt.list = true
 
@@ -855,41 +799,53 @@ vim.opt.listchars:append({
 	eol = "¬",
 })
 
-require("hlchunk").setup({
-	chunk = {
-		enable = true,
-		chars = {
-			horizontal_line = "─",
-			vertical_line = "│",
-			left_top = "╭",
-			left_bottom = "╰",
-			right_arrow = ">",
-		},
-		style = "#806d9c",
-	},
-	indent = {
-		enable = true,
-		chars = {
-			"│",
-			"¦",
-			"┆",
-			"┊",
-		},
-		style = {
-			vim.fn.synIDattr(vim.fn.synIDtrans(vim.fn.hlID("Whitespace")), "fg", "gui"),
-		},
-	},
-})
+-- require("hlchunk").setup({
+-- 	chunk = {
+-- 		enable = true,
+-- 		chars = {
+-- 			horizontal_line = "─",
+-- 			vertical_line = "│",
+-- 			left_top = "╭",
+-- 			left_bottom = "╰",
+-- 			right_arrow = ">",
+-- 		},
+-- 		style = "#806d9c",
+-- 	},
+-- 	indent = {
+-- 		enable = true,
+-- 		chars = {
+-- 			"│",
+-- 			"¦",
+-- 			"┆",
+-- 			"┊",
+-- 		},
+-- 		style = {
+-- 			vim.fn.synIDattr(vim.fn.synIDtrans(vim.fn.hlID("Whitespace")), "fg", "gui"),
+-- 		},
+-- 	},
+-- })
 
 require("conform").setup({
 	formatters_by_ft = {
 		lua = { "stylua" },
 	},
-	format_on_save = {
-		-- These options will be passed to conform.format()
-		timeout_ms = 500,
-		lsp_fallback = true,
-	},
+	format_after_save = function(bufnr)
+		-- check if the workspace root folder is a codebase managed by quilt
+		local series_file = vim.fn.getcwd() .. "/series"
+		if vim.fn.filereadable(series_file) ~= 0 then
+			return
+		end
+		local handle = io.popen("jj git remote list 2> /dev/null | rg upstream")
+		if handle ~= not nil then
+			local result = handle:read("*a")
+			handle:close()
+			if result ~= "" then
+				return
+			end
+		end
+
+		return { lsp_format = "fallback" }
+	end,
 })
 
 -- highlight yanked text
@@ -905,24 +861,7 @@ require("gitsigns").setup({})
 -- triggers CursorHold event faster
 vim.opt.updatetime = 200
 
--- require("barbecue").setup({
--- 	create_autocmd = false, -- prevent barbecue from updating itself automatically
--- })
---
--- vim.api.nvim_create_autocmd({
--- 	"WinResized", -- or WinResized on NVIM-v0.9 and higher
--- 	"BufWinEnter",
--- 	"CursorHold",
--- 	"InsertLeave",
---
--- 	-- include this if you have set `show_modified` to `true`
--- 	"BufModifiedSet",
--- }, {
--- 	group = vim.api.nvim_create_augroup("barbecue.updater", {}),
--- 	callback = function()
--- 		require("barbecue.ui").update()
--- 	end,
--- })
+require("barbecue").setup({})
 
 require("barbar").setup()
 
@@ -930,23 +869,7 @@ require("inlay-hints").setup()
 
 require("render-markdown").setup()
 
-require("neodim").setup({
-	alpha = 0.75,
-	blend_color = "#000000",
-	hide = {
-		underline = true,
-		virtual_text = true,
-		signs = true,
-	},
-	regex = {
-		"[uU]nused",
-		"[nN]ever [rR]ead",
-		"[nN]ot [rR]ead",
-		rust = {},
-	},
-	priority = 128,
-	disable = {},
-})
+require("neodim").setup({})
 
 require("git-conflict").setup()
 
@@ -1044,11 +967,6 @@ let g:coqtail#supported = 0
 
 require("coq-lsp").setup()
 
-require("copilot").setup({
-	suggestion = { enabled = false },
-	panel = { enabled = false },
-})
-
 require("colorizer").setup()
 
 -- Restore the cursor position when opening a file
@@ -1089,20 +1007,20 @@ vim.keymap.set({ "n", "x", "o" }, "S", flash.treesitter, { desc = "Flash Treesit
 vim.keymap.set({ "o", "x" }, "R", flash.treesitter_search, { desc = "Treesitter Search" })
 vim.keymap.set({ "c" }, "<c-s>", flash.toggle, { desc = "Toggle Flash Search" })
 
-vim.api.nvim_create_autocmd("VimEnter", {
-	callback = function()
-		if vim.fn.argc() == 0 then
-			require("telescope").extensions["recent-files"].recent_files({})
-		end
-	end,
-})
+-- vim.api.nvim_create_autocmd("VimEnter", {
+-- 	callback = function()
+-- 		if vim.fn.argc() == 0 then
+-- 			require("telescope").extensions["recent-files"].recent_files({})
+-- 		end
+-- 	end,
+-- })
 
 require("visual-whitespace").setup()
 require("blink.cmp").setup({
 	completion = {
 		list = {
 			selection = {
-				preselect = false,
+				preselect = true,
 				auto_insert = true,
 			},
 		},
@@ -1112,40 +1030,74 @@ require("blink.cmp").setup({
 		},
 		documentation = {
 			auto_show = true,
-			auto_show_delay_ms = 500,
 			window = { border = "single" },
 		},
 		menu = {
 			draw = {
 				treesitter = { "lsp" },
+				components = {
+					kind_icon = {
+						text = function(ctx)
+							local icon = ctx.kind_icon
+							if vim.tbl_contains({ "Path" }, ctx.source_name) then
+								local dev_icon, _ = require("nvim-web-devicons").get_icon(ctx.label)
+								if dev_icon then
+									icon = dev_icon
+								end
+							else
+								icon = require("lspkind").symbolic(ctx.kind, {
+									mode = "symbol",
+								})
+							end
+
+							return icon .. ctx.icon_gap
+						end,
+
+						-- Optionally, use the highlight groups from nvim-web-devicons
+						-- You can also add the same function for `kind.highlight` if you want to
+						-- keep the highlight groups in sync with the icons.
+						highlight = function(ctx)
+							local hl = ctx.kind_hl
+							if vim.tbl_contains({ "Path" }, ctx.source_name) then
+								local dev_icon, dev_hl = require("nvim-web-devicons").get_icon(ctx.label)
+								if dev_icon then
+									hl = dev_hl
+								end
+							end
+							return hl
+						end,
+					},
+					kind = {
+						highlight = function(ctx)
+							local hl = ctx.kind_hl
+							if vim.tbl_contains({ "Path" }, ctx.source_name) then
+								local dev_icon, dev_hl = require("nvim-web-devicons").get_icon(ctx.label)
+								if dev_icon then
+									hl = dev_hl
+								end
+							end
+							return hl
+						end,
+					},
+				},
 			},
 		},
 		trigger = {
 			show_on_blocked_trigger_characters = { enabled = "true" },
 		},
 	},
+	signature = {
+		enabled = true,
+		window = { border = "single" },
+	},
 	keymap = {
 		preset = "enter",
 	},
-
-	signature = { enabled = true, window = { border = "single" } },
 	snippets = {
 		preset = "luasnip",
-		expand = function(snippet)
-			require("luasnip").lsp_expand(snippet)
-		end,
-		active = function(filter)
-			if filter and filter.direction then
-				return require("luasnip").jumpable(filter.direction)
-			end
-			return require("luasnip").in_snippet()
-		end,
-		jump = function(direction)
-			require("luasnip").jump(direction)
-		end,
 	},
 	sources = {
-		default = { "lsp", "path", "buffer", "copilot" },
+		default = { "copilot", "git", "lazydev", "lsp", "path", "snippets", "buffer", "markdown" },
 		providers = {
 			copilot = {
 				name = "copilot",
@@ -1171,44 +1123,84 @@ require("blink.cmp").setup({
 					end,
 				},
 			},
-		},
-	},
-	appearance = {
-		-- Blink does not expose its default kind icons so you must copy them all (or set your custom ones) and add Copilot
-		kind_icons = {
-			Copilot = "",
-			Text = "󰉿",
-			Method = "󰊕",
-			Function = "󰊕",
-			Constructor = "󰒓",
-
-			Field = "󰜢",
-			Variable = "󰆦",
-			Property = "󰖷",
-
-			Class = "󱡠",
-			Interface = "󱡠",
-			Struct = "󱡠",
-			Module = "󰅩",
-
-			Unit = "󰪚",
-			Value = "󰦨",
-			Enum = "󰦨",
-			EnumMember = "󰦨",
-
-			Keyword = "󰻾",
-			Constant = "󰏿",
-
-			Snippet = "󱄽",
-			Color = "󰏘",
-			File = "󰈔",
-			Reference = "󰬲",
-			Folder = "󰉋",
-			Event = "󱐋",
-			Operator = "󰪚",
-			TypeParameter = "󰬛",
+			markdown = {
+				name = "RenderMarkdown",
+				module = "render-markdown.integ.blink",
+				fallbacks = { "lsp" },
+			},
+			lazydev = {
+				name = "LazyDev",
+				module = "lazydev.integrations.blink",
+				-- make lazydev completions top priority (see `:h blink.cmp`)
+				score_offset = 100,
+			},
+			git = {
+				module = "blink-cmp-git",
+				name = "Git",
+				enabled = function()
+					return vim.tbl_contains({ "octo", "gitcommit", "markdown" }, vim.bo.filetype)
+				end,
+				opts = {
+					-- options for the blink-cmp-git
+				},
+				score_offset = -10,
+			},
 		},
 	},
 })
 
 vim.api.nvim_set_hl(0, "BlinkCmpGhostText", { fg = "#c1c0c0" })
+
+require("blink.pairs").setup({})
+
+vim.api.nvim_set_hl(0, "BlinkPairsOrange", { fg = "#fc9867" })
+vim.api.nvim_set_hl(0, "BlinkPairsPurple", { fg = "#ab9df2" })
+vim.api.nvim_set_hl(0, "BlinkPairsBlue", { fg = "#78dce8" })
+
+require("scrollview.contrib.gitsigns").setup()
+
+require("notify").setup()
+
+require("bar")
+
+require("fidget").setup({})
+
+require("textcase").setup({})
+
+require("copilot").setup({
+	suggestion = { enabled = false },
+	panel = { enabled = false },
+})
+--
+-- require("CopilotChat").setup({})
+
+local baleia = require("baleia").setup({})
+
+vim.api.nvim_create_user_command("BaleiaColorize", function()
+	local buffer = vim.api.nvim_get_current_buf()
+	vim.api.nvim_set_option_value("modifiable", true, { buf = buffer })
+	baleia.once(buffer)
+	vim.api.nvim_set_option_value("modified", false, { buf = buffer })
+	vim.api.nvim_set_option_value("modifiable", false, { buf = buffer })
+end, { bang = true })
+
+require("terminal").setup()
+
+require("modes").setup()
+require("git-link").setup()
+vim.keymap.set("n", "<leader>gu", function()
+	require("git-link.main").copy_line_url()
+end)
+vim.keymap.set("n", "<leader>go", function()
+	require("git-link.main").open_line_url()
+end)
+vim.keymap.set("x", "<leader>gu", function()
+	require("git-link.main").copy_line_url()
+end)
+vim.keymap.set("x", "<leader>go", function()
+	require("git-link.main").open_line_url()
+end)
+
+require("octo").setup()
+
+require("blink.indent")

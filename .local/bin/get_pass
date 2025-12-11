@@ -1,6 +1,7 @@
 #!/bin/sh
 
 . ~/.config/xdg_dirs
-pass $(ls ~/.local/share/password-store/ | sed 's/\.gpg//' | sed '/\.tmp\./d' | bemenu -b) \
+pass $(ls ~/.local/share/password-store/ \
+        | sed 's/\.gpg//' | sed '/\.tmp\./d' | ~/proj/coding/rofi/build/rofi -dmenu) \
         | head -n1 \
         | wl-copy --paste-once

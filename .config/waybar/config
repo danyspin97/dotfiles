@@ -4,8 +4,9 @@
     // "height": 30, // Waybar height
     "width": 1920, // Waybar width
     // Choose the order of the modules
-    "modules-left": ["sway/workspaces", "sway/window", "sway/mode"],
-    "modules-center": [],
+    // "modules-left": ["sway/workspaces", "sway/window", "sway/mode"],
+    "modules-left": ["hyprland/window"],
+    "modules-center": ["mpris"],
     // "modules-center": ["mpd"],
     //"modules-right": ["pulseaudio", "network", "cpu", "memory", "battery", "clock", "tray"],
     "modules-right": ["idle_inhibitor", "network", "temperature", "cpu", "memory", "battery", "clock", "tray"],
@@ -13,23 +14,23 @@
     "sway/workspaces": {
         "disable-scroll": false,
         "all-outputs": true,
-        //"format": "{name}: {icon}",
-        "format": "{icon}",
-        "format-icons": {
-            "1": "一",
-            "2": "二",
-            "3": "三",
-            "4": "四",
-            "5": "五",
-            "6": "六",
-            "7": "七",
-            "8": "八",
-            "9": "九",
-            "0": "〇",
-            "urgent": "",
-            "focused": "",
-            "default": ""
-        }
+        "format": "{name}",
+        // "format": "{icon}",
+        // "format-icons": {
+        //     "1": "一",
+        //     "2": "二",
+        //     "3": "三",
+        //     "4": "四",
+        //     "5": "五",
+        //     "6": "六",
+        //     "7": "七",
+        //     "8": "八",
+        //     "9": "九",
+        //     "0": "〇",
+        //     "urgent": "",
+        //     "focused": "",
+        //     "default": ""
+        // }
     },
     "sway/mode": {
         "format": "{}"
@@ -137,5 +138,25 @@
         // "critical-threshold": 80,
         // "format-critical": "{temperatureC}°C ",
         "format": "<span color=\"#fc0967\"></span> {temperatureC}°C"
-    }
+    },
+    "custom/notification": {
+        "tooltip": false,
+        "format": "{icon}",
+        "format-icons": {
+            "notification": "<span foreground='red'><sup></sup></span>",
+            "none": "",
+            "dnd-notification": "<span foreground='red'><sup></sup></span>",
+            "dnd-none": ""
+        },
+        "return-type": "json",
+        "exec-if": "which swaync-client",
+        "exec": "swaync-client -swb",
+        "on-click": "swaync-client -t -sw",
+        "on-click-right": "swaync-client -d -sw",
+        "escape": true
+    },
+    "hyprland/window": {
+        "format": "{}",
+        "separate-outputs": true
+    },
 }

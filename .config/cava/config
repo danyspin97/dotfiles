@@ -62,8 +62,10 @@
 ; method = alsa
 ; source = hw:Loopback,1
 
-method = fifo
-source = /tmp/mpd.fifo
+; method = fifo
+; source = /tmp/mpd.fifo
+
+method = pulse
 
 ; method = shmem
 ; source = /squeezelite-AA:BB:CC:DD:EE:FF

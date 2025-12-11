@@ -1,7 +1,8 @@
 [calendars]
 
 [[personal]]
-path = ~/.local/share/calendars/personal/
+path = ~/.local/share/calendars/personal/*
+type = discover
 color = dark blue
 
 [locale]
@@ -14,6 +15,6 @@ datetimeformat = %d/%m/%Y %H:%M
 longdatetimeformat = %d/%m/%Y %H:%M
 
 [default]
-default_calendar = personal
+default_calendar = 1YK_fCBMaK5wHAbnbbtztYcHZQRu3aAt
 #timedelta = 2 # the default timedelta that list uses
 highlight_event_days = True

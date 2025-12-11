@@ -1,11 +1,13 @@
 #!/bin/sh
 
-export PATH=${HOME}/.local/bin:/usr/local/benice:/usr/bin
+export PATH=${HOME}/.local/bin:/usr/local/bin:/usr/bin
 
-export EDITOR=hx
-export VISUAL=hx
+export EDITOR="swayhide neovide --neovim-bin /home/danyspin97/nvim-linux-x86_64/bin/nvim"
+export VISUAL="swayhide neovide --neovim-bin /home/danyspin97/nvim-linux-x86_64/bin/nvim"
+export PAGER="less"
 
-export GPG_TTY=$(tty)
+GPG_TTY="$(tty)"
+export GPG_TTY
 
 # Load settings for XDG home directories
 . ~/.config/xdg_dirs
@@ -14,10 +16,17 @@ export GPG_TTY=$(tty)
 
 . ${XDG_CONFIG_HOME}/profile.wayland
 
-export GRADLE_USER_HOME=${XDG_CONFIG_HOME}/gradle
+export GRADLE_USER_HOME="${XDG_CONFIG_HOME}/gradle"
 
 # add rustup
 source "$HOME/.cargo/env"
 
 export NNN_PLUG='p:preview'
 export NNN_FIFO=/tmp/nnn.fifo
+
+#export MESA_LOADER_DRIVER_OVERRIDE=zink
+#export GALLIUM_DRIVER=zink
+
+#export WLR_RENDERER=vulkan
+
+export NEXTEST_EXPERIMENTAL_FILTER_EXPR=1

@@ -10,29 +10,13 @@
 # Please see http://i3wm.org/docs/userguide.html for a complete reference!
 
 xwayland enable
+set $WOBSOCK $XDG_RUNTIME_DIR/wob.sock
 
 set $mod Mod4
 set $sup Mod1
 
-# Set workspace
-set $workspace1 1
-# Terminal
-set $workspace2 2
-# Second workspace for terminal
-set $workspace3 3
-# IM
-set $workspace4 4
-# Video and music
-set $workspace5 5
-# Office
-set $workspace6 6
-# various programs
-set $workspace7 7
-# Others
-set $workspace8 8
-
-set $monitor1 "DP-5"
-set $monitor2 "DP-4"
+set $monitor1 "DP-4"
+set $monitor2 "DP-5"
 
 # Font for window titles. Will also be used by the bar unless a different font
 # is used in the bar {} block below.
@@ -50,9 +34,9 @@ focus_on_window_activation urgent
 popup_during_fullscreen smart
 
 # Start a terminal in the home directory
-bindsym $mod+Return exec alacritty
+bindsym $mod+Return exec kitty
 # Start a terminal in the same directory of the current window
-bindsym $mod+Shift+Return exec alacritty --working-directory $(~/.local/bin/get_terminal_folder_sway)
+bindsym $mod+Shift+Return exec wezterm start --cwd $(~/.local/bin/get_terminal_folder_sway)
 
 # Application launcher
 bindsym $mod+d exec wofi --show drun
@@ -112,32 +96,32 @@ bindsym $mod+a focus parent
 # focus the child container
 #bindsym $mod+d focus child
 
-bar {
-    swaybar_command waybar
+#bar {
+    #swaybar_command waybar
 #     # status_command swaybar
 #     position top
 #     # tray_output all
-}
+#}
 
 # switch to workspace
-bindsym $mod+1 workspace $workspace1
-bindsym $mod+2 workspace $workspace2
-bindsym $mod+3 workspace $workspace3
-bindsym $mod+4 workspace $workspace4
-bindsym $mod+5 workspace $workspace5
-bindsym $mod+6 workspace $workspace6
-bindsym $mod+7 workspace $workspace7
-bindsym $mod+8 workspace $workspace8
-
-# move focused container to workspace
-bindsym $mod+Shift+1 move container to workspace $workspace1
-bindsym $mod+Shift+2 move container to workspace $workspace2
-bindsym $mod+Shift+3 move container to workspace $workspace3
-bindsym $mod+Shift+4 move container to workspace $workspace4
-bindsym $mod+Shift+5 move container to workspace $workspace5
-bindsym $mod+Shift+6 move container to workspace $workspace6
-bindsym $mod+Shift+7 move container to workspace $workspace7
-bindsym $mod+Shift+8 move container to workspace $workspace8
+# bindsym $mod+1 workspace number 1
+# bindsym $mod+2 workspace number 2
+# bindsym $mod+3 workspace number 3
+# bindsym $mod+4 workspace number 4
+# bindsym $mod+5 workspace number 5
+# bindsym $mod+6 workspace number 6
+# bindsym $mod+7 workspace number 7
+# bindsym $mod+8 workspace number 8
+#
+# # move focused container to workspace
+# bindsym $mod+Shift+1 move container to workspace $workspace1
+# bindsym $mod+Shift+2 move container to workspace $workspace2
+# bindsym $mod+Shift+3 move container to workspace $workspace3
+# bindsym $mod+Shift+4 move container to workspace $workspace4
+# bindsym $mod+Shift+5 move container to workspace $workspace5
+# bindsym $mod+Shift+6 move container to workspace $workspace6
+# bindsym $mod+Shift+7 move container to workspace $workspace7
+# bindsym $mod+Shift+8 move container to workspace $workspace8
 
 # assign [class="Firefox"]                            $workspace1
 # assign [class="Qutebrowser"]                        $workspace1
@@ -146,7 +130,7 @@ bindsym $mod+Shift+8 move container to workspace $workspace8
 # assign [title="mpsyt"]                              $workspace5
 # assign [class="^Vlc$"]                              $workspace5
 #assign [app_id="wyeb\."]                      $workspace1
-assign [app_id="mpv"]                         $workspace5
+#assign [app_id="mpv"]                         $workspace5
 #for_window [class="mpv"] move to workspace $workspace5
 
 # for_window [window_role="pop-up"] floating enable
@@ -204,8 +188,8 @@ mode "resize" {
 bindsym $mod+r mode "resize"
 
 # Audio settings
-bindsym XF86AudioRaiseVolume exec ~/.local/bin/sndio_volume raise
-bindsym XF86AudioLowerVolume exec ~/.local/bin/sndio_volume lower
+bindsym XF86AudioRaiseVolume exec pamixer --increase 5 && pamixer --get-volume > $WOBSOCK
+bindsym XF86AudioLowerVolume exec pamixer --decrease 5 && pamixer --get-volume > $WOBSOCK
 #bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute 0 toggle
 
 bindsym XF86AudioPlay exec playerctl play-pause
@@ -220,17 +204,17 @@ bindsym XF86MonBrightnessDown exec "brightnessctl set 15%-; notify-send 'Brightn
 
 # Move the current workspace to the next output
 # (effectively toggles when you only have two outputs)
-bindsym $mod+Shift+w move workspace to output right
+#bindsym $mod+Shift+w move workspace to output right
 
 # workspace screens
-workspace $workspace1 output $monitor2
-workspace $workspace2 output $monitor1
-workspace $workspace3 output $monitor1
-workspace $workspace4 output $monitor1
-workspace $workspace5 output $monitor1
-workspace $workspace6 output $monitor2
-workspace $workspace7 output $monitor1
-workspace $workspace8 output $monitor1
+#workspace $workspace1 output $monitor2
+#workspace $workspace2 output $monitor1
+#workspace $workspace3 output $monitor1
+#workspace $workspace4 output $monitor1
+#workspace $workspace5 output $monitor1
+#workspace $workspace6 output $monitor2
+#workspace $workspace7 output $monitor1
+#workspace $workspace8 output $monitor1
 
 # Program shortcut
 bindsym $mod+c exec firefox
@@ -314,25 +298,42 @@ bindsym $mod+Prior exec env RUST_BACKTRACE=1 \
 bindsym $mod+Shift+Space exec env RUST_BACKTRACE=1 \
     ~/.cargo/bin/swayr switch-workspace-or-window >> /tmp/swayr.log 2>&1
 
-output DP-1 pos 0 0
-output HDMI-A-1 scale 2.0 pos 1920 0
+output DP-4 pos 0 0
+#transform 270
+output HDMI-A-5 disable
+output DP-3 scale 2.0 pos 1920 0
+#output HDMI-A-1 scale 2.0 pos 1920 0
+#output DP-6 scale 2.0 pos 3840 0
 
-seat seat0 hide_cursor 10000
-seat seat0 hide_cursor when-typing enable
+#seat seat0 hide_cursor 10000
+#seat seat0 hide_cursor when-typing enable
+seat seat0 hide_cursor when-typing disable
 
 #exec swayidle -w \
 #     timeout 1200 'swaylock -f -c 000000' \
 #     timeout 1800 'swaymsg "output * dpms off"' \
 #     resume 'swaymsg "output * dpms on"' \
 #     before-sleep 'swaylock -f -c 000000'
-exec env RUST_BACKTRACE=1 ~/.cargo/bin/swayrd > /tmp/swayrd.log 2>&1
-exec swaync
-exec wlsunset -t 3000 -T 5250
+#exec env RUST_BACKTRACE=1 ~/.cargo/bin/swayrd > /tmp/swayrd.log 2>&1
+#exec swaync
+#exec wlsunset -t 3000 -T 5250
 
 # Toggle control center
-bindsym $mod+Shift+n exec /usr/local/bin/swaync-client -t -sw
+#bindsym $mod+Shift+n exec /usr/local/bin/swaync-client -t -sw
 
-exec ~/.local/bin/wpaperd
+#exec ~/.local/bin/wpaperd
+exec dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP
+exec rsvc
 
-# include /etc/sway/config.d/*
+#include /etc/sway/config.d/*
+include /home/danyspin97/.config/sway/config.d/*.conf
 
+input * {
+    accel_profile "flat"
+    pointer_accel -0.1
+}
+
+input 1133:16492:Logitech_G603 {
+    accel_profile "flat"
+    pointer_accel -0.1
+}

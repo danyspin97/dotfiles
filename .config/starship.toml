@@ -14,12 +14,9 @@ vicmd_symbol = "[<](bold green)"
 # ssh_only = true
 
 [status]
-format = "[$symbol$status]($style) "
+format = "[$symbol$status]($style)${custom.jj} "
 symbol = ""
 disabled = false
-
-[git_commit]
-tag_symbol = " tag "
 
 [git_status]
 ahead = ">"
@@ -27,6 +24,27 @@ behind = "<"
 diverged = "<>"
 renamed = "r"
 deleted = "x"
+
+# optionally disable git modules
+[git_state]
+disabled = true
+
+[git_commit]
+disabled = true
+tag_symbol = " tag "
+
+[git_metrics]
+disabled = true
+
+[git_branch]
+symbol = "git "
+disabled = true
+
+# re-enable git_branch as long as we're not in a jj repo
+[custom.git_branch]
+when = true
+command = "jj root >/dev/null 2>&1 || starship module git_branch"
+description = "Only show git_branch if we're not in a jj repo"
 
 [aws]
 symbol = "aws "
@@ -60,9 +78,6 @@ symbol = "exs "
 
 [elm]
 symbol = "elm "
-
-[git_branch]
-symbol = "git "
 
 [golang]
 symbol = "go "

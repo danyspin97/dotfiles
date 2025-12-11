@@ -53,7 +53,7 @@ mpd_music_dir = ~/Music/library
 ## }
 ##
 #
-visualizer_fifo_path = /tmp/mpd.fifo
+visualizer_data_source = /tmp/mpd.fifo
 #
 ##
 ## Note: Below parameter is needed for ncmpcpp to determine which output
@@ -75,7 +75,6 @@ visualizer_in_stereo = yes
 ## that sane values start with >=10.
 ##
 #
-visualizer_sync_interval = 30
 #
 ##
 ## Note: To enable spectrum frequency visualization you need to compile ncmpcpp
@@ -297,7 +296,7 @@ song_columns_list_format = (18)[blue]{a} (6f)[cyan]{NE} (35)[252]{t|f:Title} (20
 ##
 playlist_display_mode = columns
 #
-browser_display_mode = classic
+browser_display_mode = columns
 #
 search_engine_display_mode = columns
 #
@@ -370,7 +369,7 @@ follow_now_playing_lyrics = yes
 #
 fetch_lyrics_for_current_song_in_background = yes
 #
-store_lyrics_in_song_dir = no
+store_lyrics_in_song_dir = yes
 #
 generate_win32_compatible_filenames = no
 #
@@ -410,9 +409,9 @@ startup_screen = playlist
 ## Note: You can define startup slave screen by choosing screen from the list
 ## above or an empty value for no slave screen.
 ##
-startup_slave_screen = media_library
+#startup_slave_screen = media_library
 #
-startup_slave_screen_focus = yes
+#startup_slave_screen_focus = yes
 #
 ##
 ## Default width of locked screen (in %).  Acceptable values are from 20 to 80.

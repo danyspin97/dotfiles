@@ -1,4 +1,5 @@
 vim.g.mapleader = " "
+vim.g.maplocalleader = "-"
 -- Remove the default statuts line by using cmdheight=0
 vim.opt.cmdheight = 0
 vim.opt.number = true
@@ -150,24 +151,24 @@ capabilities.textDocument.foldingRange = {
 local lspconfig = require("lspconfig")
 local util = require("lspconfig.util")
 local configs = require("lspconfig.configs")
-configs.rpmspec = {
-	default_config = {
-		cmd = { "python3", "-mrpm_spec_language_server", "--stdio" },
-		filetypes = { "spec" },
-		single_file_support = true,
-		root_dir = util.find_git_ancestor,
-		settings = {},
-	},
-	docs = {
-		description = [[
-  https://github.com/dcermak/rpm-spec-language-server
-
-  Language server protocol (LSP) support for RPM Spec files.
-  ]],
-	},
-}
+-- configs.rpmspec = {
+-- 	default_config = {
+-- 		cmd = { "python3", "-mrpm_spec_language_server", "--stdio" },
+-- 		filetypes = { "spec" },
+-- 		single_file_support = true,
+-- 		root_dir = util.find_git_ancestor,
+-- 		settings = {},
+-- 	},
+-- 	docs = {
+-- 		description = [[
+--   https://github.com/dcermak/rpm-spec-language-server
+--
+--   Language server protocol (LSP) support for RPM Spec files.
+--   ]],
+-- 	},
+-- }
 vim.lsp.enable("denols")
-local language_servers = { "pyright", "clangd", "rpmspec", "bashls", "marksman" }
+local language_servers = { "pyright", "clangd", "bashls", "marksman" }
 for _, ls in ipairs(language_servers) do
 	lspconfig[ls].setup({
 		capabilities = capabilities,
@@ -314,57 +315,15 @@ vim.keymap.set("n", "<leader>fu", telescope.extensions["undo"].undo, { desc = "S
 
 --vim.keymap.set("n", "<leader>lh", vim.lsp.buf.hover, {})
 
-vim.o.foldcolumn = "1" -- '0' is not bad
 vim.o.foldlevel = 99 -- Using ufo provider need a large value, feel free to decrease the value
 vim.o.foldlevelstart = 99
-vim.opt.foldenable = true
-vim.o.fillchars = [[eob: ,fold: ,foldopen:,foldsep: ,foldclose:]]
+
+require("origami").setup()
+
+-- vim.opt.foldenable = true
+-- vim.o.fillchars = "eob: ,fold: ,foldopen:,foldsep: ,foldinner: ,foldclose:"
 
 vim.keymap.set({ "n", "v" }, "<space>a", vim.lsp.buf.code_action)
-
-local handler = function(virtText, lnum, endLnum, width, truncate)
-	local newVirtText = {}
-	local suffix = (" 󰁂 %d "):format(endLnum - lnum)
-	local sufWidth = vim.fn.strdisplaywidth(suffix)
-	local targetWidth = width - sufWidth
-	local curWidth = 0
-	for _, chunk in ipairs(virtText) do
-		local chunkText = chunk[1]
-		local chunkWidth = vim.fn.strdisplaywidth(chunkText)
-		if targetWidth > curWidth + chunkWidth then
-			table.insert(newVirtText, chunk)
-		else
-			chunkText = truncate(chunkText, targetWidth - curWidth)
-			local hlGroup = chunk[2]
-			table.insert(newVirtText, { chunkText, hlGroup })
-			chunkWidth = vim.fn.strdisplaywidth(chunkText)
-			-- str width returned from truncate() may less than 2nd argument, need padding
-			if curWidth + chunkWidth < targetWidth then
-				suffix = suffix .. (" "):rep(targetWidth - curWidth - chunkWidth)
-			end
-			break
-		end
-		curWidth = curWidth + chunkWidth
-	end
-	table.insert(newVirtText, { suffix, "MoreMsg" })
-	return newVirtText
-end
-
-require("ufo").setup({
-	fold_virt_text_handler = handler,
-})
-vim.keymap.set("n", "zR", require("ufo").openAllFolds)
-vim.keymap.set("n", "zM", require("ufo").closeAllFolds)
-vim.keymap.set("n", "zr", require("ufo").openFoldsExceptKinds)
-vim.keymap.set("n", "zm", require("ufo").closeFoldsWith)
-
-vim.keymap.set("n", "K", function()
-	local winid = require("ufo").peekFoldedLinesUnderCursor()
-	if not winid then
-		-- choose one of coc.nvim and nvim lsp
-		vim.lsp.buf.hover()
-	end
-end)
 
 local kopts = { noremap = true, silent = true }
 
@@ -593,17 +552,17 @@ require("nvim-dap-virtual-text").setup({
 
 vim.cmd([[autocmd FileType * set formatoptions-=ro]])
 
-vim.diagnostic.config({
-	virtual_lines = true,
-	signs = {
-		text = {
-			[vim.diagnostic.severity.ERROR] = " ",
-			[vim.diagnostic.severity.WARN] = " ",
-			[vim.diagnostic.severity.INFO] = " ",
-			[vim.diagnostic.severity.HINT] = " ",
-		},
-	},
-})
+-- vim.diagnostic.config({
+-- 	virtual_lines = true,
+-- 	signs = {
+-- 		text = {
+-- 			[vim.diagnostic.severity.ERROR] = " ",
+-- 			[vim.diagnostic.severity.WARN] = " ",
+-- 			[vim.diagnostic.severity.INFO] = " ",
+-- 			[vim.diagnostic.severity.HINT] = " ",
+-- 		},
+-- 	},
+-- })
 
 require("hlargs").setup()
 
@@ -889,47 +848,26 @@ navic.setup({
 	},
 })
 
-local devicons = require("nvim-web-devicons")
--- require("incline").setup({
--- 	---@class InclineRenderProps
--- 	---@field buf number
--- 	---@field win number
--- 	---@field focused boolean
---
--- 	---@param props InclineRenderProps
--- 	render = function(props)
--- 		if not props.focused then
--- 			return ""
--- 		end
---
--- 		local count = vim.fn.searchcount({ recompute = 1, maxcount = -1 })
--- 		local contents = vim.fn.getreg("/")
--- 		if string.len(contents) == 0 then
--- 			return ""
--- 		end
---
--- 		return {
--- 			{
--- 				" ? ",
--- 				group = "dkoStatusKey",
--- 			},
--- 			{
--- 				(" %s "):format(contents),
--- 				group = "IncSearch",
--- 			},
--- 			{
--- 				(" %d/%d "):format(count.current, count.total),
--- 				group = "dkoStatusValue",
--- 			},
--- 		}
--- 	end,
---
--- 	window = {
--- 		margin = { horizontal = 0 },
--- 		padding = 0,
--- 	},
--- })
---
+require("incline").setup({
+	window = {
+		padding = 0,
+		margin = { horizontal = 0 },
+	},
+	render = function(props)
+		local filename = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(props.buf), ":t")
+		if filename == "" then
+			filename = "[No Name]"
+		end
+		local modified = vim.bo[props.buf].modified
+		return {
+			" ",
+			{ filename, gui = modified and "bold,italic" or "bold" },
+			" ",
+			guibg = "#44406e",
+		}
+	end,
+})
+
 require("deferred-clipboard").setup({
 	fallback = "unnamedplus", -- or your preferred setting for clipboard
 })
@@ -1203,4 +1141,17 @@ end)
 
 require("octo").setup()
 
-require("blink.indent")
+require("blink.indent").setup()
+
+require("grug-far").setup()
+
+require("tiny-inline-diagnostic").setup({
+	options = {
+		add_messages = {
+			display_count = true,
+		},
+		multilines = {
+			enabled = true,
+		},
+	},
+})

@@ -14,13 +14,12 @@
 "rocks.nvim" = "2.46.1"
 "neoconf.nvim" = "1.4.0"
 "neodev.nvim" = "3.0.0"
-nvim-ufo = "1.5.0"
 nvim-lspconfig = "2.5.0"
 "conform.nvim" = "9.1.0"
 "comment.nvim" = "0.8.0"
 "which-key.nvim" = "3.17.0"
 nvim-web-devicons = "0.100"
-"rocks-git.nvim" = "2.5.6"
+"rocks-git.nvim" = "2.5.7"
 "statuscol.nvim" = "scm"
 "lspkind.nvim" = "scm"
 nvim-lint = "scm"
@@ -81,6 +80,8 @@ copilot-cmp = "scm"
 tree-sitter-go = "scm"
 tree-sitter-ysh = "0.0.2"
 tree-sitter-dockerfile = "scm"
+"incline.nvim" = "0.1.0"
+"grug-far.nvim" = "1.6.53"
 
 [plugins.nvim-hlslens ]
 git = "kevinhwang91/nvim-hlslens"
@@ -217,7 +218,7 @@ rev = "v1.10.0"
 
 [plugins."telescope.nvim"]
 git = "nvim-telescope/telescope.nvim"
-rev = "v0.1.9"
+rev = "v0.2.0"
 
 [plugins."yuck.vim"]
 git = "elkowar/yuck.vim"
@@ -250,7 +251,7 @@ rev = "main"
 
 [plugins."visual-whitespace.nvim"]
 git = "mcauley-penney/visual-whitespace.nvim"
-rev = "31d0ed71ad7e376879d7e0df0c8cc4f1467702d4"
+rev = "001dd506fa19a096372b1b2fafee33712cc849cf"
 
 [plugins."blink.cmp"]
 git = "saghen/blink.cmp"
@@ -355,6 +356,18 @@ rev = "7f9f6cd2192a67c0e20c0300988fed75a93b65b5"
 [plugins."blink.indent"]
 git = "saghen/blink.indent"
 rev = "v2.0.0"
+
+[plugins.nvim-origami]
+git = "chrisgrieser/nvim-origami"
+rev = "main"
+
+[plugins."actually.nvim"]
+git = "mong8se/actually.nvim"
+rev = "v1.0.0"
+
+[plugins."tiny-inline-diagnostic.nvim"]
+git = "rachartier/tiny-inline-diagnostic.nvim"
+rev = "9b55d36b797875b6e513f6bcc526e17cb9fe31f4"
 
 # [plugins.colorizer]
 # config = true

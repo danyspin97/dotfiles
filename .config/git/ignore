@@ -4,3 +4,7 @@
 
 compile_commands.json
 compile_commands.commands.json
+
+**/.claude/settings.local.json
+
+**/.claude/.cc-writes/

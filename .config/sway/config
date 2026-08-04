@@ -34,7 +34,7 @@ focus_on_window_activation urgent
 popup_during_fullscreen smart
 
 # Start a terminal in the home directory
-bindsym $mod+Return exec kitty
+bindsym $mod+Return exec wezterm
 # Start a terminal in the same directory of the current window
 bindsym $mod+Shift+Return exec wezterm start --cwd $(~/.local/bin/get_terminal_folder_sway)
 

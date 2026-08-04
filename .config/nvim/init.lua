@@ -6,7 +6,7 @@ vim.opt.number = true
 vim.wo.relativenumber = true
 vim.opt.termguicolors = true
 
-vim.opt.guifont = "Iosevka:h12"
+vim.opt.guifont = "Victor Mono:h12"
 
 vim.keymap.set({ "i", "c" }, "<S-Insert>", "<C-R>+", { remap = true })
 
@@ -99,7 +99,8 @@ require("monokai-pro").setup({
 	end,
 })
 
-vim.cmd.colorscheme("monokai-pro")
+-- vim.cmd.colorscheme("monokai-pro")
+vim.cmd.colorscheme("monet")
 require("trouble").setup({
 	modes = {
 		preview_float = {
@@ -148,64 +149,15 @@ capabilities.textDocument.foldingRange = {
 	dynamicRegistration = false,
 	lineFoldingOnly = true,
 }
-local lspconfig = require("lspconfig")
-local util = require("lspconfig.util")
-local configs = require("lspconfig.configs")
--- configs.rpmspec = {
--- 	default_config = {
--- 		cmd = { "python3", "-mrpm_spec_language_server", "--stdio" },
--- 		filetypes = { "spec" },
--- 		single_file_support = true,
--- 		root_dir = util.find_git_ancestor,
--- 		settings = {},
--- 	},
--- 	docs = {
--- 		description = [[
---   https://github.com/dcermak/rpm-spec-language-server
---
---   Language server protocol (LSP) support for RPM Spec files.
---   ]],
--- 	},
--- }
-vim.lsp.enable("denols")
-local language_servers = { "pyright", "clangd", "bashls", "marksman" }
+local language_servers = { "denols", "pyright", "clangd", "bashls", "marksman" }
 for _, ls in ipairs(language_servers) do
-	lspconfig[ls].setup({
+	vim.lsp.config(ls, {
 		capabilities = capabilities,
 		-- you can add other fields for setting up lsp server in this table
 	})
+	vim.lsp.enable(ls)
 end
-lspconfig.rust_analyzer.setup({
-	cmd = vim.lsp.rpc.connect("127.0.0.1", 27631),
-	settings = {
-		["rust-analyzer"] = {
-			diagnostics = {
-				experimental = {
-					enable = true,
-				},
-				styleLints = {
-					enable = true,
-				},
-			},
-			check = {
-				command = "clippy",
-				extraArgs = { "--all", "--", "-W", "clippy::all" },
-			},
-		},
-	},
-	init_options = {
-		lspMux = {
-			version = "1",
-			method = "connect",
-			server = "rust-analyzer",
-		},
-	},
-	config = {
-		filetypes = { "rs" },
-	},
-	capabilities = capabilities,
-})
-lspconfig.texlab.setup({
+vim.lsp.config("texlab", {
 	settings = {
 		["texlab"] = {
 			build = {
@@ -217,7 +169,7 @@ lspconfig.texlab.setup({
 	},
 	capabilities = capabilities,
 })
-lspconfig.lua_ls.setup({
+vim.lsp.config("lua_ls", {
 	settings = {
 		Lua = {
 			completion = {
@@ -233,7 +185,7 @@ lspconfig.lua_ls.setup({
 	},
 	capabilities = capabilities,
 })
-lspconfig.harper_ls.setup({
+vim.lsp.config("harper_ls", {
 	settings = {
 		["harper-ls"] = {
 			linters = {
@@ -242,7 +194,6 @@ lspconfig.harper_ls.setup({
 		},
 	},
 })
-
 local telescope = require("telescope")
 local open_with_trouble = require("trouble.sources.telescope").open
 telescope.setup({
@@ -267,7 +218,6 @@ telescope.setup({
 	},
 })
 
-telescope.load_extension("noice")
 telescope.load_extension("recent-files")
 telescope.load_extension("jj")
 telescope.load_extension("fzf")
@@ -318,8 +268,6 @@ vim.keymap.set("n", "<leader>fu", telescope.extensions["undo"].undo, { desc = "S
 vim.o.foldlevel = 99 -- Using ufo provider need a large value, feel free to decrease the value
 vim.o.foldlevelstart = 99
 
-require("origami").setup()
-
 -- vim.opt.foldenable = true
 -- vim.o.fillchars = "eob: ,fold: ,foldopen:,foldsep: ,foldinner: ,foldclose:"
 
@@ -345,25 +293,10 @@ vim.api.nvim_set_keymap("n", "g*", [[g*<Cmd>lua require('hlslens').start()<CR>]]
 vim.api.nvim_set_keymap("n", "g#", [[g#<Cmd>lua require('hlslens').start()<CR>]], kopts)
 
 vim.api.nvim_set_keymap("n", "<Leader>l", "<Cmd>noh<CR>", kopts)
-
-require("noice").setup({
-	lsp = {
-		signature = {
-			enabled = false,
-		},
-		progress = {
-			enabled = false,
-		},
-	},
-	-- you can enable a preset for easier configuration
-	presets = {
-		command_palette = true, -- position the cmdline and popupmenu together
-		inc_rename = true, -- enables an input dialog for inc-rename.nvim
-		lsp_doc_border = true, -- add a border to hover docs and signature help
-	},
-	messages = {
-		view_search = false,
-	},
+vim.opt.winborder = "rounded"
+require("vim._core.ui2").enable()
+require("tiny-cmdline").setup({
+	on_reposition = require("tiny-cmdline").adapters.blink,
 })
 
 require("nvim-web-devicons").setup({})
@@ -411,7 +344,7 @@ neotest.setup({
 	status = { enabled = true },
 	watch = { enabled = true },
 	adapters = {
-		require("neotest-rust"),
+		require("rustaceanvim.neotest"),
 	},
 	-- consumers = {
 	-- 	overseer = require("neotest.consumers.overseer"),
@@ -563,6 +496,8 @@ vim.cmd([[autocmd FileType * set formatoptions-=ro]])
 -- 		},
 -- 	},
 -- })
+
+require("origami").setup()
 
 require("hlargs").setup()
 
@@ -789,12 +724,15 @@ require("conform").setup({
 		lua = { "stylua" },
 	},
 	format_after_save = function(bufnr)
+		if vim.g.disable_autoformat or vim.b[bufnr].disable_autoformat then
+			return
+		end
 		-- check if the workspace root folder is a codebase managed by quilt
 		local series_file = vim.fn.getcwd() .. "/series"
 		if vim.fn.filereadable(series_file) ~= 0 then
 			return
 		end
-		local handle = io.popen("jj git remote list 2> /dev/null | rg upstream")
+		local handle = io.popen("timeout 1 jj git remote list 2> /dev/null | rg upstream")
 		if handle ~= not nil then
 			local result = handle:read("*a")
 			handle:close()
@@ -803,8 +741,26 @@ require("conform").setup({
 			end
 		end
 
-		return { lsp_format = "fallback" }
+		return { timeout_ms = 500, lsp_format = "fallback" }
 	end,
+})
+
+vim.api.nvim_create_user_command("FormatDisable", function(args)
+	if args.bang then
+		-- FormatDisable! will disable formatting just for this buffer
+		vim.b.disable_autoformat = true
+	else
+		vim.g.disable_autoformat = true
+	end
+end, {
+	desc = "Disable autoformat-on-save",
+	bang = true,
+})
+vim.api.nvim_create_user_command("FormatEnable", function()
+	vim.b.disable_autoformat = false
+	vim.g.disable_autoformat = false
+end, {
+	desc = "Re-enable autoformat-on-save",
 })
 
 -- highlight yanked text
@@ -955,6 +911,12 @@ vim.keymap.set({ "c" }, "<c-s>", flash.toggle, { desc = "Toggle Flash Search" })
 
 require("visual-whitespace").setup()
 require("blink.cmp").setup({
+	cmdline = {
+		keymap = {
+			preset = "cmdline",
+		},
+		completion = { menu = { auto_show = true } },
+	},
 	completion = {
 		list = {
 			selection = {
@@ -1019,10 +981,28 @@ require("blink.cmp").setup({
 					},
 				},
 			},
+			direction_priority = function()
+				local ctx = require("blink.cmp").get_context()
+				local item = require("blink.cmp").get_selected_item()
+				if ctx == nil or item == nil then
+					return { "s", "n" }
+				end
+
+				local item_text = item.textEdit ~= nil and item.textEdit.newText or item.insertText or item.label
+				local is_multi_line = item_text:find("\n") ~= nil
+
+				-- after showing the menu upwards, we want to maintain that direction
+				-- until we re-open the menu, so store the context id in a global variable
+				if is_multi_line or vim.g.blink_cmp_upwards_ctx_id == ctx.id then
+					vim.g.blink_cmp_upwards_ctx_id = ctx.id
+					return { "n", "s" }
+				end
+				return { "s", "n" }
+			end,
 		},
-		trigger = {
-			show_on_blocked_trigger_characters = { enabled = "true" },
-		},
+		-- trigger = {
+		-- 	show_on_blocked_trigger_characters = {},
+		-- },
 	},
 	signature = {
 		enabled = true,
@@ -1035,24 +1015,36 @@ require("blink.cmp").setup({
 		preset = "luasnip",
 	},
 	sources = {
-		default = { "copilot", "git", "lazydev", "lsp", "path", "snippets", "buffer", "markdown" },
+		default = function(ctx)
+			local success, node = pcall(vim.treesitter.get_node)
+			if success and node and vim.tbl_contains({ "comment", "line_comment", "block_comment" }, node:type()) then
+				return { "buffer", "markdown" }
+			elseif vim.bo.filetype == "lua" then
+				return { "lazydev", "lsp", "path" }
+			elseif vim.bo.filetype == "git" then
+				return { "git", "lsp", "path" }
+			else
+				return { "lsp", "path", "snippets", "buffer" }
+			end
+		end,
 		providers = {
-			copilot = {
-				name = "copilot",
-				module = "blink-cmp-copilot",
-				score_offset = 100,
-				async = true,
-				transform_items = function(_, items)
-					local CompletionItemKind = require("blink.cmp.types").CompletionItemKind
-					local kind_idx = #CompletionItemKind + 1
-					CompletionItemKind[kind_idx] = "Copilot"
-					for _, item in ipairs(items) do
-						item.kind = kind_idx
-					end
-					return items
-				end,
-			},
+			-- copilot = {
+			-- 	name = "copilot",
+			-- 	module = "blink-cmp-copilot",
+			-- 	score_offset = 100,
+			-- 	async = true,
+			-- 	transform_items = function(_, items)
+			-- 		local CompletionItemKind = require("blink.cmp.types").CompletionItemKind
+			-- 		local kind_idx = #CompletionItemKind + 1
+			-- 		CompletionItemKind[kind_idx] = "Copilot"
+			-- 		for _, item in ipairs(items) do
+			-- 			item.kind = kind_idx
+			-- 		end
+			-- 		return items
+			-- 	end,
+			-- },
 			lsp = {
+				module = "blink.cmp.sources.lsp",
 				override = {
 					get_trigger_characters = function(self)
 						local trigger_characters = self:get_trigger_characters()
@@ -1060,6 +1052,11 @@ require("blink.cmp").setup({
 						return trigger_characters
 					end,
 				},
+				transform_items = function(_, items)
+					return vim.tbl_filter(function(item)
+						return item.kind ~= require("blink.cmp.types").CompletionItemKind.Keyword
+					end, items)
+				end,
 			},
 			markdown = {
 				name = "RenderMarkdown",
@@ -1089,26 +1086,27 @@ require("blink.cmp").setup({
 
 vim.api.nvim_set_hl(0, "BlinkCmpGhostText", { fg = "#c1c0c0" })
 
+require("blink.pairs").build():pwait(60000)
 require("blink.pairs").setup({})
 
 vim.api.nvim_set_hl(0, "BlinkPairsOrange", { fg = "#fc9867" })
 vim.api.nvim_set_hl(0, "BlinkPairsPurple", { fg = "#ab9df2" })
 vim.api.nvim_set_hl(0, "BlinkPairsBlue", { fg = "#78dce8" })
 
-require("scrollview.contrib.gitsigns").setup()
+-- require("scrollview.contrib.gitsigns").setup()
 
 require("notify").setup()
 
-require("bar")
+-- require("bar")
 
 require("fidget").setup({})
 
 require("textcase").setup({})
 
-require("copilot").setup({
-	suggestion = { enabled = false },
-	panel = { enabled = false },
-})
+-- require("copilot").setup({
+-- 	suggestion = { enabled = false },
+-- 	panel = { enabled = false },
+-- })
 --
 -- require("CopilotChat").setup({})
 
@@ -1155,3 +1153,11 @@ require("tiny-inline-diagnostic").setup({
 		},
 	},
 })
+
+require("jj").setup({
+	diff = {
+		backend = "native",
+	},
+})
+
+require("wrapping").setup()

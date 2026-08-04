@@ -2,8 +2,8 @@
 
 export PATH=${HOME}/.local/bin:/usr/local/bin:/usr/bin
 
-export EDITOR="swayhide neovide --neovim-bin /home/danyspin97/nvim-linux-x86_64/bin/nvim"
-export VISUAL="swayhide neovide --neovim-bin /home/danyspin97/nvim-linux-x86_64/bin/nvim"
+export EDITOR="nvim"
+export VISUAL="nvim"
 export PAGER="less"
 
 GPG_TTY="$(tty)"

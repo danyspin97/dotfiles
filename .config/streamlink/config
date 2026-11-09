@@ -1,6 +1,0 @@
-# Player options
-player=mpv
-player-no-close
-
-stream-segment-threads=3
-hls-audio-select=en

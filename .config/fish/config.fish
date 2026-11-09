@@ -1,6 +1,6 @@
 set fish_home $XDG_CONFIG_HOME/fish
 
-set PATH $HOME/nvim-linux64/bin:$HOME/.local/bin:$HOME/.cargo/bin:/usr/local/bin:/usr/lib64/ccache:/usr/bin
+# set PATH $HOME/nvim-linux64/bin:$HOME/.local/bin:$HOME/.cargo/bin:/usr/local/bin:/usr/lib64/ccache:/usr/bin
 
 # Remove greeting
 set fish_greeting

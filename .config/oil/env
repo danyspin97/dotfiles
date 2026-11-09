@@ -1,5 +1,0 @@
-#!/usr/bin/osh
-
-export LESSOPEN="| $(which highlight) %s --out-format xterm256 -l --force -s solarized-light"
-export LESS=' -R '
-
